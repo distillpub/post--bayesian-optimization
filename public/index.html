@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Exploring Bayesian Optimization</title>
+  <script src="https://distill.pub/template.v2.js"></script>
+  <!-- <script defer src="js/bundle.js"></script> -->
+  <!-- <link rel="stylesheet" type="text/css" href="css/style.css"> -->
+
+</head>
+<body>
+
+<d-front-matter>
+  <script id='distill-front-matter' type="text/json">{
+  "title": "Exploring Active Learning and Multi-Armed Bandit",
+  "description": "Breaking Active Learning & Multi-Armed Bandit into small, sizable chunks.",
+  "authors": [
+    {
+      "author":"Apoorv Agnihotri",
+      "authorURL":"https://apoorvagnihotri.github.io/",
+      "affiliations": [{"name": "Indian Insitute of Gandhinagar", "affiliationURL":
+      "https://www.iitgn.ac.in/"}]
+    },
+    {
+      "author":"Nipun Batra",
+      "authorURL":"https://nipunbatra.github.io/",
+      "affiliations": [{"name": "Indian Insitute of Gandhinagar", "affiliationURL": "https://www.iitgn.ac.in/"}]
+    }
+  ],
+  "katex": {
+    "delimiters": [
+      {"left": "$$", "right": "$$", "display": false}
+    ]
+  }
+  }</script>
+</d-front-matter>
+
+<d-title style="padding-bottom: 0">
+  <h1>Exploring Active Learning and Multi-Armed Bandit</h1>
+  <p>Breaking Active Learning &#38; Multi-Armed Bandit into small, sizable chunks.</p>
+
+  <!-- <d-figure id="Teaser" class="l-screen shaded-figure" style="border-bottom: none"></d-figure> -->
+
+</d-title>
+
+<d-byline></d-byline>
+
+<d-article>
+<p>
+  In this post, we are going to focus on two tasks, active learning - where we query the user/oracle to label samples; and the multi-arm bandit - where we again query the user/Oracle which returns us a scalar reward.
+  We will be trying to pose the problems first and then talk about some of the ways to solve these problems.
+</p>
+<p>
+  The primary motivation behind active learning is the expensive cost of labeling in machine learning tasks.
+</p>
+
+<h2 id="mininggold">Mining Gold!</h2>
+<p>
+  Let us explain the two problems using the gold mining application.
+  We will, for now, look at only one-dimensional locations, i.e., we are talking gold distribution only about a line.
+  The issue we have is that at the start of the activity, we have no idea about the amount of gold at different locations.
+  The only way we can get the information about the amount of gold is by drilling at a location.
+  This drilling is costly and involves expensive sensors to be used.
+  We, therefore, want to minimize the number of drillings that we require.
+</p>
+
+<p>
+  We below show two of the common objectives for the gold mining problem.
+</p>
+
+<ul>
+<li>
+  <p><strong>Problem 1: Best Estimate of Gold Distribution</strong>
+    In this problem, we are supposed to estimate the amount of gold on the one-dimensional line. But we can not drill at every location. We should drill at those locations that provide us the "maximum" information about the distribution of the gold.
+  </p>
+</li>
+
+<li>
+  <p><strong>Problem 2: Location of Maximum Gold</strong>
+    In this problem, we are supposed to find the location in the one-dimensional space where the gold quantity is the maximum. This problem focuses on finding the location with the most gold content.
+  </p>
+</li>
+</ul>
+
+
+<figure>
+<d-figure><img src="images/MAB_gifs/active-gp.gif"/></d-figure>
+<figcaption>
+      Here, we have a two-dimensional normal distribution.
+      Each dimension <d-math>x_i</d-math> is assigned an index <d-math>i \in \{1,2\}</d-math>.
+      You can drag the handles to see how a particular sample (left) corresponds to functional values (right).
+      This representation also allows us to understand the connection between the covariance and the resulting values:
+      the underlying Gaussian distribution has a positive covariance between <d-math>x_1</d-math> and <d-math>x_2</d-math> &mdash; this means that <d-math>x_2</d-math> will increases as <d-math>x_1</d-math> gets larger and vice versa.
+      You can also drag the handles in the figure to the right and observe the probability of such a configuration in the figure to the left.
+</figure>
+<figure>
+<d-figure><img src="images/MAB_gifs/mab-gp-pi-eps0.5.gif"/></d-figure>
+</figure>
+
+<p><ul>
+  <li>
+    Here are representative animations showing the process of drilling at new locations and to reduce the uncertainty and get the best predictions showcasing the <strong>Active Learning</strong> problem.
+  <li>
+    And drilling at locations to get the location of the maximum gold reserve, showcasing the <strong>Multi Armed Bandit</strong> problem
+  </li>
+</ul></p>
+<p>
+  We will build the solution to both of these problems from the ground up.
+</p>
+
+
+<h3 id="activelearning">Active Learning</h3>
+
+<p>
+  <strong>Problem 1</strong> is very similar to problems we like to solve using active learning.
+  Active learning is used to predict the distribution by reducing uncertainty.
+  One of the ways we can reduce the uncertainty is by choosing the point at which we have the maximum variance (we are most uncertain).
+</p>
+
+<h3 id="gaussianprocesses">Gaussian Processes</h3>
+
+<p>
+  In our previous post on Gaussian Processes <d-footnote> <a href="https://nipunbatra.github.io/blog/2019/GP-1.html">Programatically understanding Gaussain Processes</a> </d-footnote>, we introduced the Gaussian Process.
+  As you can remember, we use Gaussian Processes to get a prediction as well as the attached uncertainty (variance) with that prediction.
+  This will turn out to be useful for us, as we wanted to drill where we were most uncertain.
+  By using Gaussian processes, we take some very naive assumption that the gold distribution of nearby points in similar (smoothness).
+</p>
+
+<p>
+  Let us now try to see how our groundtruth data looks like.
+  <figure>
+  <d-figure><img src="images/MAB_gifs/GT.svg"/></d-figure>
+  </figure>
+</p>
+
+
+<h4 id="priormodel">Prior Model</h4>
+
+<p>
+  Our prior model doesn't know much and assumes a smooth relationship between points via an Matern kernel. The Grey line in the graph below denotes the knowledge we have about the gold content without drilling even at a single location.
+  <figure>
+  <d-figure><img src="images/MAB_gifs/prior.svg"/></d-figure>
+  </figure>
+</p>
+
+<p>
+  Also, take notice that the confidence (uncertainty) about the gold content is also the same for every location.
+</p>
+
+<h4 id="addingtrainingdata">Adding Training Data</h4>
+
+<p>
+  Let us now add a point to the train set or in other words, drill one of the locations and see the gold content (<d-code language="python">y</d-code>). We can see how our confidence and our estimates change after we get this first information by fitting the model to the new data. I am going to add <d-code language="python">x = 0.5, y = f(0.5)</d-code> into the train set now.
+  <figure>
+  <d-figure><img src="images/MAB_gifs/posterior.svg"/></d-figure>
+  </figure>
+</p>
+
+<p>Nice! We see now that the posterior has changed and we are very certain about the gold content in the vicinity of <d-code language="python">x = 0.5</d-code>, but, very uncertain far away from it. Also, we can see that the mean of the point closer to <d-code language="python">x = 0.5</d-code> is closer to the value that we got from drilling and seeing the gold content. So, we now come to the key idea.</p>
+
+<h4 id="activelearningprocedure">Active Learning Procedure</h4>
+
+<ol>
+  <li>Choose the point of having the highest uncertainty</li>
+  <li>Add the point to train set</li>
+  <li>Train on the new train set</li>
+  <li>Go to 1 till convergence or budget elapsed</li>
+</ol>
+
+
+<p>
+  Let us now automate this process and see how our posterior changes at every iteration where we add a sensor. For each of our iteration below, the prior was the Gaussian Process learned on the points already in the training set. We have recreated the 1st animation at the top of the post!
+
+  <figure>
+  <d-figure><img src="images/MAB_gifs/active-gp.gif"/></d-figure>
+  </figure>
+  
+</p>
+
+<p>
+  There you go we have recreated one of the plots from the starting of the blog! One point to notice is that this idea of choosing the most uncertain location leads to querying of the points that are the farthest (visible when we choose the 2nd location to drill). This might not be so good as we are kind of wasting our drillings because they are at the boundary of the 1-dimensional plot.
+</p>
+
+<h3 id="multiarmedbandit">Multi-Armed Bandit</h3>
+
+<p>
+  <strong>Problem 2</strong> requires us to find the location where the gold content is maximum. Even though the problem setting may be similar, the objective is quite different than problem 1. In other words, we just want the location where we can drill to get the most gold.
+</p>
+
+<p>
+  Older problem - Earlier in the active learning problem, our motivation for drilling at locations was to predict the distribution of the gold content over all the locations in the one-dimensional line. We, therefore, had chosen the next location to drill where we had maximum uncertainty about our estimate.
+</p>
+
+<p>
+  In this problem, we are instead interested to know the location at which we find the maximum gold. For getting the location of maximum gold content, we might want to drill at the location where predicted mean is the highest (exploit). But unfortunately our mean is not always accurate, so we need to correct our mean (reduce variance / explore) too. Multi-Arm Bandit looks at both exploitation and exploration, whereas in the case of Active Learning Problem, we only cared about exploration.
+</p>
+
+<h4 id="acquisitionfunctions">Acquisition Functions</h4>
+
+<p>
+  Now, to take into account the combination of exploration and exploitation, we try to use a function which combines the two sides. These utility functions that take into account both exploration and exploitation in multi-arm bandit problem are called acquisition functions.
+</p>
+
+  
+<p>
+  <figure>
+  <d-figure><img src="images/MAB_gifs/acq_fn.svg"/></d-figure>
+  </figure>
+  Here, we can see that mean near the location of the just added point (red point) is high. But as we go far from the red point, we see that our uncertainty increases to a maximum. As we discussed in multi-arm bandit problem, we like to have some combination of exploration and exploitation. The most basic way to do so is by linearly combining the two values.
+</p>
+
+<d-math block>
+  $acq_fn(x) = \mu + \labda \times \sigma$
+</d-math>
+
+<p>
+  This combined value that takes into account exploration and exploitation is referred to as the acquisition value, returned by acquisition function. We see at around the location <d-code language="python">x = 1.4</d-code> we get the maximum value for the acquisition (green curve). Thus we next select this location to drill.
+</p>
+
+<p>
+  The intuition of using the acquisition function <d-code language="python">mean + lam * uncertainty</d-code> is that we are interested in finding the global mean, so taking into account the estimated mean would be a good idea. Additionally, we would like to explore too (using <d-code language="python">lam</d-code>); else we might be stuck in a local minimum if don't explore too much (see below).
+</p>
+
+<d-appendix>
+    <h3 id="Acknowledgements">Acknowledgments</h3>
+    <p>
+      We are very grateful to Prof. Nando de Freitas with his help in showing us relevant papers 
+
+      And Thomas Huijskens PyData Talk - Bayesian optimisation with scikit-learn https://www.youtube.com/watch?v=jtRPxRnOXnk and Marc Spicker for their feedback on the manuscript.
+      
+      In addition, we want to thank Apoorv Agnihotri for helping with the organization of the code repository and formation of the distill pub post.
+
+    <h3 id="discussion-review">Discussion and Review</h3>
+    <p>
+      <a href="https://github.com/distillpub/post--visual-exploration-gaussian-processes/issues/1">Review 1 - Anonymous</a><br>
+      <a href="https://github.com/distillpub/post--visual-exploration-gaussian-processes/issues/3">Review 2 - Anonymous</a><br>
+      <a href="https://github.com/distillpub/post--visual-exploration-gaussian-processes/issues/4">Review 3 - Austin Huang</a><br>
+    </p>
+    
+    <h3 id="FurtherReading">Further Reading</h3>
+    <p>The following blog posts offer more interactive visualizations and further reading material on the topic of Gaussian processes:</p>
+    <ul>
+      <li><a href="http://www.tmpl.fi/gp/">Gaussian process regression demo</a> by Tomi Peltola</li>
+      <li><a href="http://katbailey.github.io/post/gaussian-processes-for-dummies/">Gaussian Processes for Dummies</a> by Katherine Bailey</li>
+      <li><a href="https://blog.sigopt.com/posts/intuition-behind-gaussian-processes">Intuition behind Gaussian Processes</a> by Mike McCourt</li>
+      <li><a href="https://blog.dominodatalab.com/fitting-gaussian-process-models-python/">Fitting Gaussian Process Models in Python</a> by Chris Fonnesbeck</li>
+    </ul>
+  <p>If you want more of a hands-on experience, there are also many Python notebooks available:</p>
+  <ul>
+    <li><a href="https://blog.dominodatalab.com/fitting-gaussian-process-models-python/">Fitting Gaussian Process Models
+      in Python</a> by Chris Fonnesbeck
+    </li>
+    <li><a href="http://nbviewer.jupyter.org/github/adamian/adamian.github.io/blob/master/talks/Brown2016.ipynb/">Gaussian
+      process lecture</a> by Andreas Damianou
+    </li>
+  </ul>
+
+  <d-bibliography src="references.bib"></d-bibliography>
+</d-appendix>
+
+</body>
+</html>
