@@ -400,15 +400,18 @@ Z= \frac{\mu(x) - \mu^+ - \epsilon}{\sigma(x)}
 <hr />
 
 <p>
-  We have seen two closely related methods, The <code>Probability of Improvement</code> and the <em>Expected Improvement</em>. We can think of these two to be related to the ideas that we commonly are familiar with <code>risk</code> and <code>gain</code> respectively.
+  We have seen two closely related methods, The <em>Probability of Improvement</em> and the <em>Expected Improvement</em>. We can think of these two to be related to the ideas that we commonly are familiar with <d-code language="python">risk</d-code> and <d-code language="python">gain</d-code> respectively.
 </p>
 
 <p>
-  It seems natural to see how these metrics change for each of the points. We have plotted the value of <code>PI</code> and <code>EI</code> acquisition function below for each of the training points. The graph shows the relation followed between IE and PI for when we have a single drill hole already.
+  It seems natural to see how these metrics change for each of the points. We have plotted the values for both policies' acquisition function's values below, for each of the possible locations. The graph shows the relation followed between EI and PI for when we have a single training point <d-code language="python">(0.5 f(0.5))</d-code>.
 </p>
 
+  <figure class="smaller-img">
+  <d-figure><img src="images/MAB_gifs/Ei_Pi_graph/0.svg"/></d-figure>
+  </figure>
 <p>
-  If we look closely, we can see if we have an equal probability of improvement as in the case with the points on <code>x = 1.0</code> it would be more beneficial to differentiate between these points which more Expected Improvement. In other words, when <code>risk</code>s are the same, we should prioritize to choose the option with more <code>gain</code>. And similarly, when the gains are similar, we would likely want to go with lesser <code>risk</code>.
+  If we look closely, we can see if we have an equal estimated improvement as in the case with the points with <d-code language="python">EI(x) = 0.4</d-code> it would be more beneficial to differentiate between these points which have a better value for Probability of Improvement. In other words, when <d-code language="python">gain</d-code>s are the same, we should prioritize to choose the option with lesser <d-code language="python">risk</d-code language="python">. And similarly, when the <d-code language="python">risk</d-code>s are similar, we would likely want to go with points with greater <d-code language="python">gain</d-code>s.
 </p>
 
 
