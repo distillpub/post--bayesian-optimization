@@ -4,7 +4,8 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Exploring Bayesian Optimization</title>
-  <script src="https://distill.pub/template.v2.js"></script>
+  <script src="js/template.v2.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/styles.css">
   <!-- <script defer src="js/bundle.js"></script> -->
   <!-- <link rel="stylesheet" type="text/css" href="css/style.css"> -->
 
@@ -130,7 +131,7 @@
 <p>
   Let us now try to see how our groundtruth data looks like.
 </p>
-  <figure>
+  <figure class="smaller-img">
   <d-figure><img src="images/MAB_gifs/GT.svg"/></d-figure>
   </figure>
 
@@ -140,7 +141,7 @@
 <p>
   Our prior model doesn't know much and assumes a smooth relationship between points via an Matern kernel. The Grey line in the graph below denotes the knowledge we have about the gold content without drilling even at a single location.
 </p>
-  <figure>
+  <figure class="smaller-img">
   <d-figure><img src="images/MAB_gifs/prior.svg"/></d-figure>
   </figure>
 
@@ -361,13 +362,58 @@ Z= \frac{\mu(x) - \mu^+ - \epsilon}{\sigma(x)}
   <figure>
   <d-figure><img src="images/MAB_gifs/mab-gp-ei-eps0.01.gif"/></d-figure>
   </figure>
+
 <p>
-  We again see that having <code>eps = 0.01</code> results in a nice behavior of the acquisition function (we are able to get near to the global maxima and additionally we are trying to exploit the regions near global maxima). Though it still seems that we should have detected the second hump a little earlier.
+  Like the Probability of Improvement's acquisition function, we can moderate the amount of explorability the Expected Improvement's acquisition function by setting the <d-code language="python">eps</d-code> hyper-parameter.
 </p>
 
 <p>
-  Let's try increasing the <code>eps</code> variable to focus a little more on exploribility.
+  We see that having <d-code language="python">eps = 0.01</d-code> primarily results in exploitation, and we are not able to get to the global maxima due to this myopic drilling location selection.
 </p>
+
+<p>
+  Let's try increasing the <d-code language="python">eps</d-code> variable to focus a little more on exploribility.
+</p>
+
+  <figure>
+  <d-figure><img src="images/MAB_gifs/mab-gp-ei-eps1.5.gif"/></d-figure>
+  </figure>
+<p>
+  As we expected, increasing the value to <d-code language="python">eps = 1.5</d-code> makes the acquisition function explore more and exploit when the time comes. We see that it moves slowly once it reaches near the global maxima, trying to find the global maxima. In this case, the exploration is effectively helping us reach a higher functional value much earlier!
+</p>
+
+<p>
+  Let's see if increasing <d-code language="python">eps</d-code> helps us more!
+</p>
+
+  <figure>
+  <d-figure><img src="images/MAB_gifs/mab-gp-ei-eps3.gif"/></d-figure>
+  </figure>
+<p>
+  Is this better than before? Turns out a yes and a no. We see that here we do too much exploration given the value of <d-code language="python">eps = 3</d-code>. Which results in early reaching something close to global maxima, but unfortunately we don't exploit to get more gains near the global maxima. We would have liked an acquisition function that tried to exploit a bit more after reaching somewhere close to the global maxima. In essence:
+<ul>
+  <li>reach near global maxima in a lower number of iterations</li>
+  <li>we don't exploit once we reach near global maxima</li>
+</ul>
+</p>
+
+<hr />
+
+<p>
+  We have seen two closely related methods, The <code>Probability of Improvement</code> and the <em>Expected Improvement</em>. We can think of these two to be related to the ideas that we commonly are familiar with <code>risk</code> and <code>gain</code> respectively.
+</p>
+
+<p>
+  It seems natural to see how these metrics change for each of the points. We have plotted the value of <code>PI</code> and <code>EI</code> acquisition function below for each of the training points. The graph shows the relation followed between IE and PI for when we have a single drill hole already.
+</p>
+
+<p>
+  If we look closely, we can see if we have an equal probability of improvement as in the case with the points on <code>x = 1.0</code> it would be more beneficial to differentiate between these points which more Expected Improvement. In other words, when <code>risk</code>s are the same, we should prioritize to choose the option with more <code>gain</code>. And similarly, when the gains are similar, we would likely want to go with lesser <code>risk</code>.
+</p>
+
+
+
+
 
 
 <d-appendix>
