@@ -83,20 +83,20 @@
 </li>
 </ul>
 
-
-<figure>
-<d-figure><img src="images/MAB_gifs/active-gp.gif"/></d-figure>
-<figcaption>
+  <figure>
+  <d-figure><img src="images/MAB_gifs/active-gp.gif"/></d-figure>
+    <figcaption>
       Here, we have a two-dimensional normal distribution.
       Each dimension <d-math>x_i</d-math> is assigned an index <d-math>i \in \{1,2\}</d-math>.
       You can drag the handles to see how a particular sample (left) corresponds to functional values (right).
       This representation also allows us to understand the connection between the covariance and the resulting values:
       the underlying Gaussian distribution has a positive covariance between <d-math>x_1</d-math> and <d-math>x_2</d-math> &mdash; this means that <d-math>x_2</d-math> will increases as <d-math>x_1</d-math> gets larger and vice versa.
       You can also drag the handles in the figure to the right and observe the probability of such a configuration in the figure to the left.
-</figure>
-<figure>
-<d-figure><img src="images/MAB_gifs/mab-gp-pi-eps0.5.gif"/></d-figure>
-</figure>
+    </figcaption>
+  </figure>
+  <figure>
+  <d-figure><img src="images/MAB_gifs/mab-gp-pi-eps0.5.gif"/></d-figure>
+  </figure>
 
 <p><ul>
   <li>
@@ -129,20 +129,20 @@
 
 <p>
   Let us now try to see how our groundtruth data looks like.
+</p>
   <figure>
   <d-figure><img src="images/MAB_gifs/GT.svg"/></d-figure>
   </figure>
-</p>
 
 
 <h4 id="priormodel">Prior Model</h4>
 
 <p>
   Our prior model doesn't know much and assumes a smooth relationship between points via an Matern kernel. The Grey line in the graph below denotes the knowledge we have about the gold content without drilling even at a single location.
+</p>
   <figure>
   <d-figure><img src="images/MAB_gifs/prior.svg"/></d-figure>
   </figure>
-</p>
 
 <p>
   Also, take notice that the confidence (uncertainty) about the gold content is also the same for every location.
@@ -152,10 +152,10 @@
 
 <p>
   Let us now add a point to the train set or in other words, drill one of the locations and see the gold content (<d-code language="python">y</d-code>). We can see how our confidence and our estimates change after we get this first information by fitting the model to the new data. I am going to add <d-code language="python">x = 0.5, y = f(0.5)</d-code> into the train set now.
+</p>
   <figure>
   <d-figure><img src="images/MAB_gifs/posterior.svg"/></d-figure>
   </figure>
-</p>
 
 <p>Nice! We see now that the posterior has changed and we are very certain about the gold content in the vicinity of <d-code language="python">x = 0.5</d-code>, but, very uncertain far away from it. Also, we can see that the mean of the point closer to <d-code language="python">x = 0.5</d-code> is closer to the value that we got from drilling and seeing the gold content. So, we now come to the key idea.</p>
 
@@ -171,12 +171,10 @@
 
 <p>
   Let us now automate this process and see how our posterior changes at every iteration where we add a sensor. For each of our iteration below, the prior was the Gaussian Process learned on the points already in the training set. We have recreated the 1st animation at the top of the post!
-
+</p>
   <figure>
   <d-figure><img src="images/MAB_gifs/active-gp.gif"/></d-figure>
   </figure>
-  
-</p>
 
 <p>
   There you go we have recreated one of the plots from the starting of the blog! One point to notice is that this idea of choosing the most uncertain location leads to querying of the points that are the farthest (visible when we choose the 2nd location to drill). This might not be so good as we are kind of wasting our drillings because they are at the boundary of the 1-dimensional plot.
@@ -201,17 +199,20 @@
 <p>
   Now, to take into account the combination of exploration and exploitation, we try to use a function which combines the two sides. These utility functions that take into account both exploration and exploitation in multi-arm bandit problem are called acquisition functions.
 </p>
-
-  
-<p>
   <figure>
   <d-figure><img src="images/MAB_gifs/acq_fn.svg"/></d-figure>
   </figure>
+
+<p>
   Here, we can see that mean near the location of the just added point (red point) is high. But as we go far from the red point, we see that our uncertainty increases to a maximum. As we discussed in multi-arm bandit problem, we like to have some combination of exploration and exploitation. The most basic way to do so is by linearly combining the two values.
 </p>
 
-<d-math block>
-  $acq_fn(x) = \mu + \labda \times \sigma$
+<hr />
+
+<h3 id="acq">ACQ1</h4>
+
+<d-math block> <!-- class="l-middle.side" -->
+  \texttt{acq\_fn}(x) = \mu + \lambda \times \sigma
 </d-math>
 
 <p>
@@ -221,6 +222,153 @@
 <p>
   The intuition of using the acquisition function <d-code language="python">mean + lam * uncertainty</d-code> is that we are interested in finding the global mean, so taking into account the estimated mean would be a good idea. Additionally, we would like to explore too (using <d-code language="python">lam</d-code>); else we might be stuck in a local minimum if don't explore too much (see below).
 </p>
+
+<p>
+  Let us now try different hyperparameters for <d-code language="python">ACQ1</d-code>. We can see that on increasing <d-code language="python">lam</d-code> we "explore" more! In the below case we can easily see since we didn't give too much importance to the uncertainty (low <d-code language="python">lam</d-code>), we got stuck in local minima.
+</p>
+  <figure>
+  <d-figure><img src="images/MAB_gifs/mab-gp-1.gif"/></d-figure>
+  </figure>
+
+<p>
+  Below we can see that this choice of <code>lam</code> is still a little smaller than we like (we would like to see that we get to exploit the location where the gold is the most.).
+</p>
+  <figure>
+  <d-figure><img src="images/MAB_gifs/mab-gp-5.gif"/></d-figure>
+  </figure>
+
+<p>
+  Perfect! We see that setting this value of <code>lam = 10</code> resulted in finding points near the global maxima and not getting stuck in a local maximum.
+</p>
+  <figure>
+  <d-figure><img src="images/MAB_gifs/mab-gp-10.gif"/></d-figure>
+  </figure>
+
+<hr />
+
+<h3 id="random">Random</h3>
+
+<p>We had used a little intelligent acquisition function earlier, let's see is out acquisition function is not that intelligent and chooses randomly.</p>
+
+<p>We have here implemented a random method as a baseline. Notice, random method can find a location near the global maximum but is not able to exploit (try to find the global maxima that might be near this "best" location). Instead, it randomly chooses to explore (not even intelligently) here and there. Even with no intelligent, we might get good locations which might be close to the location with the most gold content.
+</p>
+  <figure>
+  <d-figure><img src="images/MAB_gifs/rand.gif"/></d-figure>
+  </figure>
+
+<hr />
+
+<h3 id="probabilityofimprovementpi">Probability of Improvement (PI)</h3>
+
+<p>
+  Let us look into our next method for the MAB maximization problem. As before, we want to balance or trade-off between exploration and exploitation. The idea behind the algorithm is fairly simple - choose the next point as the one which has the highest probability of improvement over the current max <d-math>(\mu^+)</d-math>.
+</p>
+
+<p>Let's understand this concept via two cases:</p>
+
+<ol>
+  <li><p>
+    We have two points of similar means (of function values (gold in our case)). We now want to choose one of these to obtain the labels or values. We will choose the one with higher variance. This basically says that given same exploitability, we choose the one with higher exploration value.
+  </p></li>
+  <li><p>
+    We have two points having same variance. We would now choose the point with the higher mean. This basically says that given same explorability, we will choose the one with higher exploitation value.
+  </p></li>
+</ol>
+<ol>
+  <li><p>
+    Let <d-math>\mu^+</d-math> be the current highest value of the function
+  </p></li>
+  <li><p>
+    Let <d-math>\epsilon</d-math> be close to zero
+  </p></li>
+
+  <li><p>
+    Choose <d-math>x^* = argmax(P(f(x)) > (\mu^+ +\epsilon))</d-math>
+  </p></li>
+</ol>
+
+<p>This can be given as: <d-math>x^* = argmax_x \Phi(\frac{\mu(x) - \mu^+ - \epsilon}{\sigma(x)})</d-math> where
+<d-math>\Phi(\cdot)</d-math> indicates the CDF.</p>
+
+
+<h4 id="intuitionbehindtheformula">Intuition behind PI</h4>
+
+<p>
+  Below is a graph that helps to visualize how the PI values are calculated. We have calculated for 3 points <d-code language="python">x in [0.10, 0.6, 4]</d-code>.
+</p>
+  <figure>
+  <d-figure><img src="images/MAB_gifs/pi_cdf.svg"/></d-figure>
+  </figure>
+
+<p>
+  <d-code language="python">mu_plus</d-code> refers to the maximum functional value i.e., <d-code language="python">max(train_y)</d-code>, where <d-code language="python">train_y</d-code> refers to the the gold content at the currently drilled locations.
+  We see that the probability of improvement values are calculated by finding the functional value of the cumulative density function at <d-code language="python">mu_plus</d-code>. The Gaussian parameters for each point are the mean and standard deviation predicted from Gaussian Process Regressor for that point.
+</p>
+
+<h4 id="eps">Hyperparameter: Eps</h4>
+<p>
+  Now we possess the intuition behind how Probability of Improvement is calculated, now let's change <d-code language="python">eps</d-code> and look at its effects.
+</p>
+
+  <figure>
+  <d-figure><img src="images/MAB_gifs/mab-gp-pi-eps0.01.gif"/></d-figure>
+  </figure>
+<p>
+  Looking at the graph above we can see that we are not effectively exploring at value <d-code language="python">eps = 0.01</d-code> for the Probability of Improvement acquisition function. We are stuck.
+</p>
+
+  <figure>
+  <d-figure><img src="images/MAB_gifs/mab-gp-pi-eps0.5.gif"/></d-figure>
+  </figure>
+<p>
+  Looking above, we see increasing the value to <d-code language="python">eps = 0.5</d-code>, enables us to explore more and get to the maximum value which we wanted in the case of Multi-arm bandit problem. One can notice that the predicted values where <d-math>x \in [3, 4.5]</d-math> posses uncertainty (can be identified by the grey translucent area, but as we remember we are not interested in getting the best prediction of the gold distribution, we only care about the maximum value that we can achieve, which this acquisition function with given hyper-parameters is able to capture nicely!
+</p>
+
+<p>
+  Let's look at what happens if we increase the hyper-parameter <d-code language="python">eps</d-code> a bit more.
+</p>
+
+  <figure>
+  <d-figure><img src="images/MAB_gifs/mab-gp-pi-eps3.gif"/></d-figure>
+  </figure>
+<p>
+  We see that we made things worse! Our model now uses <d-code language="python">eps = 3</d-code> which has effectively resulted in way too much exploration. This amount of exploration is not able to exploit when we land somewhere near a global maximum.
+</p>
+
+
+<hr />
+
+
+<h3 id="expectedimprovementei">Expected Improvement (EI)</h3>
+
+<p>
+  Probability of improvement only looked at <d-code language="python">how likely</d-code> is an improvement, but, shouldn't we be looking into <d-code language="python">how much</d-code> we can improve. The next criterion called Expected Improvement (EI) looks into both :)
+</p>
+
+<d-math block>
+EI(x)=
+\begin{cases}
+  (\mu(x) - \mu^+ - \epsilon)\Phi(Z) + \sigma(x)\phi(Z), & \text{if}\ \sigma(x) > 0 \\
+  0 & \text{if}\ \sigma(x) = 0 
+\end{cases}
+
+Z= \frac{\mu(x) - \mu^+ - \epsilon}{\sigma(x)}
+</d-math>
+<p>
+  where <d-math>\Phi(\cdot)</d-math> indicates CDF and <d-math>\phi(\cdot)</d-math> indicates pdf.
+</p>
+
+  <figure>
+  <d-figure><img src="images/MAB_gifs/mab-gp-ei-eps0.01.gif"/></d-figure>
+  </figure>
+<p>
+  We again see that having <code>eps = 0.01</code> results in a nice behavior of the acquisition function (we are able to get near to the global maxima and additionally we are trying to exploit the regions near global maxima). Though it still seems that we should have detected the second hump a little earlier.
+</p>
+
+<p>
+  Let's try increasing the <code>eps</code> variable to focus a little more on exploribility.
+</p>
+
 
 <d-appendix>
     <h3 id="Acknowledgements">Acknowledgments</h3>
