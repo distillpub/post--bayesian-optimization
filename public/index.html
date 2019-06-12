@@ -14,8 +14,8 @@
 
 <d-front-matter>
   <script id='distill-front-matter' type="text/json">{
-  "title": "Exploring Active Learning and Multi-Armed Bandit",
-  "description": "Breaking Active Learning & Multi-Armed Bandit into small, sizable chunks.",
+  "title": "Exploring Bayesian Optimization",
+  "description": "Breaking Bayesian Optimization into small, sizable chunks.",
   "authors": [
     {
       "author":"Apoorv Agnihotri",
@@ -38,8 +38,8 @@
 </d-front-matter>
 
 <d-title style="padding-bottom: 0">
-  <h1>Exploring Active Learning and Multi-Armed Bandit</h1>
-  <p>Breaking Active Learning &#38; Multi-Armed Bandit into small, sizable chunks.</p>
+  <h1>Exploring Bayesian Optimization</h1>
+  <p>Breaking Bayesian Optimization into small, sizable chunks.</p>
 
   <!-- <d-figure id="Teaser" class="l-screen shaded-figure" style="border-bottom: none"></d-figure> -->
 
@@ -411,8 +411,75 @@ Z= \frac{\mu(x) - \mu^+ - \epsilon}{\sigma(x)}
   <d-figure><img src="images/MAB_gifs/Ei_Pi_graph/0.svg"/></d-figure>
   </figure>
 <p>
-  If we look closely, we can see if we have an equal estimated improvement as in the case with the points with <d-code language="python">EI(x) = 0.4</d-code> it would be more beneficial to differentiate between these points which have a better value for Probability of Improvement. In other words, when <d-code language="python">gain</d-code>s are the same, we should prioritize to choose the option with lesser <d-code language="python">risk</d-code language="python">. And similarly, when the <d-code language="python">risk</d-code>s are similar, we would likely want to go with points with greater <d-code language="python">gain</d-code>s.
+  If we look closely, we can see if we have an equal estimated improvement as in the case with the points with <d-code language="python">EI(x) = 0.4</d-code> it would be more beneficial to differentiate between these points which have a better value for Probability of Improvement. In other words, when <d-code language="python">gain</d-code>s are the same, we should prioritize to choose the option with lesser <d-code language="python">risk</d-code>. And similarly, when the <d-code language="python">risk</d-code>s are similar, we would likely want to go with points with greater <d-code language="python">gain</d-code>s.
 </p>
+
+<hr />
+
+<h3 id="gaussianprocessupperconfidenceboundgp_ucb">Gaussian Process Upper Confidence Bound (GP_UCB)</h3>
+
+<p>
+  GP_UCB is another formulation for acquisition function where we also have theoretical bounds on the number of iterations taken to reach near global maximum.
+</p>
+
+  <figure>
+  <d-figure><img src="images/MAB_gifs/mab-gp-gp_ucb1-1.gif"/></d-figure>
+  </figure>
+<p>
+  We seem to be exploiting too much, let's increase the exploratory hyperparameters!
+</p>
+
+  <figure>
+  <d-figure><img src="images/MAB_gifs/mab-gp-gp_ucb3-1.gif"/></d-figure>
+  </figure>
+<p>
+  Using this set of hyperparameters, we are able to get near global maxima and further "exploit" to find the global maximum. This was a result of increasing the value of <d-code language="python">v</d-code> to <d-code language="python">3</d-code>; this shows that <d-code language="python">v</d-code> gives weight to exploration.</p>
+
+  <figure>
+  <d-figure><img src="images/MAB_gifs/mab-gp-gp_ucb1-3.gif"/></d-figure>
+  </figure>
+<p>
+  Setting the values of the hyperparameters  to <d-code language="python">v = 1</d-code> and <d-code language="python">delta = 3</d-code> results a greater exploitation.</p>
+
+<hr />
+
+<h3 id="probabilityofimprovementdlambdatimesdexpectedimprovementei_pi">Probability of Improvement + <d-math>\lambda \  \times</d-math> Expected Improvement (EI_PI)</h3>
+
+<p>Below we have tried to combine PI and EI using a linear combination as a combination of various acquisition function also results in an acquisition function. We can, therefore, combine any of the acquisition function and form a new one.</p>
+
+  <figure>
+  <d-figure><img src="images/MAB_gifs/mab-gp-ei_pi.gif"/></d-figure>
+  </figure>
+<hr />
+
+<h3 id="comparisonbetweenallthemethods">Comparison between all the methods</h3>
+
+<p>Below we have a graph showing a comparison between the methods discussed above. We have chosen the hyper-parameters that gave us the best performance during our basic hyper-parameter search.</p>
+
+  <figure>
+  <d-figure><img src="images/MAB_gifs/comp.svg"/></d-figure>
+  </figure>
+<p>We see the <em>Random</em> method is able to find the maximum much before any of the other methods, this can be seen when we are faced with smaller spaces to find the global maximum. If we have more dimensions to <d-code language="python">x</d-code>, searching in this space would not be so easy using random, due to what we call the curse of dimensionality.</p>
+
+<hr />
+
+<h2 id="observation">Observation</h2>
+
+<p>We see that the plots above show the maximum gold content detected for the case of multi-arm bandit problem vs. the number of holes drilled. Looking at the graph above we can see that for our problem Probability of Improvement performed the best among all the variants of Acquisition functions.</p>
+
+<h2 id="conclusions">Conclusions</h2>
+
+<p>We see that for the case of multi-arm bandit we have a bit different problem as compared to the active learning problem and therefore we have the different objective functions that we try to maximize for the query points.</p>
+
+<h3 id="caution">Caution</h3>
+
+<p>We need to take care while using Bayesian Optimization</p>
+
+<ul>
+<li>The scale of the features</li>
+
+<li>Kernel selection for Gaussian Process</li>
+</ul>
 
 
 
