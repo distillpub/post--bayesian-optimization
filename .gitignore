@@ -1,3 +1,4 @@
 *.ipynb_checkpoints/
 *MAB_pngs/
 *active-gp-img
+public/images/data
