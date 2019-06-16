@@ -596,7 +596,43 @@ Z= \frac{\mu(x) - \mu^+ - \epsilon}{\sigma(x)}
 
 <hr />
 
-<h3 id="example2">Example 2</h3>
+<h4 id="example2">Example 2</h4>
+
+<p>Using Bayesian Optimization in Random Forests.</p>
+
+<p>Let us now show some plots showing Bayesian Optimization for learning nice hyperparameters for our Random Forest model.</p>
+
+<figure>
+  <d-figure><img src="images/MAB_gifs/RFpi3d-0.05-mat.gif"></d-figure>
+  </figure>
+
+<p>Above we see a gif showing the work of the <em>Probability of Improvement</em> acquisition function in finding the best hyperparameters.</p>
+
+<figure>
+  <d-figure><img src="images/MAB_gifs/RFei3d-0.0001-mat.gif"></d-figure>
+  </figure>
+
+<p>Above we see a gif showing the work of the <em>Expected Improvement</em> acquisition function in finding the best hyperparameters.</p>
+
+<figure>
+  <d-figure><img src="images/MAB_gifs/RFgp3d-1-2-mat.gif"></d-figure>
+  </figure>
+
+<p>Above we see a gif showing the work of the <em>Guassian Processes Upper Confidence Bound</em> acquisition function in finding the best hyperparameters. This by far seems to perform the best with getting quite close to the global optimum value of hyperparameters (found using brute force).</p>
+
+<figure>
+  <d-figure><img src="images/MAB_gifs/RFrand3d.gif"></d-figure>
+  </figure>
+
+<p>Now our favorite random acquisition function. :)</p>
+
+<figure>
+  <d-figure><img src="images/MAB_gifs/RFcomp3d.svg"></d-figure>
+  </figure>
+
+<p>In the case of Random Forests, one thing to notice is that the ground truth is not that smooth. Therefore the assumption of Bayesian Optimization (smooth functions) no longer holds to the fullest. Therefore we do see that random may perform better than some of the methods. The best performing method we see is Probability of Improvement.</p>
+
+<h3 id="example3">Example 3</h3>
 
 <p>Let's train CNNs on Mnist. Here we will be using <d-code language="python">scikit-optim</d-code>, which also provides us support for optimizing our function on a mix of categorical, integral, and real variables. We won't be plotting the ground truth here, as it's extremely costly to do so.</p>
 
