@@ -180,7 +180,7 @@ In this problem, we are supposed to find the location in the one-dimensional spa
 <h3 id="acq">ACQ1</h4>
 
 <d-math block> <!-- class="l-middle.side" -->
-  \texttt{acq\_fn}(x) = \mu + \lambda \times \sigma
+  \text{acq\_fn}(x) = \mu + \lambda \times \sigma
 </d-math>
 
 <p>
@@ -327,7 +327,7 @@ Z= \frac{\mu(x) - \mu^+ - \epsilon}{\sigma(x)}
 <p>We can see when our <em>Expected Improvement</em> will be high.</p>
 
 <ul>
-<li>It is high when the expected value of mean(x) - $\mu^+$ is high.</li>
+<li>It is high when the expected value of mean(x) - <d-math>\mu^+</d-math> is high.</li>
 
 <li>It is high when the uncertainty around a point is high.</li>
 </ul>
@@ -426,7 +426,7 @@ Z= \frac{\mu(x) - \mu^+ - \epsilon}{\sigma(x)}
 
 <p>One more acquisition function that is quite common is Thompson Sampling. It has a low overhead of setting up.</p>
 
-<p>The idea is to sample functions within upper and lower probabilistic bounds of a regressor; one can then optimize on these functions and chose the next query point to be the <d-math>\boldsymbol{x} = argmax(\texttt{sampled_f})</d-math>. In other words, sampling functions within the greyed out area in the graph below.</p>
+<p>The idea is to sample functions within upper and lower probabilistic bounds of a regressor; one can then optimize on these functions and chose the next query point to be the <d-math>x = argmax(\text{sampled\_f})</d-math>. In other words, sampling functions within the greyed out area in the graph below.</p>
 
 <figure>
   <d-figure><img src="images/MAB_gifs/posterior.svg"/></d-figure>
@@ -450,20 +450,71 @@ Z= \frac{\mu(x) - \mu^+ - \epsilon}{\sigma(x)}
   </figure>
 <hr />
 
-<h3 id="comparisonbetweenallthemethods">Comparison between all the methods</h3>
+<h3 id="comparison">Comparison</h3>
 
 <p>Below we have a graph showing a comparison between the methods discussed above. We have chosen the hyper-parameters that gave us the best performance during our basic hyper-parameter search.</p>
 
   <figure>
   <d-figure><img src="images/MAB_gifs/comp.svg"/></d-figure>
   </figure>
-<p>We see the <em>Random</em> method is able to find the maximum much before any of the other methods, this can be seen when we are faced with smaller spaces to find the global maximum. If we have more dimensions to <d-code language="python">x</d-code>, searching in this space would not be so easy using random, due to what we call the curse of dimensionality.</p>
 
-<hr />
+<p>We see the <em>Random</em> method can find the maximum much before any of the other techniques; this can be seen when we are faced with smaller spaces. But we will soon see that when we have larger search spaces, a random method isn't that efficient. This is because the probability of finding the optimum <d-math>x</d-math> in our new <d-math>f</d-math> real-valued multivariable function, would drop exponentially with increasing dimensions due to what we call, the curse of dimensionality.</p>
 
 <h2 id="observation">Observation</h2>
 
-<p>We see that the plots above show the maximum gold content detected for the case of multi-arm bandit problem vs. the number of holes drilled. Looking at the graph above we can see that for our problem Probability of Improvement performed the best among all the variants of Acquisition functions.</p>
+<p>We see that the plots above show the maximum gold content detected from all the holes that have been drilled. We can see that Random performs quite nicely. We will soon see that might not be the case in higher dimensional real-valued functions.</p>
+
+<h1 id="generalization">Generalization</h1>
+
+<span>Let us now formally introduce Bayesian Optimization. Our goal is to find the <d-math>{x}</d-math> where we reached global maximum (or minimum) of a function <d-math>f: \mathbb{R}^d \text{ -> } \mathbb{R}</d-math>. Constraints in Bayesian Optimization look like below quoted from slides/talk 
+<d-footnote>Talk from Peter Fraizer from Uber on Bayesian Optimization:<br>
+    <ul>
+    <li> <a href="https://www.youtube.com/watch?v=c4KKvyWW_Xk">Youtube Talk</a></li>
+    <li> <a href="https://people.orie.cornell.edu/pfrazier/Presentations/2018.11.INFORMS.tutorial.pdf">Slide Deck</a></li>
+</ul>
+</d-footnote> on Tutorial on Bayesian Optimization from Peter Fraizer.</span>
+
+<blockquote>
+  <p>We’d like to optimize <d-math>f: \mathbb{R}^d \text{ -> } \mathbb{R}</d-math>.<br></p>
+  
+  <p>• <d-math>f</d-math>’s feasible set <d-math>A</d-math> is simple,
+  e.g., box constraints.<br>
+  • <d-math>f</d-math> is continuous but lacks special structure,
+  e.g., concavity, that would make it easy to optimize.<br>
+  • <d-math>f</d-math> is derivative-free:
+  evaluations do not give gradient information.<br>
+  • <d-math>f</d-math> is expensive to evaluate:
+  the # of times we can evaluate it
+  is severely limited.<br>
+  • <d-math>f</d-math> may be noisy. If noise is present, we’ll assume it
+  is independent and normally distributed, with
+  common but unknown variance.<br></p>
+</blockquote>
+
+<p>Let us link the above constraints to our initial problem statement of gold mining.</p>
+
+<ul>
+<li>Our domain in the gold mining problem is a single dimensional box constraint of <d-math>0 \leq x \leq 6</d-math>.</li>
+
+<li>Our ground truth can be seen as <em>not</em> convex or concave function, which resulted in local minima as well.</li>
+
+<li>Our evaluation (by drilling) of the amount of gold content at a location didn't give us any gradient information.</li>
+
+<li>The function we used in the case of Gold Mining problem is extremely costly to evaluate (drilling costs millions).</li>
+
+<li>This constraint is still satisfied in our case as we had used 0 noise, or zero mean zero std gaussian noise.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
 
 <h2 id="conclusions">Conclusions</h2>
 
@@ -473,13 +524,15 @@ Z= \frac{\mu(x) - \mu^+ - \epsilon}{\sigma(x)}
 
 <p>We need to take care while using Bayesian Optimization</p>
 
+<p>
 <ul>
 <li>The scale of the features</li>
 
 <li>Kernel selection for Gaussian Process</li>
 </ul>
+</p>
 
-
+</d-article>
 
 
 

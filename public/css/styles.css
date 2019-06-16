@@ -3,3 +3,18 @@
   width: 80%;
   align-content: center;
 }
+
+/*https://distill.pub/2019/gan-open-problems/*/
+.open-problem {
+    display: flex;
+    color: #333;
+    background-color: hsla(206, 90%, 20%, 0.03);
+    border-left: 3px solid hsla(206, 50%, 20%, 0.8);
+    padding: 1em 2em;
+    margin-bottom: 1em;
+    counter-increment: problem;
+}
+
+span {
+	padding-bottom: 15px;
+}
