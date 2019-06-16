@@ -470,8 +470,7 @@ Z= \frac{\mu(x) - \mu^+ - \epsilon}{\sigma(x)}
 <d-footnote>Talk from Peter Fraizer from Uber on Bayesian Optimization:<br>
     <ul>
     <li> <a href="https://www.youtube.com/watch?v=c4KKvyWW_Xk">Youtube Talk</a></li>
-    <li> <a href="https://people.orie.cornell.edu/pfrazier/Presentations/2018.11.INFORMS.tutorial.pdf">Slide Deck</a></li>
-</ul>
+    <li> <a href="https://people.orie.cornell.edu/pfrazier/Presentations/2018.11.INFORMS.tutorial.pdf">Slide Deck</a></li></ul>
 </d-footnote> on Tutorial on Bayesian Optimization from Peter Fraizer.</span>
 
 <blockquote>
@@ -526,6 +525,8 @@ Z= \frac{\mu(x) - \mu^+ - \epsilon}{\sigma(x)}
 
 <li>BO doesn't scale well with large data, as the GP inference is cubic in the number of points.</li>
 </ul>
+
+<p>There has been work done in Bayesian Optimization to make use of gradient information. The idea is based on the fact that the Gaussian Processes' predictions can be updated to take in the gradient information we get from the function we are trying to optimize. For more information, we would suggest looking at the paper Bayesian Optimization with Gradients<d-cite key="BOwtGD"></d-cite> from Wu et. al..</p>
 
 <p>Now, as we have described BO more technically, let's have a look at how we can use this method in the case of Hyperparameter Tuning. Hyperparameters, you ask?</p>
 
