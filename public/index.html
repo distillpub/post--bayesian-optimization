@@ -48,84 +48,57 @@
 <d-byline></d-byline>
 
 <d-article>
-<p>
-  In this post, we are going to focus on two tasks, active learning - where we query the user/oracle to label samples; and the multi-arm bandit - where we again query the user/Oracle which returns us a scalar reward.
-  We will be trying to pose the problems first and then talk about some of the ways to solve these problems.
-</p>
-<p>
-  The primary motivation behind active learning is the expensive cost of labeling in machine learning tasks.
-</p>
+<p>In this post, we are going to focus on two tasks, prediction and optimization of a function that is extremely costly to evaluate. We query the user/oracle to label (evaluate) samples — Oracle than returns us a scalar value. We will be trying to pose the problems first and then talk about some of the ways to solve these problems.</p>
+
+<p>The primary motivation behind both of the tasks is the expensive cost of labeling (evaluating).</p>
 
 <h2 id="mininggold">Mining Gold!</h2>
-<p>
-  Let us explain the two problems using the gold mining application.
-  We will, for now, look at only one-dimensional locations, i.e., we are talking gold distribution only about a line.
-  The issue we have is that at the start of the activity, we have no idea about the amount of gold at different locations.
-  The only way we can get the information about the amount of gold is by drilling at a location.
-  This drilling is costly and involves expensive sensors to be used.
-  We, therefore, want to minimize the number of drillings that we require.
-</p>
+<p>Let us explain the two problems using the gold mining application.
+We will, for now, look at only one-dimensional locations, i.e., we are talking gold distribution only about a line.
+The issue we have is that at the start of the activity, we have no idea about the amount of gold at different locations.
+The only way we can get the information about the amount of gold is by drilling at a location.
+This drilling is costly and involves expensive sensors to be used.
+We, therefore, want to minimize the number of drillings that we require.</p>
 
-<p>
-  We below show two of the common objectives for the gold mining problem.
-</p>
+<p>We below show two of the common objectives for the gold mining problem.</p>
 
 <ul>
-<li>
-  <p><strong>Problem 1: Best Estimate of Gold Distribution</strong>
-    In this problem, we are supposed to estimate the amount of gold on the one-dimensional line. But we can not drill at every location. We should drill at those locations that provide us the "maximum" information about the distribution of the gold.
-  </p>
-</li>
+<li><p><strong>Problem 1: Best Estimate of Gold Distribution</strong>
+In this problem, we are supposed to estimate the amount of gold on the one-dimensional line. But we can not drill at every location. We should drill at those locations that provide us the "maximum" information about the distribution of the gold.</p></li>
 
-<li>
-  <p><strong>Problem 2: Location of Maximum Gold</strong>
-    In this problem, we are supposed to find the location in the one-dimensional space where the gold quantity is the maximum. This problem focuses on finding the location with the most gold content.
-  </p>
-</li>
+<li><p><strong>Problem 2: Location of Maximum Gold</strong>
+In this problem, we are supposed to find the location in the one-dimensional space where the gold quantity is the maximum. This problem focuses on finding the location with the most gold content.</p></li>
 </ul>
 
   <figure>
   <d-figure><img src="images/MAB_gifs/active-gp.gif"/></d-figure>
-    <figcaption>
-      Here, we have a two-dimensional normal distribution.
-      Each dimension <d-math>x_i</d-math> is assigned an index <d-math>i \in \{1,2\}</d-math>.
-      You can drag the handles to see how a particular sample (left) corresponds to functional values (right).
-      This representation also allows us to understand the connection between the covariance and the resulting values:
-      the underlying Gaussian distribution has a positive covariance between <d-math>x_1</d-math> and <d-math>x_2</d-math> &mdash; this means that <d-math>x_2</d-math> will increases as <d-math>x_1</d-math> gets larger and vice versa.
-      You can also drag the handles in the figure to the right and observe the probability of such a configuration in the figure to the left.
-    </figcaption>
   </figure>
+
   <figure>
   <d-figure><img src="images/MAB_gifs/mab-gp-pi-eps0.5.gif"/></d-figure>
   </figure>
 
-<p><ul>
-  <li>
-    Here are representative animations showing the process of drilling at new locations and to reduce the uncertainty and get the best predictions showcasing the <strong>Active Learning</strong> problem.
-  <li>
-    And drilling at locations to get the location of the maximum gold reserve, showcasing the <strong>Multi Armed Bandit</strong> problem
-  </li>
-</ul></p>
-<p>
-  We will build the solution to both of these problems from the ground up.
-</p>
+<ul>
+<li><p>Here are representative animations showing the process of drilling at new locations and to reduce the uncertainty and get the best predictions showcasing the <strong>Active Learning</strong> problem.</p></li>
+
+<li><p>And drilling at locations to get the location of the maximum gold reserve, showcasing the <strong>Bayesian Optimization</strong> problem</p></li>
+</ul>
+
+<p>We will build the solution to both of these problems from the ground up.</p>
+
 
 
 <h3 id="activelearning">Active Learning</h3>
 
-<p>
-  <strong>Problem 1</strong> is very similar to problems we like to solve using active learning.
-  Active learning is used to predict the distribution by reducing uncertainty.
-  One of the ways we can reduce the uncertainty is by choosing the point at which we have the maximum variance (we are most uncertain).
-</p>
+<p><strong>Problem 1</strong> is very similar to problems we like to solve using active learning. Active learning is used to predict distribution by reducing uncertainty. One of the ways we can reduce the uncertainty is by choosing the point at which we have the maximum variance (we are most uncertain).</p>
 
 <h3 id="gaussianprocesses">Gaussian Processes</h3>
 
 <p>
-  In our previous post on Gaussian Processes <d-footnote> <a href="https://nipunbatra.github.io/blog/2019/GP-1.html">Programatically understanding Gaussain Processes</a> </d-footnote>, we introduced the Gaussian Process.
+  One might want to look at this excellent distillpub article<d-cite key="görtler2019a"></d-cite> on Gaussian Processes<d-cite key="Rasmussen2004"></d-cite>.
   As you can remember, we use Gaussian Processes to get a prediction as well as the attached uncertainty (variance) with that prediction.
   This will turn out to be useful for us, as we wanted to drill where we were most uncertain.
-  By using Gaussian processes, we take some very naive assumption that the gold distribution of nearby points in similar (smoothness).
+  By using Gaussian processes, we take some naive assumption that the gold distribution of nearby points is similar (smoothness).
 </p>
 
 <p>
@@ -138,9 +111,8 @@
 
 <h4 id="priormodel">Prior Model</h4>
 
-<p>
-  Our prior model doesn't know much and assumes a smooth relationship between points via an Matern kernel. The Grey line in the graph below denotes the knowledge we have about the gold content without drilling even at a single location.
-</p>
+<p>Our prior model doesn't know much and assumes a smooth relationship between points via an Matern kernel. The Grey line in the graph below denotes the knowledge we have about the gold content without drilling even at a single location.</p>
+
   <figure class="smaller-img">
   <d-figure><img src="images/MAB_gifs/prior.svg"/></d-figure>
   </figure>
@@ -151,9 +123,8 @@
 
 <h4 id="addingtrainingdata">Adding Training Data</h4>
 
-<p>
-  Let us now add a point to the train set or in other words, drill one of the locations and see the gold content (<d-code language="python">y</d-code>). We can see how our confidence and our estimates change after we get this first information by fitting the model to the new data. I am going to add <d-code language="python">x = 0.5, y = f(0.5)</d-code> into the train set now.
-</p>
+<p>Let us now add a point to the train set or in other words, drill one of the locations and see the gold content (<d-code language="python">y</d-code>). We can see how our confidence and our estimates change after we get this first information by fitting the model to the new data. I am going to add <d-code language="python">(x = 0.5, y = f(0.5))</d-code language="python"> into the train set now.</p>
+
   <figure>
   <d-figure><img src="images/MAB_gifs/posterior.svg"/></d-figure>
   </figure>
@@ -181,19 +152,15 @@
   There you go we have recreated one of the plots from the starting of the blog! One point to notice is that this idea of choosing the most uncertain location leads to querying of the points that are the farthest (visible when we choose the 2nd location to drill). This might not be so good as we are kind of wasting our drillings because they are at the boundary of the 1-dimensional plot.
 </p>
 
-<h3 id="multiarmedbandit">Multi-Armed Bandit</h3>
+<h3 id="bayesianoptimization">Bayesian Optimization</h3>
 
-<p>
-  <strong>Problem 2</strong> requires us to find the location where the gold content is maximum. Even though the problem setting may be similar, the objective is quite different than problem 1. In other words, we just want the location where we can drill to get the most gold.
-</p>
 
-<p>
-  Older problem - Earlier in the active learning problem, our motivation for drilling at locations was to predict the distribution of the gold content over all the locations in the one-dimensional line. We, therefore, had chosen the next location to drill where we had maximum uncertainty about our estimate.
-</p>
+<p><strong>Problem 2</strong> requires us to find the location where the gold content is maximum. Even though the problem setting may be similar, the objective is quite different than problem 1. In other words, we just want the location where we can drill to get the most gold.</p>
 
-<p>
-  In this problem, we are instead interested to know the location at which we find the maximum gold. For getting the location of maximum gold content, we might want to drill at the location where predicted mean is the highest (exploit). But unfortunately our mean is not always accurate, so we need to correct our mean (reduce variance / explore) too. Multi-Arm Bandit looks at both exploitation and exploration, whereas in the case of Active Learning Problem, we only cared about exploration.
-</p>
+<p>Older problem - Earlier in the active learning problem, our motivation for drilling at locations was to predict the distribution of the gold content over all the locations in the one-dimensional line. We, therefore, had chosen the next location to drill where we had maximum uncertainty about our estimate.</p>
+
+<p>In this problem, we are instead interested to know the location at which we find the maximum gold. For getting the location of maximum gold content, we might want to drill at the location where predicted mean is the highest (exploit). But unfortunately our mean is not always accurate, so we need to correct our mean (reduce variance / explore) too. Bayesian Optimization looks at both exploitation and exploration, whereas in the case of Active Learning Problem, we only cared about exploration.</p>
+
 
 <h4 id="acquisitionfunctions">Acquisition Functions</h4>
 
@@ -294,16 +261,15 @@
 
 <h4 id="intuitionbehindtheformula">Intuition behind PI</h4>
 
-<p>
-  Below is a graph that helps to visualize how the PI values are calculated. We have calculated for 3 points <d-code language="python">x in [0.10, 0.6, 4]</d-code>.
-</p>
+<p>Below is a graph that helps to visualize how the PI values are calculated. We have calculated for 3 points <d-code language="python">x in [0.10, 0.6, 4]</d-code language="python">. We can see the CDF being shaded in the graphs below. Further, we can see if we increase <d-code language="python">eps</d-code>, we implicitly place more importance to the uncertainty of a point. If <d-code language="python">eps</d-code> is increased, the points with a larger sigma will benefit as their probability density is spread more. Thus points with more spread out sigma would have a higher value of cumulative density function on same <d-math>\mu^+ + \epsilon</d-math>.</p>
+
   <figure>
-  <d-figure><img src="images/MAB_gifs/pi_cdf.svg"/></d-figure>
+  <d-figure><img src="images/MAB_gifs/pi_cdf.gif"/></d-figure>
   </figure>
 
 <p>
-  <d-code language="python">mu_plus</d-code> refers to the maximum functional value i.e., <d-code language="python">max(train_y)</d-code>, where <d-code language="python">train_y</d-code> refers to the the gold content at the currently drilled locations.
-  We see that the probability of improvement values are calculated by finding the functional value of the cumulative density function at <d-code language="python">mu_plus</d-code>. The Gaussian parameters for each point are the mean and standard deviation predicted from Gaussian Process Regressor for that point.
+  <d-math>\mu^+</d-math> refers to the maximum functional value i.e., <d-code language="python">max(train_y)</d-code>, where <d-code language="python">train_y</d-code> refers to the the gold content at the currently drilled locations.
+  We see that the probability of improvement values are calculated by finding the functional value of the cumulative density function at <d-math>\mu^+</d-math>. The Gaussian parameters for each point are the mean and standard deviation predicted from Gaussian Process Regressor for that point.
 </p>
 
 <h4 id="eps">Hyperparameter: Eps</h4>
@@ -343,7 +309,7 @@
 <h3 id="expectedimprovementei">Expected Improvement (EI)</h3>
 
 <p>
-  Probability of improvement only looked at <d-code language="python">how likely</d-code> is an improvement, but, shouldn't we be looking into <d-code language="python">how much</d-code> we can improve. The next criterion called Expected Improvement (EI) looks into both :)
+  Probability of improvement only looked at <d-code language="python">how likely</d-code> is an improvement, but, shouldn't we be looking into <d-code language="python">how much</d-code> we can improve. The next criterion called, Expected Improvement, (EI) looks into both :)
 </p>
 
 <d-math block>
@@ -358,6 +324,16 @@ Z= \frac{\mu(x) - \mu^+ - \epsilon}{\sigma(x)}
 <p>
   where <d-math>\Phi(\cdot)</d-math> indicates CDF and <d-math>\phi(\cdot)</d-math> indicates pdf.
 </p>
+<p>We can see when our <em>Expected Improvement</em> will be high.</p>
+
+<ul>
+<li>It is high when the expected value of mean(x) - $\mu^+$ is high.</li>
+
+<li>It is high when the uncertainty around a point is high.</li>
+</ul>
+
+<p>Now, if we see the role of $\epsilon$ in <em>Expected Improvement</em>, it is the exact same as the role played in the case of <em>Probability of Improvement</em> (we have the same expression in PI) <d-footnote>A good introduction to the Expected Improvement Acuqisition function is by <a href="https://thuijskens.github.io/2016/12/29/bayesian-optimisation/"
+ target="_blank">this post</a> by Thomas Huijskens and <a href="https://people.orie.cornell.edu/pfrazier/Presentations/2018.11.INFORMS.tutorial.pdf" target="_blank">these slides</a> by Peter Frazier</d-footnote>.</p>
 
   <figure>
   <d-figure><img src="images/MAB_gifs/mab-gp-ei-eps0.01.gif"/></d-figure>
