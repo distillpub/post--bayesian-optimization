@@ -81,7 +81,7 @@ In this problem, we are supposed to find the location in the one-dimensional spa
 <ul>
 <li><p>Here are representative animations showing the process of drilling at new locations and to reduce the uncertainty and get the best predictions showcasing the <strong>Active Learning</strong> problem.</p></li>
 
-<li><p>And drilling at locations to get the location of the maximum gold reserve, showcasing the <strong>Bayesian Optimization</strong> problem</p></li>
+<li><p>And drilling at locations to get the location of the maximum gold reserve, showcasing the <strong>Bayesian Optimization</strong> problem.</p></li>
 </ul>
 
 <p>We will build the solution to both of these problems from the ground up.</p>
@@ -102,7 +102,7 @@ In this problem, we are supposed to find the location in the one-dimensional spa
 </p>
 
 <p>
-  Let us now try to see how our groundtruth data looks like.
+  Let us now try to see how our ground-truth data looks like.
 </p>
   <figure class="smaller-img">
   <d-figure><img src="images/MAB_gifs/GT.svg"/></d-figure>
@@ -111,7 +111,7 @@ In this problem, we are supposed to find the location in the one-dimensional spa
 
 <h4 id="priormodel">Prior Model</h4>
 
-<p>Our prior model doesn't know much and assumes a smooth relationship between points via an Matern kernel. The Grey line in the graph below denotes the knowledge we have about the gold content without drilling even at a single location.</p>
+<p>Our prior model doesn't know much and assumes a smooth relationship between points via a Matern kernel. The grey line in the graph below denotes the knowledge we have about the gold content without drilling even at a single location.</p>
 
   <figure class="smaller-img">
   <d-figure><img src="images/MAB_gifs/prior.svg"/></d-figure>
@@ -232,14 +232,14 @@ In this problem, we are supposed to find the location in the one-dimensional spa
   Let us look into our next method for the MAB maximization problem. As before, we want to balance or trade-off between exploration and exploitation. The idea behind the algorithm is fairly simple - choose the next point as the one which has the highest probability of improvement over the current max <d-math>(\mu^+)</d-math>.
 </p>
 
-<p>Let's understand this concept via two cases:</p>
+<p>Let's understand this concept in two cases:</p>
 
 <ol>
   <li><p>
     We have two points of similar means (of function values (gold in our case)). We now want to choose one of these to obtain the labels or values. We will choose the one with higher variance. This basically says that given same exploitability, we choose the one with higher exploration value.
   </p></li>
   <li><p>
-    We have two points having same variance. We would now choose the point with the higher mean. This basically says that given same explorability, we will choose the one with higher exploitation value.
+    We have two points having the same variance. We would now choose the point with the higher mean. This basically says that given the same explorability, we will choose the one with higher exploitation value.
   </p></li>
 </ol>
 <ol>
@@ -268,7 +268,7 @@ In this problem, we are supposed to find the location in the one-dimensional spa
   </figure>
 
 <p>
-  <d-math>\mu^+</d-math> refers to the maximum functional value i.e., <d-code language="python">max(train_y)</d-code>, where <d-code language="python">train_y</d-code> refers to the the gold content at the currently drilled locations.
+  <d-math>\mu^+</d-math> refers to the maximum functional value, i.e., <d-code language="python">max(train_y)</d-code>, where <d-code language="python">train_y</d-code> refers to the gold content at the currently drilled locations.
   We see that the probability of improvement values are calculated by finding the functional value of the cumulative density function at <d-math>\mu^+</d-math>. The Gaussian parameters for each point are the mean and standard deviation predicted from Gaussian Process Regressor for that point.
 </p>
 
@@ -299,7 +299,7 @@ In this problem, we are supposed to find the location in the one-dimensional spa
   <d-figure><img src="images/MAB_gifs/mab-gp-pi-eps3.gif"/></d-figure>
   </figure>
 <p>
-  We see that we made things worse! Our model now uses <d-code language="python">eps = 3</d-code> which has effectively resulted in way too much exploration. This amount of exploration is not able to exploit when we land somewhere near a global maximum.
+  We see that we made things worse! Our model now uses <d-code language="python">eps = 3</d-code>, which has effectively resulted in way too much exploration. This amount of exploration is not able to exploit when we land somewhere near a global maximum.
 </p>
 
 
@@ -348,7 +348,7 @@ Z= \frac{\mu(x) - \mu^+ - \epsilon}{\sigma(x)}
 </p>
 
 <p>
-  Let's try increasing the <d-code language="python">eps</d-code> variable to focus a little more on exploribility.
+  Let's try increasing the <d-code language="python">eps</d-code> variable to focus a little more on explorability.
 </p>
 
   <figure>
@@ -375,11 +375,11 @@ Z= \frac{\mu(x) - \mu^+ - \epsilon}{\sigma(x)}
 
 <hr />
 
-<h3 id="eipi-relation">PI vs EI</h3>
+<h3 id="eipi-relation">PI vs. EI</h3>
 
 
 <p>
-  We have seen two closely related methods, The <em>Probability of Improvement</em> and the <em>Expected Improvement</em>. We can think of these two to be related to the ideas that we commonly are familiar with <d-code language="python">risk</d-code> and <d-code language="python">gain</d-code> respectively.
+  We have seen two closely related methods, The <em>Probability of Improvement</em> and the <em>Expected Improvement</em>. We can think of these two to be related to the ideas that we commonly are familiar with <d-code language="python">risk</d-code> and <d-code language="python">gain</d-code>, respectively.
 </p>
 
 <p>
@@ -418,7 +418,7 @@ Z= \frac{\mu(x) - \mu^+ - \epsilon}{\sigma(x)}
   <d-figure><img src="images/MAB_gifs/mab-gp-gp_ucb1-3.gif"/></d-figure>
   </figure>
 <p>
-  Setting the values of the hyperparameters  to <d-code language="python">v = 1</d-code> and <d-code language="python">delta = 3</d-code> results a greater exploitation.</p>
+  Setting the values of the hyperparameters  to <d-code language="python">v = 1</d-code> and <d-code language="python">delta = 3</d-code> results in greater exploitation.</p>
 
 <hr />
 
@@ -458,7 +458,7 @@ Z= \frac{\mu(x) - \mu^+ - \epsilon}{\sigma(x)}
   <d-figure><img src="images/MAB_gifs/comp.svg"/></d-figure>
   </figure>
 
-<p>We see the <em>Random</em> method can find the maximum much before any of the other techniques; this can be seen when we are faced with smaller spaces. But we will soon see that when we have larger search spaces, a random method isn't that efficient. This is because the probability of finding the optimum <d-math>x</d-math> in our new <d-math>f</d-math> real-valued multivariable function, would drop exponentially with increasing dimensions due to what we call, the curse of dimensionality.</p>
+<p>We see the <em>Random</em> method can find the maximum much before any of the other techniques; this can be seen when we are faced with smaller spaces. But we will soon see that when we have larger search spaces, a random method isn't that efficient. This is because the probability of finding the optimum <d-math>x</d-math> in our new <d-math>f</d-math> real-valued multivariable function would drop exponentially with increasing dimensions due to what we call, the curse of dimensionality.</p>
 
 <h2 id="observation">Observation</h2>
 
@@ -638,7 +638,7 @@ Z= \frac{\mu(x) - \mu^+ - \epsilon}{\sigma(x)}
 <d-appendix>
     <h3 id="AuthorContributions">Author Contributions</h3>
     <p>
-      We thank Apoorv for working with the formation of the post and experimentation of different Bayesian Optimiazation methods.<br/>
+      We thank Apoorv for working with the formation of the post and experimentation of different Bayesian Optimization methods.<br/>
       We would like to thank Nipun Batra for guiding us throughout the formation of the post.
     
 <h3 id="FurtherReading">Further Reading</h3>
