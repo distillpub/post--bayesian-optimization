@@ -635,7 +635,50 @@ Z= \frac{\mu(x) - \mu^+ - \epsilon}{\sigma(x)}
 
 <h3 id="example3">Example 3</h3>
 
-<p>Let's train CNNs on Mnist. Here we will be using <d-code language="python">scikit-optim</d-code>, which also provides us support for optimizing our function on a mix of categorical, integral, and real variables. We won't be plotting the ground truth here, as it's extremely costly to do so.</p>
+<p>Let's train CNNs on Mnist. Here we will be using <d-code language="python">scikit-optim</d-code>, which also provides us support for optimizing our function on a mix of categorical, integral, and real variables. We won't be plotting the ground truth here, as it's extremely costly to do so. Below is some of the code that will limit the search space.</p>
+
+<d-code block language="python">
+log_batch_size = Integer(
+    low=3,
+    high=6,
+    name='log_batch_size'
+  )
+lr = Real(
+    low=1e-6,
+    high=1e0,
+    prior='log-uniform',
+    name='lr'
+  )
+activation = Categorical(
+    categories=['relu', 'sigmoid'],
+    name='activation'
+  )
+
+dimensions = [
+    dim_num_batch_size_to_base,
+    dim_learning_rate,
+    dim_activation
+  ]
+</d-code>
+
+<p>
+Moving on we will now have a minimizer function imported from <d-code language="python">scikit-optim</d-code> called <d-code language="python">gp-minimize</d-code>. The easiness can be seen from the code block below. </p>
+
+<d-code block language="python">
+# setting up default parameters (1st point)
+default_parameters = [4, 1e-1, 'relu']
+
+# bayesian optimization
+search_result = gp_minimize(
+    func=train,
+    dimensions=dimensions,
+    acq_func='EI', # Expected Improvement.
+    n_calls=11,
+    x0=default_parameters
+  )
+</d-code>
+
+There you go you now have the hyperparameters that have minimized your -ve accuracy (maximized the original accuracy).
 
 <figure>
   <d-figure><img src="images/MAB_gifs/conv.svg"></d-figure>
