@@ -588,27 +588,47 @@ Z= \frac{\mu(x) - \mu^+ - \epsilon}{\sigma(x)}
 
 <p>Now our favorite random acquisition function. :)</p>
 
+  <figure>
+  <d-figure><img src="images/MAB_gifs/comp3d.svg"/></d-figure>
+  </figure>
 
+<p>We see GP-UCB performed the best in this case. Random that was performing really nice in the last single dimensional example seems to perform much badly in this case. This can be attributed to the increase in the number of dimensions, it's much difficult to get to the optimal value by using random search.</p>
 
+<hr />
 
+<h3 id="example2">Example 2</h3>
 
+<p>Let's train CNNs on Mnist. Here we will be using <d-code language="python">scikit-optim</d-code>, which also provides us support for optimizing our function on a mix of categorical, integral, and real variables. We won't be plotting the ground truth here, as it's extremely costly to do so.</p>
 
+<p>Looking at the above example, we can see that incorporating Bayesian Optimization isn't too difficult and on the other hand, saves a lot of our efforts trying to find the right hyperparameters. The example above has been inspired by Hvass Laboratories' Tutorial on <d-code language="python">scikit-optim</d-code>. <d-footnote> <a herf="https://github.com/Hvass-Labs/TensorFlow-Tutorials/blob/master/19_Hyper-Parameters.ipynb">Notebook</a> showcasing hyperparameter optimization in Tensorflow. </d-footnote></p>
 
 <h2 id="conclusions">Conclusions</h2>
 
-<p>We see that for the case of multi-arm bandit we have a bit different problem as compared to the active learning problem and therefore we have the different objective functions that we try to maximize for the query points.</p>
+<p>We see that for the case of Bayesian optimization, we have a different problem that we are trying to solve compared to the active learning problem. This, therefore, leads to different objective functions that we try to maximize for the query points in both of the problems.</p>
+
+<h2 id="embracebayesianoptimization">Embrace Bayesian Optimization</h2>
+
+<p>After reading through the blog post, you might have been sold on the idea about the time you can save by asking Bayesian Optimizer to find the best hyperparameters for your fantastic model. There are a plethora of Bayesian Optimization libraries available. I have linked a few known ones. Do check them out.</p>
+
+<ul>
+<li><a href="https://scikit-optimize.github.io/">scikit-optimize</a> -- footnotes really nice tutorial showcasing hyperparameter optimization on a neural network. <a href="https://github.com/Hvass-Labs/TensorFlow-Tutorials/blob/master/19_Hyper-Parameters.ipynb">link</a></li>
+
+<li><a href="https://app.sigopt.com/docs/overview/python">sigopt</a></li>
+
+<li><a href="http://hyperopt.github.io/hyperopt/">hyperopt</a></li>
+
+<li><a href="https://github.com/HIPS/Spearmint">spearmint</a></li>
+
+<li><a href="https://github.com/Yelp/MOE">MOE</a></li>
+</ul>
 
 <h3 id="caution">Caution</h3>
 
-<p>We need to take care while using Bayesian Optimization</p>
+<p>We need to take care while using Bayesian Optimization. Bayesian Optimization based on Gaussian Processes Regression is highly sensitive to the kernel used. For example, if you are using <a href="https://scikit-learn.org/stable/modules/generated/sklearn.gaussian_process.kernels.Matern.html">Matern</a> kernel, we are implicitly assuming that the function we are trying to optimize is first order differentiable.</p>
 
-<p>
-<ul>
-<li>The scale of the features</li>
+<p>A nice list of tips and tricks one should have a look at if you aim to use Bayesian Optimization in your workflow is from this fantastic post by Thomas on <a href="https://thuijskens.github.io/2016/12/29/bayesian-optimisation/">Bayesian Optimization with sklearn</a>.</p>
 
-<li>Kernel selection for Gaussian Process</li>
-</ul>
-</p>
+<p>Let's save us some time and money by delegating hyperparameter search to bayesian optimizers from now. Go get started see our <a href="#FurtherReading">Further Reading</a> section.</p>
 
 </d-article>
 
