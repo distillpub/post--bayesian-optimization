@@ -637,7 +637,11 @@ Z= \frac{\mu(x) - \mu^+ - \epsilon}{\sigma(x)}
 
 <p>Let's train CNNs on Mnist. Here we will be using <d-code language="python">scikit-optim</d-code>, which also provides us support for optimizing our function on a mix of categorical, integral, and real variables. We won't be plotting the ground truth here, as it's extremely costly to do so.</p>
 
-<p>Looking at the above example, we can see that incorporating Bayesian Optimization isn't too difficult and on the other hand, saves a lot of our efforts trying to find the right hyperparameters. The example above has been inspired by Hvass Laboratories' Tutorial on <d-code language="python">scikit-optim</d-code>. <d-footnote> <a href="https://github.com/Hvass-Labs/TensorFlow-Tutorials/blob/master/19_Hyper-Parameters.ipynb">Notebook</a> showcasing hyperparameter optimization in Tensorflow. </d-footnote></p>
+<figure>
+  <d-figure><img src="images/MAB_gifs/conv.svg"></d-figure>
+  </figure>
+
+<p>Looking at the above example, we can see that incorporating Bayesian Optimization isn't a big problem and saves a lot of time we can see that the network was able to get to an accuracy of nearly one in around three iterations. That's impressive! The example above has been inspired by Hvass Laboratories' Tutorial on <d-code language="python">scikit-optim</d-code>. <d-footnote> <a href="https://github.com/Hvass-Labs/TensorFlow-Tutorials/blob/master/19_Hyper-Parameters.ipynb">Notebook</a> showcasing hyperparameter optimization in Tensorflow. </d-footnote></p>
 
 <h2 id="conclusions">Conclusions</h2>
 
