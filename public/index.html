@@ -505,10 +505,88 @@ Z= \frac{\mu(x) - \mu^+ - \epsilon}{\sigma(x)}
 <li>This constraint is still satisfied in our case as we had used 0 noise, or zero mean zero std gaussian noise.</li>
 </ul>
 
+<h1 id="higherdimensions">Higher Dimensions</h1>
+
+<p>For now we have been looking at real-valued single dimensional function, i.e. <d-math>f: \mathbb{R} \texttt{ -> } \mathbb{R}</d-math> data where we needed to find the value of <d-math>\boldsymbol{x}</d-math> where we reached global maximum. Let's move on and try to tackle real-valued functions of <d-math>n</d-math> real variables functions, i.e. <d-math>f: \mathbb{R}^n \texttt{ -> } \mathbb{R}</d-math>. We will soon see that our methods that we saw earlier for the single dimensional case can be easily ported to multi-variable functions.</p>
+
+<h2 id="whyisthiseasier">Why is this easier?</h2>
+
+<p>One valid question one might come up is that we have replaced the original optimization problem to another optimization problem (optimization of acquisition function). How is this any better than the last problem. The main reason is that evaluating the acquisition function is much cheaper, whereas in the original problem, evaluating the value at a particular was extremely costly.</p>
+
+<h2 id="bayesianoptimizationvsgradientdescent">Bayesian Optimization vs. Gradient Descent</h2>
+
+<p>Some of the main differences between BO and GD --cite BOvsGD as pointed out at StackExchange:</p>
+
+<ul>
+<li>The biggest difference between Bayesian Optimization and Gradient Descent is that in the latter case, we have access to the gradient values.</li>
+
+<li>BO doesn't assume the function to be convex, in the case of Gradient Descent if you would like to get to the global minima, your function should be convex.</li>
+
+<li>BO assumes the function we are optimizing is fairly smooth.</li>
+
+<li>BO doesn't scale well with large data, as the GP inference is cubic in the number of points.</li>
+</ul>
+
+<p>Now, as we have described BO more technically, let's have a look at how we can use this method in the case of Hyperparameter Tuning. Hyperparameters, you ask?</p>
+
+<h2 id="hyperparametersvsparameters">Hyperparameters v/s Parameters</h2>
+
+<p>We all are familiar with Machine Learning and the models that we use. To show one of the use cases for Bayesian optimization, we will quickly differentiate between hyperparameters and parameters. </p>
 
 
+<p>Hyperparameters is a parameter whose value is set before the learning process begins. Parameters, on the other hand, are the parameters that are learned looking at the data. One small example that we can think of can be of linear regression, we don't really have hyperparameters, but the parameters are the <d-math>W</d-math>: weight, <d-math>c</d-math>: intercept, which is learned from the data. If we apply lasso to linear regression, we introduce a regularization hyperparameter <d-math>\lambda</d-math>. -- footnotes Wikipedia article</p>
 
+<h2 id="hyperparametersearch">Hyperparameter Search</h2>
 
+<p>Now as we are clear on the difference between hyperparameters and parameters we would like to introduce one of the most common use case of Bayesian Optimization; <em>Hyperparameter Tuning</em>: finding best performing hyperparameters on machine learning models. At last, hyperparameter searching is an optimization problem (optimizing our score).</p>
+
+<p>Usually, when training a model isn't expensive and time-consuming, we might just do a grid search or random search. The main issues faced when using these methods are as follows:</p>
+
+<ul>
+<li>Grid Search is not feasible if getting the functional value is extremely costly, as in case of a large neural network that takes days to train. This might result in days of waiting to get the accuracy scores.</li>
+
+<li>Random and Grid Search are near brute-force methods; this causes these methods to become extremely inefficient and impossible to use when the dimensions of our search space increase (aka the curse of dimensionality). You can get the intuition for <em>the curse of dimentionality</em> from <a href="https://stats.stackexchange.com/a/169170">this</a> excellent answer on stackoverflow.com</li>
+</ul>
+
+<blockquote>
+  <p>in essence when you have more dimensions you need exponentially more samples to be able to estimate the real-valued multivariable function.</p>
+</blockquote>
+
+<p>We turn to Bayesian optimization to find counter the expensiveness of getting the functional values, and these increased dimensions.</p>
+
+<h3 id="example1">Example 1</h3>
+
+<p>Let's us use an SVM on sklearn's moons dataset and try to find the optimal hyperparameter using Bayesian optimization. Let's have a look at the dataset first.</p>
+
+  <figure class="smaller-img">
+  <d-figure><img src="images/MAB_gifs/moons.svg"/></d-figure>
+  </figure>
+
+<span>Let us now try to learn the classification problem above using a Support Vector Machine (SVM). We are aware that SVM takes in 2 important hyperparameters, <d-code language="python">gamma</d-code> and <d-code language="python">C</d-code>. Let us apply Bayesian Optimization to learn the best hyperparameters for this classification task. <d-footnote> <strong>Note</strong>: the surface plots you see for the ground truth accuracies below were calculated for each possible of hyperparameter for showcasing purposes only. We don't have these values in real applications.</d-footnote></span>
+
+  <figure>
+  <d-figure><img src="images/MAB_gifs/pi3d-0.05-mat.gif"/></d-figure>
+  </figure>
+
+<p>Above we see a gif showing the work of the <em>Probability of Improvement</em> acquisition function in finding the best hyperparameters.</p>
+
+  <figure>
+  <d-figure><img src="images/MAB_gifs/ei3d-0.0001-mat.gif"/></d-figure>
+  </figure>
+
+<p>Above we see a gif showing the work of the <em>Expected Improvement</em> acquisition function in finding the best hyperparameters.</p>
+
+  <figure>
+  <d-figure><img src="images/MAB_gifs/gp3d-1-2-mat.gif"/></d-figure>
+  </figure>
+
+<p>Above we see a gif showing the work of the <em>Guassian Processes Upper Confidence Bound</em> acquisition function in finding the best hyperparameters. This by far seems to perform the best with getting quite close to the global optimum value of hyperparameters (found using brute force).</p>
+
+  <figure>
+  <d-figure><img src="images/MAB_gifs/rand3d.gif"/></d-figure>
+  </figure>
+
+<p>Now our favorite random acquisition function. :)</p>
 
 
 
