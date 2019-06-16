@@ -332,7 +332,7 @@ Z= \frac{\mu(x) - \mu^+ - \epsilon}{\sigma(x)}
 <li>It is high when the uncertainty around a point is high.</li>
 </ul>
 
-<p>Now, if we see the role of $\epsilon$ in <em>Expected Improvement</em>, it is the exact same as the role played in the case of <em>Probability of Improvement</em> (we have the same expression in PI) <d-footnote>A good introduction to the Expected Improvement Acuqisition function is by <a href="https://thuijskens.github.io/2016/12/29/bayesian-optimisation/"
+<p>Now, if we see the role of $\epsilon$ in <em>Expected Improvement</em>, it is the exact same as the role played in the case of <em>Probability of Improvement</em> (we have the same expression in PI) <d-footnote>A good introduction to the Expected Improvement Acquisition function is by <a href="https://thuijskens.github.io/2016/12/29/bayesian-optimisation/"
  target="_blank">this post</a> by Thomas Huijskens and <a href="https://people.orie.cornell.edu/pfrazier/Presentations/2018.11.INFORMS.tutorial.pdf" target="_blank">these slides</a> by Peter Frazier</d-footnote>.</p>
 
   <figure>
@@ -375,6 +375,9 @@ Z= \frac{\mu(x) - \mu^+ - \epsilon}{\sigma(x)}
 
 <hr />
 
+<h3 id="eipi-relation">PI vs EI</h3>
+
+
 <p>
   We have seen two closely related methods, The <em>Probability of Improvement</em> and the <em>Expected Improvement</em>. We can think of these two to be related to the ideas that we commonly are familiar with <d-code language="python">risk</d-code> and <d-code language="python">gain</d-code> respectively.
 </p>
@@ -416,6 +419,25 @@ Z= \frac{\mu(x) - \mu^+ - \epsilon}{\sigma(x)}
   </figure>
 <p>
   Setting the values of the hyperparameters  to <d-code language="python">v = 1</d-code> and <d-code language="python">delta = 3</d-code> results a greater exploitation.</p>
+
+<hr />
+
+<h3 id="thompsonsampling">Thompson Sampling</h3>
+
+<p>One more acquisition function that is quite common is Thompson Sampling. It has a low overhead of setting up.</p>
+
+<p>The idea is to sample functions within upper and lower probabilistic bounds of a regressor; one can then optimize on these functions and chose the next query point to be the <d-math>\boldsymbol{x} = argmax(\texttt{sampled_f})</d-math>. In other words, sampling functions within the greyed out area in the graph below.</p>
+
+<figure>
+  <d-figure><img src="images/MAB_gifs/posterior.svg"/></d-figure>
+  </figure>
+<p>
+
+<p>Thompson Sampling<d-cite key="thompTut"></d-cite> is general enough to be useful even when we have Bernoulli (the domain of x is spatially independent) distributions modeling the function <d-math>F</d-math>, instead of Gaussian Process.</p>
+
+<figure>
+  <d-figure><img src="images/MAB_gifs/mab-gp-thomp.gif"/></d-figure>
+  </figure>
 
 <hr />
 
