@@ -514,7 +514,7 @@ Z= \frac{\mu(x) - \mu^+ - \epsilon}{\sigma(x)}
 
 <h2 id="bayesianoptimizationvsgradientdescent">Bayesian Optimization vs. Gradient Descent</h2>
 
-<p>Some of the main differences between BO and GD --cite BOvsGD as pointed out at StackExchange:</p>
+<p>Some of the main differences between BO and GD as pointed out at StackExchange<d-cite key="BOvsGD"></d-cite>:</p>
 
 <ul>
 <li>The biggest difference between Bayesian Optimization and Gradient Descent is that in the latter case, we have access to the gradient values.</li>
@@ -535,7 +535,7 @@ Z= \frac{\mu(x) - \mu^+ - \epsilon}{\sigma(x)}
 <p>We all are familiar with Machine Learning and the models that we use. To show one of the use cases for Bayesian optimization, we will quickly differentiate between hyperparameters and parameters. </p>
 
 
-<p>Hyperparameters is a parameter whose value is set before the learning process begins. Parameters, on the other hand, are the parameters that are learned looking at the data. One small example that we can think of can be of linear regression, we don't really have hyperparameters, but the parameters are the <d-math>W</d-math>: weight, <d-math>c</d-math>: intercept, which is learned from the data. If we apply lasso to linear regression, we introduce a regularization hyperparameter <d-math>\lambda</d-math>. -- footnotes Wikipedia article</p>
+<p>Hyperparameters is a parameter whose value is set before the learning process begins. Parameters, on the other hand, are the parameters that are learned looking at the data. One small example that we can think of can be of linear regression, we don't really have hyperparameters, but the parameters are the <d-math>W</d-math>: weight, <d-math>c</d-math>: intercept, which is learned from the data. If we apply lasso to linear regression, we introduce a regularization hyperparameter <d-math>\lambda</d-math>.<d-footnote> For more information visit the Wikipedia article on <a href="https://en.wikipedia.org/wiki/Hyperparameter_(machine_learning)">Hyperparamters</a>.</d-footnote></p>
 
 <h2 id="hyperparametersearch">Hyperparameter Search</h2>
 
@@ -652,7 +652,7 @@ Z= \frac{\mu(x) - \mu^+ - \epsilon}{\sigma(x)}
 <p>After reading through the blog post, you might have been sold on the idea about the time you can save by asking Bayesian Optimizer to find the best hyperparameters for your fantastic model. There are a plethora of Bayesian Optimization libraries available. I have linked a few known ones. Do check them out.</p>
 
 <ul>
-<li><a href="https://scikit-optimize.github.io/">scikit-optimize</a> -- footnotes really nice tutorial showcasing hyperparameter optimization on a neural network. <a href="https://github.com/Hvass-Labs/TensorFlow-Tutorials/blob/master/19_Hyper-Parameters.ipynb">link</a></li>
+<li><a href="https://scikit-optimize.github.io/">scikit-optimize</a><d-footnote>Really nice tutorial showcasing hyperparameter optimization on a neural network available at this <a href="https://github.com/Hvass-Labs/TensorFlow-Tutorials/blob/master/19_Hyper-Parameters.ipynb">link</a>.</d-footnote></li>
 
 <li><a href="https://app.sigopt.com/docs/overview/python">sigopt</a></li>
 
