@@ -114,11 +114,9 @@
 
         <h5 id="priormodel">Prior Model</h5>
 
-        <p>We will choose a simple prior about the gold content along the one-dimensional space. Our prior assumes a smooth relationship between points via a Matern kernel. The black line in the graph below denotes the knowledge we have about the
-          gold
-          content without drilling even at a single location.</p>
+        <p>We will choose a simple prior about the gold content along the one-dimensional space. Our prior assumes a smooth relationship between points via a Matern kernel.<d-footnote>See <a href="http://www.gaussianprocess.org/gpml/">Rasmussen and Williams 2004</a> and <a href="https://scikit-learn.org/stable/modules/generated/sklearn.gaussian_process.kernels.Matern.html">scikit-learn</a>, for details regarding the Matern kernel.</d-footnote> The black line in the graph below denotes the knowledge we have about the gold content without drilling even at a single location.</p>
 
-        <figure class="smaller-img">
+        <figure>
           <d-figure><img src="images/MAB_gifs/prior.svg" /></d-figure>
         </figure>
 
