@@ -88,7 +88,7 @@
 
 
 
-        <h3 id="activelearning">Active Learning</h3>
+        <h1 id="activelearning">Active Learning</h3>
 
         <p>In machine learning problems, often, unlabelled data is very easily available, but labelling could be an expensive task. As an example, for a speech-to-text task, the ground truth labelling or annotation task requires expert(s) to manually
           label words and sentences. In our gold mining problem, drilling is an expensive operation and we would like to minimize it. But, without drilling we can not estimate the gold estimate. Active learning would solve this problem by posing a
@@ -96,7 +96,7 @@
           query point as the one our model is the most uncertain about. One of the ways we can reduce the uncertainty is by choosing the point at which we have the maximum
           variance (we are most uncertain). We will now look into Gaussian Processes, which not only give us predictions, but also uncertainty estimates, which will be useful for active learning.</p>
 
-        <h4 id="gaussianprocesses">Gaussian Processes</h4>
+        <h3 id="gaussianprocesses">Gaussian Processes</h4>
 
         <p>
           One might want to look at this excellent distillpub article<d-cite key="görtler2019a"></d-cite> on Gaussian Processes<d-cite key="Rasmussen2004"></d-cite>.
@@ -105,14 +105,14 @@
         </p>
 
         <p>
-          Let us now try to see how our ground-truth data looks like. The gold distribution in our data looks to be bi-modal with a maximum value around X=5. For now, let us not worry about the X-axis or the Y-axis units.
+          Let us now try to see how our ground-truth data looks like. The gold distribution in our data looks to be bi-modal with a maximum value around <d-math>x = 5</d-math>. For now, let us not worry about the X-axis or the Y-axis units.
         </p>
         <figure class="smaller-img">
           <d-figure><img src="images/MAB_gifs/GT.svg" /></d-figure>
         </figure>
 
 
-        <h5 id="priormodel">Prior Model</h5>
+        <h4 id="priormodel">Prior Model</h5>
 
         <p>We will choose a simple prior about the gold content along the one-dimensional space. Our prior assumes a smooth relationship between points via a Matern kernel.<d-footnote>See <a href="http://www.gaussianprocess.org/gpml/">Rasmussen and Williams 2004</a> and <a href="https://scikit-learn.org/stable/modules/generated/sklearn.gaussian_process.kernels.Matern.html">scikit-learn</a>, for details regarding the Matern kernel.</d-footnote> The black line in the graph below denotes the knowledge we have about the gold content without drilling even at a single location.</p>
 
@@ -137,7 +137,7 @@
           the mean of the point
           closer to <d-code language="python">x = 0.5</d-code> is closer to the value that we got from drilling and seeing the gold content. So, we now come to the key idea of active learning: </p>
 
-        <h4 id="activelearningprocedure">Active Learning Procedure</h4>
+        <h3 id="activelearningprocedure">Active Learning Procedure</h4>
 
         <ol>
           <li>Choose the point of having the highest uncertainty</li>
@@ -160,10 +160,8 @@
           </strong> to
           make our estimates better.
         </p>
-        <hr />
-        <h3 id="bayesianoptimization">Bayesian Optimization</h3>
 
-
+        <h1 id="bayesianoptimization">Bayesian Optimization</h3>
         <p><strong>Problem 2</strong> requires us to find the location where the gold content is maximum. Even though the problem setting may be similar, the objective is quite different than problem 1. In other words, we just want the location where
           we can drill to get the most gold.</p>
 
@@ -319,7 +317,6 @@
               We see that the probability of improvement values are calculated by finding the functional value of the cumulative density function at <d-math>\mu^+</d-math>.
             </p>
 
-            <h4 id="eps">Hyperparameter: Eps</h4>
             <p>
               Now we possess the intuition behind how Probability of Improvement is calculated, now let's change <d-math>\epsilon</d-math> and look at its effects.
             </p>
@@ -396,39 +393,36 @@
             </figure>
 
             <p>
-              Like the Probability of Improvement's acquisition function, we can moderate the amount of explorability the Expected Improvement's acquisition function by setting the <d-code language="python">eps</d-code> hyper-parameter.
+              Like the Probability of Improvement's acquisition function, we can moderate the amount of explorability the Expected Improvement's acquisition function by setting the <d-math>\epsilon</d-math> hyper-parameter.
             </p>
 
             <p>
-              We see that having <d-code language="python">eps = 0.01</d-code> primarily results in exploitation, and we are not able to get to the global maxima due to this myopic drilling location selection.
+              We see that having <d-math>\epsilon = 0.01</d-math> primarily results in exploitation, and we are not able to get to the global maxima due to this myopic drilling location selection.
             </p>
 
             <p>
-              Let's try increasing the <d-code language="python">eps</d-code> variable to focus a little more on explorability.
+              Let's try increasing the <d-math>\epsilon</d-math> variable to focus a little more on explorability.
             </p>
 
             <figure>
               <d-figure><img src="images/MAB_gifs/mab-gp-ei-eps1.5.gif" /></d-figure>
             </figure>
             <p>
-              As we expected, increasing the value to <d-code language="python">eps = 1.5</d-code> makes the acquisition function explore more and exploit when the time comes. We see that it moves slowly once it reaches near the global maxima,
+              As we expected, increasing the value to <d-math>\epsilon = 1.5</d-math> makes the acquisition function explore more and exploit when the time comes. We see that it moves slowly once it reaches near the global maxima,
               trying
               to find the global maxima. In this case, the exploration is effectively helping us reach a higher functional value much earlier!
             </p>
 
             <p>
-              Let's see if increasing <d-code language="python">eps</d-code> helps us more!
+              Let's see if increasing <d-math>\epsilon</d-math> helps us more!
             </p>
 
             <figure>
               <d-figure><img src="images/MAB_gifs/mab-gp-ei-eps3.gif" /></d-figure>
             </figure>
             <p>
-              Is this better than before? Turns out a yes and a no. We see that here we do too much exploration given the value of <d-code language="python">eps = 3</d-code>. Which results in early reaching something close to global maxima, but
-              unfortunately we don't exploit to get more gains near the global maxima. We would have liked an acquisition function that tried to exploit a bit more after reaching somewhere close to the global maxima.
+              Is this better than before? Turns out a yes and a no. We see that here we do too much exploration given the value of <d-math>\epsilon = 3</d-math>. Which results in early reaching something close to global maxima, but unfortunately we don't exploit to get more gains near the global maxima. We would have liked an acquisition function that tried to exploit a bit more after reaching somewhere close to the global maxima.
             </p>
-
-            <hr />
 
             <h3 id="eipi-relation">PI vs. EI</h3>
 
@@ -440,7 +434,7 @@
             <p>
               In the figure below, we have plotted the values for both policies' acquisition function's values below, for each of the possible locations. The graph shows the relation followed
               between
-              EI and PI for when we have a single training point <d-code language="python">(0.5 f(0.5))</d-code>.
+              EI and PI for when we have a single training point <d-code language="python">(0.5, f(0.5))</d-code>.
             </p>
 
             <figure class="smaller-img">
@@ -453,8 +447,6 @@
               when
               the risks are the same (same <d-math>\alpha_{PI}</d-math>), we would want to go with points with greater reward (higher <d-math>\alpha_{EI}</d-math>).
             </p>
-
-            <hr />
 
             <h3 id="gaussianprocessupperconfidenceboundgp_ucb">Gaussian Process Upper Confidence Bound (GP-UCB)</h3>
 
@@ -474,17 +466,14 @@
               <d-figure><img src="images/MAB_gifs/mab-gp-gp_ucb3-1.gif" /></d-figure>
             </figure>
             <p>
-              Using this set of hyperparameters, we are able to get near global maxima and further "exploit" to find the global maximum. This was a result of increasing the value of <d-code language="python">v</d-code> to <d-code language="python">
-                3
-              </d-code>; this shows that <d-code language="python">v</d-code> gives weight to exploration.</p>
+              Using this set of hyperparameters, we are able to get near global maxima and further "exploit" to find the global maximum. This was a result of increasing the value of <d-math>v</d-math> to 
+              <d-math>3</d-math>. This shows that <d-math>v</d-math> gives weight to exploration.</p>
 
             <figure>
               <d-figure><img src="images/MAB_gifs/mab-gp-gp_ucb1-3.gif" /></d-figure>
             </figure>
             <p>
-              Setting the values of the hyperparameters to <d-code language="python">v = 1</d-code> and <d-code language="python">delta = 3</d-code> results in greater exploitation.</p>
-
-            <hr />
+              Setting the values of the hyperparameters to <d-math>v = 1</d-math> and <d-math>\delta = 3</d-math> results in greater exploitation.</p>
 
             <h3 id="thompsonsampling">Thompson Sampling</h3>
 
@@ -507,7 +496,6 @@
                 <d-figure><img src="images/MAB_gifs/mab-gp-thomp.gif" /></d-figure>
               </figure>
 
-
               <h3 id="random">Random</h3>
 
               <p>We had used a little intelligent acquisition function earlier, let's see is out acquisition function is not that intelligent and chooses randomly.</p>
@@ -520,9 +508,7 @@
                 <d-figure><img src="images/MAB_gifs/rand.gif" /></d-figure>
               </figure>
 
-              <hr />
-
-              <h3 id="probabilityofimprovementdlambdatimesdexpectedimprovementei_pi">Probability of Improvement + <d-math>\lambda \ \times</d-math> Expected Improvement (EI_PI)</h3>
+              <h3 id="piei_acq">Probability of Improvement + <d-math>\lambda \ \times</d-math> Expected Improvement (EI_PI)</h3>
 
               <p>Below we have tried to combine PI and EI using a linear combination as a combination of various acquisition function also results in an acquisition function. We can, therefore, combine any of the acquisition function and form a
                 new
@@ -531,7 +517,6 @@
               <figure>
                 <d-figure><img src="images/MAB_gifs/mab-gp-ei_pi.gif" /></d-figure>
               </figure>
-              <hr />
 
               <h3 id="comparison">Comparison</h3>
 
@@ -548,6 +533,7 @@
                 the
                 curse of dimensionality.</p>
 
+              <hr />
 
               <h2 id="generalization">Formalizing Bayesian Optimization</h2>
 
@@ -621,7 +607,7 @@
                 that evaluating the acquisition function is much cheaper, whereas in the original problem, evaluating the value at a particular was extremely costly.</p>
 
 
-              <h2 id="hyperparametersvsparameters">Hyperparameter Tuning</h2>
+              <h1 id="hyperparametersvsparameters">Hyperparameter Tuning</h2>
 
               <p>Before we talk about Bayesian optimization for hyperparameter tuning, we will quickly differentiate between hyperparameters and parameters. </p>
 
