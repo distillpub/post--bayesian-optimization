@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <meta charset="utf-8"/>
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Exploring Bayesian Optimization</title>
   <script src="js/template.v2.js"></script>
@@ -10,746 +11,893 @@
   <!-- <link rel="stylesheet" type="text/css" href="css/style.css"> -->
 
 </head>
+
 <body>
 
-<d-front-matter>
-  <script id='distill-front-matter' type="text/json">{
-  "title": "Exploring Bayesian Optimization",
-  "description": "Breaking Bayesian Optimization into small, sizable chunks.",
-  "authors": [
-    {
-      "author":"Apoorv Agnihotri",
-      "authorURL":"https://apoorvagnihotri.github.io/",
-      "affiliations": [{"name": "Indian Insitute of Technology Gandhinagar", "affiliationURL":
-      "https://www.iitgn.ac.in/"}]
-    },
-    {
-      "author":"Nipun Batra",
-      "authorURL":"https://nipunbatra.github.io/",
-      "affiliations": [{"name": "Indian Insitute of Technology Gandhinagar", "affiliationURL": "https://www.iitgn.ac.in/"}]
-    }
-  ],
-  "katex": {
-    "delimiters": [
-      {"left": "$$", "right": "$$", "display": false}
-    ]
-  }
-  }</script>
-</d-front-matter>
+  <d-front-matter>
+    <script id='distill-front-matter' type="text/json">
+      {
+        "title": "Exploring Bayesian Optimization",
+        "description": "Breaking Bayesian Optimization into small, sizable chunks.",
+        "authors": [{
+            "author": "Apoorv Agnihotri",
+            "authorURL": "https://apoorvagnihotri.github.io/",
+            "affiliations": [{
+              "name": "Indian Insitute of Technology Gandhinagar",
+              "affiliationURL": "https://www.iitgn.ac.in/"
+            }]
+          },
+          {
+            "author": "Nipun Batra",
+            "authorURL": "https://nipunbatra.github.io/",
+            "affiliations": [{
+              "name": "Indian Insitute of Technology Gandhinagar",
+              "affiliationURL": "https://www.iitgn.ac.in/"
+            }]
+          }
+        ],
+        "katex": {
+          "delimiters": [{
+            "left": "$$",
+            "right": "$$",
+            "display": false
+          }]
+        }
+      }
+    </script>
+  </d-front-matter>
 
-<d-title style="padding-bottom: 0">
-  <h1>Exploring Bayesian Optimization</h1>
-  <p>Breaking Bayesian Optimization into small, sizable chunks.</p>
+  <d-title style="padding-bottom: 0">
+    <h1>Exploring Bayesian Optimization</h1>
+    <p>Breaking Bayesian Optimization into small, sizable chunks.</p>
 
-  <!-- <d-figure id="Teaser" class="l-screen shaded-figure" style="border-bottom: none"></d-figure> -->
+    <!-- <d-figure id="Teaser" class="l-screen shaded-figure" style="border-bottom: none"></d-figure> -->
 
-</d-title>
+  </d-title>
 
-<d-byline></d-byline>
+  <d-byline></d-byline>
 
-<d-article>
-<p>In this post, we are going to focus on two tasks, prediction and optimization of a function that is extremely costly to evaluate. We query the user/oracle to label (evaluate) samples — Oracle than returns us a scalar value. We will be trying to pose the problems first and then talk about some of the ways to solve these problems.</p>
+  <d-article>
+    <p> We are increasingly getting used to deep(er) neural networks! These networks often come with a huge number of hyperparameters: like the number of layers, the dropout rate, the learning rate. How do we efficiently optimize these? In this
+      article, we will talk about Bayesian Optimization - which is an effective suite of techniques often used to efficiently tune the hyperparameters.</p>
+    <p> Before we talk in depth about Bayesian Optimization and its applicability in hyperparameter tuning, we will look into an example problem: maximizing a black box function!
+      <h2 id="mininggold">Mining Gold!</h2>
+      <p> Let us start the discussion about mining gold. For now, let us make a simplifying assumption, the gold content lies in a one-dimensional space, i.e., we are talking gold distribution only about a line.
+        Our aim is to find the location along this line where we would get maximum returns and drill at that location. Now, at the start of the activity, we have no idea about the amount of gold at different locations.
+        The only way we can get the information about the amount of gold is by drilling at a location.
+        This drilling is costly and involves expensive sensors to be used.
+        We, therefore, want to minimize the number of drillings required.</p>
 
-<p>The primary motivation behind both of the tasks is the expensive cost of labeling (evaluating).</p>
+      <p>We below show two common objectives for the gold mining problem.</p>
 
-<h2 id="mininggold">Mining Gold!</h2>
-<p>Let us explain the two problems using the gold mining application.
-We will, for now, look at only one-dimensional locations, i.e., we are talking gold distribution only about a line.
-The issue we have is that at the start of the activity, we have no idea about the amount of gold at different locations.
-The only way we can get the information about the amount of gold is by drilling at a location.
-This drilling is costly and involves expensive sensors to be used.
-We, therefore, want to minimize the number of drillings that we require.</p>
+      <ul>
+        <li>
+          <p><strong>Problem 1: Best Estimate of Gold Distribution</strong><br />
+            In this problem, we will estimate the amount of gold on the one-dimensional line. But we can not drill at every location. We should drill at those locations that provide us the "maximum" information about the distribution of the gold.
+            This problem is akin to <strong>Active Learning</strong>.</p>
+        </li>
 
-<p>We below show two of the common objectives for the gold mining problem.</p>
+        <li>
+          <p><strong>Problem 2: Location of Maximum Gold</strong><br />
+            In this problem, we will find the location in the one-dimensional space where the gold quantity is the maximum. This problem focuses on finding the location with the most gold content. This problem is akin to <strong>Bayesian
+              Optimization.</strong></p>
+        </li>
+      </ul>
+
+      <p> In this article, we will soon see how the two problems are related, but, not the same.
+
+
+
+        <h3 id="activelearning">Active Learning</h3>
+
+        <p>In machine learning problems, often, unlabelled data is very easily available, but labelling could be an expensive task. As an example, for a speech-to-text task, the ground truth labelling or annotation task requires expert(s) to manually
+          label words and sentences. In our gold mining problem, drilling is an expensive operation and we would like to minimize it. But, without drilling we can not estimate the gold estimate. Active learning would solve this problem by posing a
+          smart strategy to choose the next drilling site. While there are various methods and techniques in the active learning literature, for the sake of brevity, we will look only at <strong>uncertainty reduction</strong>, which chooses the next
+          query point as the one our model is the most uncertain about. One of the ways we can reduce the uncertainty is by choosing the point at which we have the maximum
+          variance (we are most uncertain). We will now look into Gaussian Processes, which not only give us predictions, but also uncertainty estimates, which will be useful for active learning.</p>
+
+        <h4 id="gaussianprocesses">Gaussian Processes</h4>
+
+        <p>
+          One might want to look at this excellent distillpub article<d-cite key="görtler2019a"></d-cite> on Gaussian Processes<d-cite key="Rasmussen2004"></d-cite>.
+          We will be using Gaussian Processes regression to model the gold distribution along the one-dimensional line. By using Gaussian processes, we take some naive assumption that the gold distribution of nearby points is similar (smoothness).
+          Such an assumption is usually true.
+        </p>
+
+        <p>
+          Let us now try to see how our ground-truth data looks like. The gold distribution in our data looks to be bi-modal with a maximum value around X=5. For now, let us not worry about the X-axis or the Y-axis units.
+        </p>
+        <figure class="smaller-img">
+          <d-figure><img src="images/MAB_gifs/GT.svg" /></d-figure>
+        </figure>
+
+
+        <h5 id="priormodel">Prior Model</h5>
+
+        <p>We will choose a simple prior about the gold content along the one-dimensional space. Our prior assumes a smooth relationship between points via a Matern kernel. The black line in the graph below denotes the knowledge we have about the
+          gold
+          content without drilling even at a single location.</p>
+
+        <figure class="smaller-img">
+          <d-figure><img src="images/MAB_gifs/prior.svg" /></d-figure>
+        </figure>
+
+        <p>
+          Also, take notice that the confidence (uncertainty) about the gold content is also the same for every location.
+        </p>
+
+        <h4 id="addingtrainingdata">Adding Training Data</h4>
+
+        <p>Let us now add a point to the train set or in other words, drill one of the locations and see the gold content (<d-code language="python">y</d-code>). We can see how our confidence and our estimates change after we get this first
+          information by fitting the model to the new data. We are going to add <d-code language="python">(x = 0.5, y = f(0.5))</d-code language="python"> into the train set now.</p>
+
+        <figure>
+          <d-figure><img src="images/MAB_gifs/posterior.svg" /></d-figure>
+        </figure>
+
+        <p>We see now that the posterior (shown as our prediction) has changed and we are very certain about the gold content in the vicinity of <d-code language="python">x = 0.5</d-code>, but, very uncertain far away from it. Also, we can see that
+          the mean of the point
+          closer to <d-code language="python">x = 0.5</d-code> is closer to the value that we got from drilling and seeing the gold content. So, we now come to the key idea of active learning: </p>
+
+        <h4 id="activelearningprocedure">Active Learning Procedure</h4>
+
+        <ol>
+          <li>Choose the point of having the highest uncertainty</li>
+          <li>Add the point to train set</li>
+          <li>Train on the new train set</li>
+          <li>Go to #1 till convergence or budget elapsed</li>
+        </ol>
+
+
+        <p>
+          Let us now automate this process and see how our posterior changes at every iteration where we add a sensor. For each of our iteration below, the prior was the Gaussian Process learned on the points already in the training set.
+        </p>
+        <figure>
+          <d-figure><img src="images/MAB_gifs/active-gp.gif" /></d-figure>
+        </figure>
+
+        <p>
+          One point to notice is that this idea of choosing the most uncertain location leads to querying of the points that are the farthest (visible when we choose the
+          2nd location to drill). Through this animation, we can notice that just in a few iterations, we are able to estimate the true distribution of gold. At every iteration, our active learning procedure carries out an <strong> exploration
+          </strong> to
+          make our estimates better.
+        </p>
+        <hr />
+        <h3 id="bayesianoptimization">Bayesian Optimization</h3>
+
+
+        <p><strong>Problem 2</strong> requires us to find the location where the gold content is maximum. Even though the problem setting may be similar, the objective is quite different than problem 1. In other words, we just want the location where
+          we can drill to get the most gold.</p>
+
+        <p>Older problem - Earlier in the active learning problem, our motivation for drilling at locations was to predict the distribution of the gold content over all the locations in the one-dimensional line. We, therefore, had chosen the next
+          location to drill where we had maximum uncertainty about our estimate.</p>
+
+        <p>In this problem, we are instead interested to know the location at which we find the maximum gold. For getting the location of maximum gold content, we might want to drill at the location where predicted mean is the highest, i.e. to
+          <strong>exploit</strong>. But
+          unfortunately our mean is not always accurate, so we need to correct our mean which can be done by reducing variance or <strong>exploration</strong>. Bayesian Optimization looks at both <strong>exploitation</strong> and
+          <strong>exploration</strong>,
+          whereas
+          in the
+          case
+          of Active Learning Problem, we only cared
+          about <strong>exploration</strong>.</p>
+
+
+        <h3 id="acquisitionfunctions">Acquisition Functions</h3>
+
+        <p>
+          Now, to take into account the combination of exploration and exploitation, we try to use a function which combines the two sides. These utility functions are called acquisition functions. <p>We can write a general form of an acquisition
+            function (<d-math>\alpha(x)</d-math>) as a function of the mean(<d-math>\mu(x)</d-math>) and the variance(<d-math>\sigma(x)</d-math>), which is in turn specifying that <d-math>\alpha(x)
+            </d-math> is a function of exploration and exploitation.
+            <d-math block>
+              <!-- class="l-middle.side" -->
+              \alpha(x) = f(\mu(x), \sigma(x))
+            </d-math>
+            At each iteration, we would recompute <d-math>\alpha(x) </d-math> and choose the location </d-math>
+            <d-math> x^* = _\text{argmax}\alpha(x)</d-math>as the next location/point to query.
+
+
+            <p>
+              Let us now look into one such trivial acquisition function that linearly combines the exploration/exploitation tradeoff.
+              <d-math block>\alpha(x) = \mu(x) + \lambda \times \sigma(x)</d-math>
+            </p>
+
+            <figure>
+              <d-figure><img src="images/MAB_gifs/acq_fn.svg" /></d-figure>
+            </figure>
+
+
+            <p>
+              In the figure above, we can see an instantiation of the above mentioned acquisition function (shown in green) for some value of <d-math>\lambda</d-math>.
+              We can observe that mean near the location (predicted) of the just added point (red point) is high. Also, as we go far
+              from the red point, we see that our uncertainty increases to a maximum.
+              We can see that the acquisition function is low at the sampled point (part of train set), as there is no
+              uncertainty at the point. However, as we move away from the red point, our variance increases and so does our acquisition function. But, beyond a certain value, the acquistion function keeps on decreasing. This is due to the fact
+              that while the variance or uncertainty is high for such points, the posterior mean is low.
+
+              We see at around the location <d-code language="python">x = 1.4</d-code> we get the
+              maximum value for the acquisition (green curve). Thus we next select this location to drill.
+            </p>
+
+
+
+
+
+            <p>
+              The intuition of using the acquisition function <d-math>\alpha(x) = \mu(x) + \lambda \times \sigma(x)</d-math> is that we are interested in finding the global mean <d-math>\mu</d-math>, so taking into account the estimated mean would
+              be
+              a good idea.
+              Additionally, we would like to explore too (using <d-math>\sigma</d-math>); else we might be stuck in a local maxima if don't explore enough.
+            </p>
+
+            <p>
+              Let us now try different values of <d-math>\lambda</d-math> and see the maximum gold count found by our acquisition function.
+            </p>
+            <figure>
+              <d-figure><img src="images/MAB_gifs/mab-gp-1.gif" /></d-figure>
+            </figure>
+
+            <p>
+              For <d-math>\lambda=1</d-math> as shown in the above animation, we can see that we get stuck in the local maxima. This probably means that we are not exploring enough and only exploiting near the current maxima.
+
+            </p>
+            <figure>
+              <d-figure><img src="images/MAB_gifs/mab-gp-5.gif" /></d-figure>
+            </figure>
+            <p>
+              For <d-math>\lambda=5</d-math> as shown in the above animation, we can see that we still get stuck in the local maxima. Let us now increase <d-math>\lambda</d-math> even more.
+            </p>
+
+            <figure>
+              <d-figure><img src="images/MAB_gifs/mab-gp-10.gif" /></d-figure>
+            </figure>
+            <p>
+              Perfect! We see that setting this value of <d-math>\lambda=10</d-math> resulted in finding points near the global maxima and not getting stuck in a local maximum.
+            </p>
+
+
+
+
+            <h3 id="probabilityofimprovementpi">Probability of Improvement (PI)</h3>
+
+            <p>
+              Let us look into our next method for the MAB maximization problem. As before, we want to balance or trade-off between exploration and exploitation. The idea behind the algorithm is fairly simple - choose the next point as the one
+              which
+              has the highest probability of improvement over the current max <d-math>(\mu^+)</d-math>.
+            </p>
+
+            <p>Let's understand this concept in two cases:</p>
+
+            <ol>
+              <li>
+                <p>
+                  We have two points of similar means (of function values (gold in our case)). We now want to choose one of these to obtain the labels or values. We will choose the one with higher variance. This basically says that given same
+                  exploitability, we choose the one with higher exploration value.
+                </p>
+              </li>
+              <li>
+                <p>
+                  We have two points having the same variance. We would now choose the point with the higher mean. This basically says that given the same explorability, we will choose the one with higher exploitation value.
+                </p>
+              </li>
+            </ol>
+            <ol>
+              <li>
+                <p>
+                  Let <d-math>\mu^+</d-math> be the current highest value of the function
+                </p>
+              </li>
+              <li>
+                <p>
+                  Let <d-math>\epsilon</d-math> be close to zero
+                </p>
+              </li>
+
+              <li>
+                <p>
+                  Choose <d-math>x^* = argmax(\alpha_{PI}(x))</d-math> where <d-math>\alpha_{PI}(x) = P(f(x)) > (\mu^+ +\epsilon)</d-math>
+                </p>
+              </li>
+            </ol>
+
+            <p>This can be given as: <d-math>x^* = argmax_x \Phi(\frac{\mu(x) - \mu^+ - \epsilon}{\sigma(x)})</d-math> where
+              <d-math>\Phi(\cdot)</d-math> indicates the CDF.</p>
+
+
+            <h4 id="intuitionbehindtheformula">Intuition behind PI</h4>
+
+            <p>Below is a graph that helps to visualize how the PI values are calculated. We have calculated <d-math>\alpha_{PI}(x)</d-math> for 3 points <d-code language="python">x in [0.10, 0.6, 4]</d-code language="python">. We can see the CDF
+              being shaded in
+              the graphs below.
+              Further, we can see if we increase <d-math>\epsilon</d-math>, we implicitly place more importance to the uncertainty of a point. If <d-math>\epsilon</d-math> is increased, the points with a larger sigma will
+              benefit as their probability density is spread more. Thus points with more spread out sigma would have a higher value of cumulative density function on same <d-math>\mu^+ + \epsilon</d-math>.</p>
+
+            <figure>
+              <d-figure><img src="images/MAB_gifs/pi_cdf.gif" /></d-figure>
+            </figure>
+
+            <p>
+              <d-math>\mu^+</d-math> refers to the maximum functional value, i.e., <d-code language="python">max(train_y)</d-code>, where <d-code language="python">train_y</d-code> refers to the gold content at the currently drilled locations.
+              We see that the probability of improvement values are calculated by finding the functional value of the cumulative density function at <d-math>\mu^+</d-math>.
+            </p>
+
+            <h4 id="eps">Hyperparameter: Eps</h4>
+            <p>
+              Now we possess the intuition behind how Probability of Improvement is calculated, now let's change <d-math>\epsilon</d-math> and look at its effects.
+            </p>
+
+            <figure>
+              <d-figure><img src="images/MAB_gifs/mab-gp-pi-eps0.01.gif" /></d-figure>
+            </figure>
+            <p>
+              Looking at the graph above we can see that we are not effectively exploring at value <d-math>\epsilon = 0.01</d-math> for the Probability of Improvement acquisition function. We are stuck.
+            </p>
+
+            <figure>
+              <d-figure><img src="images/MAB_gifs/mab-gp-pi-eps0.5.gif" /></d-figure>
+            </figure>
+            <p>
+              Looking above, we see increasing the value to <d-math>\epsilon = 0.5</d-math>, enables us to explore more and get to the maximum value. One can notice that the
+              predicted
+              values where <d-math>x \in [3, 4.5]</d-math> posses high uncertainty (can be identified by the grey translucent area, but as we remember we are not interested in getting the best prediction of the gold distribution, we only care about
+              the
+              maximum value that we can achieve, which this acquisition function with given hyper-parameters is able to capture nicely!
+            </p>
+
+            <p>
+              Let's look at what happens if we increase the hyper-parameter <d-math>\epsilon</d-math> a bit more.
+            </p>
+
+            <figure>
+              <d-figure><img src="images/MAB_gifs/mab-gp-pi-eps3.gif" /></d-figure>
+            </figure>
+            <p>
+              We see that we made things worse! Our model now uses <d-math>\epsilon = 3</d-math>, which has effectively resulted in way too much exploration. This amount of exploration is not able to exploit when we land somewhere near
+              a
+              global maximum.
+            </p>
+
+
+
+
+
+            <h3 id="expectedimprovementei">Expected Improvement (EI)</h3>
+
+            <p>
+              Probability of improvement only looked at <d-code language="python">how likely</d-code> is an improvement, but, shouldn't we be looking into <d-code language="python">how much</d-code> we can improve? The next criterion called,
+              Expected
+              Improvement, (EI) does exactly that!
+            </p>
+
+            <d-math block>
+              EI(x)=
+              \begin{cases}
+              (\mu(x) - \mu^+ - \epsilon)\Phi(Z) + \sigma(x)\phi(Z), & \text{if}\ \sigma(x) > 0 \\
+              0 & \text{if}\ \sigma(x) = 0
+              \end{cases}
+
+              Z= \frac{\mu(x) - \mu^+ - \epsilon}{\sigma(x)}
+            </d-math>
+            <p>
+              where <d-math>\Phi(\cdot)</d-math> indicates CDF and <d-math>\phi(\cdot)</d-math> indicates pdf.
+            </p>
+            <p>We can see when our <em>Expected Improvement</em> will be high.</p>
+
+            <ul>
+              <li>It is high when the expected value of mean(x) - <d-math>\mu^+</d-math> is high.</li>
+
+              <li>It is high when the uncertainty around a point is high.</li>
+            </ul>
+
+            <p>Now, if we see the role of <d-math>\epsilon</d-math> in <em>Expected Improvement</em>, it is the exact same as the role played in the case of <em>Probability of Improvement</em> (we have the same expression in PI) <d-footnote>A good
+                introduction to the Expected Improvement Acquisition function is by <a href="https://thuijskens.github.io/2016/12/29/bayesian-optimisation/" target="_blank">this post</a> by Thomas Huijskens and <a
+                  href="https://people.orie.cornell.edu/pfrazier/Presentations/2018.11.INFORMS.tutorial.pdf" target="_blank">these slides</a> by Peter Frazier</d-footnote>.</p>
+
+            <figure>
+              <d-figure><img src="images/MAB_gifs/mab-gp-ei-eps0.01.gif" /></d-figure>
+            </figure>
+
+            <p>
+              Like the Probability of Improvement's acquisition function, we can moderate the amount of explorability the Expected Improvement's acquisition function by setting the <d-code language="python">eps</d-code> hyper-parameter.
+            </p>
+
+            <p>
+              We see that having <d-code language="python">eps = 0.01</d-code> primarily results in exploitation, and we are not able to get to the global maxima due to this myopic drilling location selection.
+            </p>
+
+            <p>
+              Let's try increasing the <d-code language="python">eps</d-code> variable to focus a little more on explorability.
+            </p>
+
+            <figure>
+              <d-figure><img src="images/MAB_gifs/mab-gp-ei-eps1.5.gif" /></d-figure>
+            </figure>
+            <p>
+              As we expected, increasing the value to <d-code language="python">eps = 1.5</d-code> makes the acquisition function explore more and exploit when the time comes. We see that it moves slowly once it reaches near the global maxima,
+              trying
+              to find the global maxima. In this case, the exploration is effectively helping us reach a higher functional value much earlier!
+            </p>
+
+            <p>
+              Let's see if increasing <d-code language="python">eps</d-code> helps us more!
+            </p>
+
+            <figure>
+              <d-figure><img src="images/MAB_gifs/mab-gp-ei-eps3.gif" /></d-figure>
+            </figure>
+            <p>
+              Is this better than before? Turns out a yes and a no. We see that here we do too much exploration given the value of <d-code language="python">eps = 3</d-code>. Which results in early reaching something close to global maxima, but
+              unfortunately we don't exploit to get more gains near the global maxima. We would have liked an acquisition function that tried to exploit a bit more after reaching somewhere close to the global maxima.
+            </p>
+
+            <hr />
+
+            <h3 id="eipi-relation">PI vs. EI</h3>
+
+
+            <p>
+              We have seen two closely related methods, The <em>Probability of Improvement</em> and the <em>Expected Improvement</em>.
+            </p>
+
+            <p>
+              In the figure below, we have plotted the values for both policies' acquisition function's values below, for each of the possible locations. The graph shows the relation followed
+              between
+              EI and PI for when we have a single training point <d-code language="python">(0.5 f(0.5))</d-code>.
+            </p>
+
+            <figure class="smaller-img">
+              <d-figure><img src="images/MAB_gifs/Ei_Pi_graph/0.svg" /></d-figure>
+            </figure>
+            <p>
+              We can see that the <d-math>\alpha_{EI}</d-math> has its maximum value corresponding to <d-math>\alpha_{PI}</d-math> close to 0.25. But, <d-math>\alpha_{PI}</d-math> has a maximum of around 0.375, for which <d-math>\alpha_{EI}</d-math>
+              is low. Choosing a point with low <d-math>\alpha_{PI}</d-math> and high <d-math>\alpha_{EI}</d-math> means taking more risk, but getting a high reward.
+              In other words, when reward is the same for multiple points (<d-math>\alpha_{EI}</d-math>), we should prioritize to choose the option with lesser risk (or higher <d-math>\alpha_{PI}</d-math>). And similarly,
+              when
+              the risks are the same (same <d-math>\alpha_{PI}</d-math>), we would want to go with points with greater reward (higher <d-math>\alpha_{EI}</d-math>).
+            </p>
+
+            <hr />
+
+            <h3 id="gaussianprocessupperconfidenceboundgp_ucb">Gaussian Process Upper Confidence Bound (GP-UCB)</h3>
+
+            <p>
+              GP-UCB is another formulation for acquisition function where we have theoretical bounds on the number of iterations taken to reach near global maximum.
+            </p>
+
+            <figure>
+              <d-figure><img src="images/MAB_gifs/mab-gp-gp_ucb1-1.gif" /></d-figure>
+            </figure>
+            <p>
+              We seem to be exploiting too much, let's increase the exploratory hyperparameters!
+            </p>
+
+            <figure>
+              <d-figure><img src="images/MAB_gifs/mab-gp-gp_ucb3-1.gif" /></d-figure>
+            </figure>
+            <p>
+              Using this set of hyperparameters, we are able to get near global maxima and further "exploit" to find the global maximum. This was a result of increasing the value of <d-code language="python">v</d-code> to <d-code language="python">
+                3
+              </d-code>; this shows that <d-code language="python">v</d-code> gives weight to exploration.</p>
+
+            <figure>
+              <d-figure><img src="images/MAB_gifs/mab-gp-gp_ucb1-3.gif" /></d-figure>
+            </figure>
+            <p>
+              Setting the values of the hyperparameters to <d-code language="python">v = 1</d-code> and <d-code language="python">delta = 3</d-code> results in greater exploitation.</p>
+
+            <hr />
+
+            <h3 id="thompsonsampling">Thompson Sampling</h3>
+
+            <p>One more acquisition function that is quite common is Thompson Sampling. It has a low overhead of setting up.</p>
+
+            <p>The idea is to sample functions within upper and lower probabilistic bounds of a regressor; one can then optimize on these functions and chose the next query point to be the <d-math>x = argmax(\text{sampled\_f})</d-math>. In other
+              words,
+              sampling functions within the greyed out area in the graph below.</p>
+
+            <figure>
+              <d-figure><img src="images/MAB_gifs/posterior.svg" /></d-figure>
+            </figure>
+            <p>
+
+              <p>Thompson Sampling<d-cite key="thompTut"></d-cite> is general enough to be useful even when we have Bernoulli (the domain of x is spatially independent) distributions modeling the function <d-math>F</d-math>, instead of Gaussian
+                Process.</p>
+
+              <figure>
+                <d-figure><img src="images/MAB_gifs/mab-gp-thomp.gif" /></d-figure>
+              </figure>
+
+
+              <h3 id="random">Random</h3>
+
+              <p>We had used a little intelligent acquisition function earlier, let's see is out acquisition function is not that intelligent and chooses randomly.</p>
+
+              <p>We have here implemented a random method as a baseline. Notice, random method can find a location near the global maximum but is not able to exploit (try to find the global maxima that might be near this "best" location). Instead, it
+                randomly chooses to explore (not even intelligently) here and there. Even with no intelligent, we might get good locations which might be close to the location with the most gold content.
+              </p>
+              <figure>
+                <d-figure><img src="images/MAB_gifs/rand.gif" /></d-figure>
+              </figure>
+
+              <hr />
+
+              <h3 id="probabilityofimprovementdlambdatimesdexpectedimprovementei_pi">Probability of Improvement + <d-math>\lambda \ \times</d-math> Expected Improvement (EI_PI)</h3>
+
+              <p>Below we have tried to combine PI and EI using a linear combination as a combination of various acquisition function also results in an acquisition function. We can, therefore, combine any of the acquisition function and form a new
+                one.</p>
+
+              <figure>
+                <d-figure><img src="images/MAB_gifs/mab-gp-ei_pi.gif" /></d-figure>
+              </figure>
+              <hr />
+
+              <h3 id="comparison">Comparison</h3>
+
+              <p>Below we have a graph showing a comparison between the methods discussed above. We have chosen the hyper-parameters that gave us the best performance during our basic hyper-parameter search.</p>
+
+              <figure>
+                <d-figure><img src="images/MAB_gifs/comp.svg" /></d-figure>
+              </figure>
+
+              <p>We see the <em>Random</em> method can find the maximum much before any of the other techniques; this can be seen when we are faced with smaller spaces. But we will soon see that when we have larger search spaces, a random method
+                isn't
+                that efficient. This is because the probability of finding the optimum <d-math>x</d-math> in our new <d-math>f</d-math> real-valued multivariable function would drop exponentially with increasing dimensions due to what we call, the
+                curse of dimensionality.</p>
+
+              <h2 id="observation">Observation</h2>
+
+              <p>We see that the plots above show the maximum gold content detected from all the holes that have been drilled. We can see that Random performs quite nicely. We will soon see that might not be the case in higher dimensional
+                real-valued
+                functions.</p>
+
+              <h1 id="generalization">Generalization</h1>
+
+              <span>Let us now formally introduce Bayesian Optimization. Our goal is to find the <d-math>{x}</d-math> where we reached global maximum (or minimum) of a function <d-math>f: \mathbb{R}^d \text{ -> } \mathbb{R}</d-math>. Constraints in
+                Bayesian Optimization look like below quoted from slides/talk
+                <d-footnote>Talk from Peter Fraizer from Uber on Bayesian Optimization:<br>
+                  <ul>
+                    <li> <a href="https://www.youtube.com/watch?v=c4KKvyWW_Xk">Youtube Talk</a></li>
+                    <li> <a href="https://people.orie.cornell.edu/pfrazier/Presentations/2018.11.INFORMS.tutorial.pdf">Slide Deck</a></li>
+                  </ul>
+                </d-footnote> on Tutorial on Bayesian Optimization from Peter Fraizer.</span>
+
+              <blockquote>
+                <p>We’d like to optimize <d-math>f: \mathbb{R}^d \text{ -> } \mathbb{R}</d-math>.<br></p>
+
+                <p>• <d-math>f</d-math>’s feasible set <d-math>A</d-math> is simple,
+                  e.g., box constraints.<br>
+                  • <d-math>f</d-math> is continuous but lacks special structure,
+                  e.g., concavity, that would make it easy to optimize.<br>
+                  • <d-math>f</d-math> is derivative-free:
+                  evaluations do not give gradient information.<br>
+                  • <d-math>f</d-math> is expensive to evaluate:
+                  the # of times we can evaluate it
+                  is severely limited.<br>
+                  • <d-math>f</d-math> may be noisy. If noise is present, we’ll assume it
+                  is independent and normally distributed, with
+                  common but unknown variance.<br></p>
+              </blockquote>
+
+              <p>Let us link the above constraints to our initial problem statement of gold mining.</p>
+
+              <ul>
+                <li>Our domain in the gold mining problem is a single dimensional box constraint of <d-math>0 \leq x \leq 6</d-math>.</li>
+
+                <li>Our ground truth can be seen as <em>not</em> convex or concave function, which resulted in local minima as well.</li>
+
+                <li>Our evaluation (by drilling) of the amount of gold content at a location didn't give us any gradient information.</li>
+
+                <li>The function we used in the case of Gold Mining problem is extremely costly to evaluate (drilling costs millions).</li>
+
+                <li>This constraint is still satisfied in our case as we had used 0 noise, or zero mean zero std gaussian noise.</li>
+              </ul>
+
+              <h1 id="higherdimensions">Higher Dimensions</h1>
+
+              <p>For now we have been looking at real-valued single dimensional function, i.e. <d-math>f: \mathbb{R} \texttt{ -> } \mathbb{R}</d-math> data where we needed to find the value of <d-math>\boldsymbol{x}</d-math> where we reached global
+                maximum. Let's move on and try to tackle real-valued functions of <d-math>n</d-math> real variables functions, i.e. <d-math>f: \mathbb{R}^n \texttt{ -> } \mathbb{R}</d-math>. We will soon see that our methods that we saw earlier for
+                the
+                single dimensional case can be easily ported to multi-variable functions.</p>
+
+              <h2 id="whyisthiseasier">Why is this easier?</h2>
+
+              <p>One valid question one might come up is that we have replaced the original optimization problem to another optimization problem (optimization of acquisition function). How is this any better than the last problem. The main reason
+                is
+                that evaluating the acquisition function is much cheaper, whereas in the original problem, evaluating the value at a particular was extremely costly.</p>
+
+              <h2 id="bayesianoptimizationvsgradientdescent">Bayesian Optimization vs. Gradient Descent</h2>
+
+              <p>Some of the main differences between BO and GD as pointed out at StackExchange<d-cite key="BOvsGD"></d-cite>:</p>
+
+              <ul>
+                <li>The biggest difference between Bayesian Optimization and Gradient Descent is that in the latter case, we have access to the gradient values.</li>
+
+                <li>BO doesn't assume the function to be convex, in the case of Gradient Descent if you would like to get to the global minima, your function should be convex.</li>
+
+                <li>BO assumes the function we are optimizing is fairly smooth.</li>
+
+                <li>BO doesn't scale well with large data, as the GP inference is cubic in the number of points.</li>
+              </ul>
+
+              <p>There has been work done in Bayesian Optimization to make use of gradient information. The idea is based on the fact that the Gaussian Processes' predictions can be updated to take in the gradient information we get from the
+                function
+                we are trying to optimize. For more information, we would suggest looking at the paper Bayesian Optimization with Gradients<d-cite key="BOwtGD"></d-cite> from Wu et. al..</p>
+
+              <p>Now, as we have described BO more technically, let's have a look at how we can use this method in the case of Hyperparameter Tuning. Hyperparameters, you ask?</p>
+
+              <h2 id="hyperparametersvsparameters">Hyperparameters v/s Parameters</h2>
+
+              <p>We all are familiar with Machine Learning and the models that we use. To show one of the use cases for Bayesian optimization, we will quickly differentiate between hyperparameters and parameters. </p>
+
+
+              <p>Hyperparameters is a parameter whose value is set before the learning process begins. Parameters, on the other hand, are the parameters that are learned looking at the data. One small example that we can think of can be of linear
+                regression, we don't really have hyperparameters, but the parameters are the <d-math>W</d-math>: weight, <d-math>c</d-math>: intercept, which is learned from the data. If we apply lasso to linear regression, we introduce a
+                regularization hyperparameter <d-math>\lambda</d-math>.<d-footnote> For more information visit the Wikipedia article on <a href="https://en.wikipedia.org/wiki/Hyperparameter_(machine_learning)">Hyperparamters</a>.</d-footnote>
+              </p>
+
+              <h2 id="hyperparametersearch">Hyperparameter Search</h2>
+
+              <p>Now as we are clear on the difference between hyperparameters and parameters we would like to introduce one of the most common use case of Bayesian Optimization; <em>Hyperparameter Tuning</em>: finding best performing
+                hyperparameters
+                on machine learning models. At last, hyperparameter searching is an optimization problem (optimizing our score).</p>
+
+              <p>Usually, when training a model isn't expensive and time-consuming, we might just do a grid search or random search. The main issues faced when using these methods are as follows:</p>
+
+              <ul>
+                <li>Grid Search is not feasible if getting the functional value is extremely costly, as in case of a large neural network that takes days to train. This might result in days of waiting to get the accuracy scores.</li>
+
+                <li>Random and Grid Search are near brute-force methods; this causes these methods to become extremely inefficient and impossible to use when the dimensions of our search space increase (aka the curse of dimensionality). You can get
+                  the
+                  intuition for <em>the curse of dimentionality</em> from <a href="https://stats.stackexchange.com/a/169170">this</a> excellent answer on stackoverflow.com</li>
+              </ul>
+
+              <blockquote>
+                <p>in essence when you have more dimensions you need exponentially more samples to be able to estimate the real-valued multivariable function.</p>
+              </blockquote>
+
+              <p>We turn to Bayesian optimization to find counter the expensiveness of getting the functional values, and these increased dimensions.</p>
+
+              <h3 id="example1">Example 1</h3>
+
+              <p>Let's us use an SVM on sklearn's moons dataset and try to find the optimal hyperparameter using Bayesian optimization. Let's have a look at the dataset first.</p>
+
+              <figure class="smaller-img">
+                <d-figure><img src="images/MAB_gifs/moons.svg" /></d-figure>
+              </figure>
+
+              <span>Let us now try to learn the classification problem above using a Support Vector Machine (SVM). We are aware that SVM takes in 2 important hyperparameters, <d-code language="python">gamma</d-code> and <d-code language="python">C
+                </d-code>. Let us apply Bayesian Optimization to learn the best hyperparameters for this classification task. <d-footnote> <strong>Note</strong>: the surface plots you see for the ground truth accuracies below were calculated for
+                  each
+                  possible of hyperparameter for showcasing purposes only. We don't have these values in real applications.</d-footnote></span>
+
+              <figure>
+                <d-figure><img src="images/MAB_gifs/pi3d-0.05-mat.gif" /></d-figure>
+              </figure>
+
+              <p>Above we see a gif showing the work of the <em>Probability of Improvement</em> acquisition function in finding the best hyperparameters.</p>
+
+              <figure>
+                <d-figure><img src="images/MAB_gifs/ei3d-0.0001-mat.gif" /></d-figure>
+              </figure>
+
+              <p>Above we see a gif showing the work of the <em>Expected Improvement</em> acquisition function in finding the best hyperparameters.</p>
+
+              <figure>
+                <d-figure><img src="images/MAB_gifs/gp3d-1-2-mat.gif" /></d-figure>
+              </figure>
+
+              <p>Above we see a gif showing the work of the <em>Guassian Processes Upper Confidence Bound</em> acquisition function in finding the best hyperparameters. This by far seems to perform the best with getting quite close to the global
+                optimum value of hyperparameters (found using brute force).</p>
+
+              <figure>
+                <d-figure><img src="images/MAB_gifs/rand3d.gif" /></d-figure>
+              </figure>
+
+              <p>Now our favorite random acquisition function. :)</p>
+
+              <figure>
+                <d-figure><img src="images/MAB_gifs/comp3d.svg" /></d-figure>
+              </figure>
+
+              <p>We see GP-UCB performed the best in this case. Random that was performing really nice in the last single dimensional example seems to perform much badly in this case. This can be attributed to the increase in the number of
+                dimensions,
+                it's much difficult to get to the optimal value by using random search.</p>
+
+              <hr />
+
+              <h4 id="example2">Example 2</h4>
+
+              <p>Using Bayesian Optimization in Random Forests.</p>
+
+              <p>Let us now show some plots showing Bayesian Optimization for learning nice hyperparameters for our Random Forest model.</p>
+
+              <figure>
+                <d-figure><img src="images/MAB_gifs/RFpi3d-0.05-mat.gif"></d-figure>
+              </figure>
+
+              <p>Above we see a gif showing the work of the <em>Probability of Improvement</em> acquisition function in finding the best hyperparameters.</p>
+
+              <figure>
+                <d-figure><img src="images/MAB_gifs/RFei3d-0.0001-mat.gif"></d-figure>
+              </figure>
+
+              <p>Above we see a gif showing the work of the <em>Expected Improvement</em> acquisition function in finding the best hyperparameters.</p>
+
+              <figure>
+                <d-figure><img src="images/MAB_gifs/RFgp3d-1-2-mat.gif"></d-figure>
+              </figure>
+
+              <p>Above we see a gif showing the work of the <em>Guassian Processes Upper Confidence Bound</em> acquisition function in finding the best hyperparameters.</p>
+
+              <figure>
+                <d-figure><img src="images/MAB_gifs/RFrand3d.gif"></d-figure>
+              </figure>
+
+              <p>Random acquisition function. :)</p>
+
+              <figure>
+                <d-figure><img src="images/MAB_gifs/RFcomp3d.svg"></d-figure>
+              </figure>
+
+              <p>In the case of Random Forests, one thing to notice is that the ground truth is not that smooth. Therefore the assumption of Bayesian Optimization (smooth functions) no longer holds to the fullest. Therefore we do see that random
+                may
+                perform better than some of the methods. The best performing method we see is Probability of Improvement.</p>
+
+              <h3 id="example3">Example 3</h3>
+
+              <p>Let's train CNNs on Mnist. Here we will be using <d-code language="python">scikit-optim</d-code>, which also provides us support for optimizing our function on a mix of categorical, integral, and real variables. We won't be
+                plotting
+                the ground truth here, as it's extremely costly to do so. Below is some of the code that will limit the search space.</p>
+
+              <d-code block language="python">
+                log_batch_size = Integer(
+                low=3,
+                high=6,
+                name='log_batch_size'
+                )
+                lr = Real(
+                low=1e-6,
+                high=1e0,
+                prior='log-uniform',
+                name='lr'
+                )
+                activation = Categorical(
+                categories=['relu', 'sigmoid'],
+                name='activation'
+                )
+
+                dimensions = [
+                dim_num_batch_size_to_base,
+                dim_learning_rate,
+                dim_activation
+                ]
+              </d-code>
+
+              <p>
+                Moving on we will now have a minimizer function imported from <d-code language="python">scikit-optim</d-code> called <d-code language="python">gp-minimize</d-code>. The easiness can be seen from the code block below. </p>
+
+              <d-code block language="python">
+                # setting up default parameters (1st point)
+                default_parameters = [4, 1e-1, 'relu']
+
+                # bayesian optimization
+                search_result = gp_minimize(
+                func=train,
+                dimensions=dimensions,
+                acq_func='EI', # Expected Improvement.
+                n_calls=11,
+                x0=default_parameters
+                )
+              </d-code>
+
+              There you go you now have the hyperparameters that have minimized your -ve accuracy (maximized the original accuracy).
+
+              <figure>
+                <d-figure><img src="images/MAB_gifs/conv.svg"></d-figure>
+              </figure>
+
+              <p>Looking at the above example, we can see that incorporating Bayesian Optimization isn't a big problem and saves a lot of time we can see that the network was able to get to an accuracy of nearly one in around three iterations.
+                That's
+                impressive! The example above has been inspired by Hvass Laboratories' Tutorial on <d-code language="python">scikit-optim</d-code>. <d-footnote> <a
+                    href="https://github.com/Hvass-Labs/TensorFlow-Tutorials/blob/master/19_Hyper-Parameters.ipynb">Notebook</a> showcasing hyperparameter optimization in Tensorflow. </d-footnote>
+              </p>
+
+              <h2 id="conclusions">Conclusions</h2>
+
+              <p>We see that for the case of Bayesian optimization, we have a different problem that we are trying to solve compared to the active learning problem. This, therefore, leads to different objective functions that we try to maximize for
+                the
+                query points in both of the problems.</p>
+
+              <h2 id="embracebayesianoptimization">Embrace Bayesian Optimization</h2>
+
+              <p>After reading through the blog post, you might have been sold on the idea about the time you can save by asking Bayesian Optimizer to find the best hyperparameters for your fantastic model. There are a plethora of Bayesian
+                Optimization
+                libraries available. I have linked a few known ones. Do check them out.</p>
+
+              <ul>
+                <li><a href="https://scikit-optimize.github.io/">scikit-optimize</a>
+                  <d-footnote>Really nice tutorial showcasing hyperparameter optimization on a neural network available at this <a href="https://github.com/Hvass-Labs/TensorFlow-Tutorials/blob/master/19_Hyper-Parameters.ipynb">link</a>.
+                  </d-footnote>
+                </li>
+
+                <li><a href="https://app.sigopt.com/docs/overview/python">sigopt</a></li>
+
+                <li><a href="http://hyperopt.github.io/hyperopt/">hyperopt</a></li>
+
+                <li><a href="https://github.com/HIPS/Spearmint">spearmint</a></li>
+
+                <li><a href="https://github.com/Yelp/MOE">MOE</a></li>
+              </ul>
+
+              <h3 id="caution">Caution</h3>
+
+              <p>We need to take care while using Bayesian Optimization. Bayesian Optimization based on Gaussian Processes Regression is highly sensitive to the kernel used. For example, if you are using <a
+                  href="https://scikit-learn.org/stable/modules/generated/sklearn.gaussian_process.kernels.Matern.html">Matern</a> kernel, we are implicitly assuming that the function we are trying to optimize is first order differentiable.</p>
+
+              <p>A nice list of tips and tricks one should have a look at if you aim to use Bayesian Optimization in your workflow is from this fantastic post by Thomas on <a
+                  href="https://thuijskens.github.io/2016/12/29/bayesian-optimisation/">Bayesian
+                  Optimization with sklearn</a>.</p>
+
+              <p>Let's save us some time and money by delegating hyperparameter search to bayesian optimizers from now. Go get started see our <a href="#FurtherReading">Further Reading</a> section.</p>
+
+  </d-article>
+
+
+
+
+  <d-appendix>
+
+    <h3 id="FurtherReading">Further Reading</h3>
+    <ul>
+      <li><a href="http://jmlr.csail.mit.edu/papers/v12/pedregosa11a.html">Scikit-learn: Machine Learning in Python</a>, Pedregosa et al., JMLR 12, pp. 2825-2830, 2011.</li>
+    </ul>
+
+    <p>Youtube Videos</p>
+
+    <ul>
+      <li><a href="https://www.youtube.com/watch?v=c4KKvyWW_Xk">Bayesian Optimization Tutorial</a> by Peter Frazier, Uber
+
+        <ul>
+          <li><a href="https://people.orie.cornell.edu/pfrazier/Presentations/2018.11.INFORMS.tutorial.pdf">slides</a></li>
+
+          <li><a href="https://arxiv.org/abs/1807.02811">paper</a></li>
+        </ul>
+      </li>
+
+      <li><a href="https://www.youtube.com/watch?v=jtRPxRnOXnk">Bayesian Optimization with scikit-learn</a> by Thomas Huijskens at PyData London</li>
+
+      <li><a href="https://www.youtube.com/watch?v=vz3D36VXefI">Bayesian Optimization and Multi-Armed Bandit</a> by Nando de Freitas</li>
+    </ul>
+
+    <p>Misc:</p>
+
+    <ul>
+      <li><a href="https://nipunbatra.github.io/blog/2019/GP-1.html">Programatically understand Gaussian Processes</a></li>
+    </ul>
+
+    <d-bibliography src="references.bib"></d-bibliography>
+  </d-appendix>
+
+</body>
+
+<figure>
+  <d-figure><img src="images/MAB_gifs/active-gp.gif" /></d-figure>
+</figure>
+
+<figure>
+  <d-figure><img src="images/MAB_gifs/mab-gp-pi-eps0.5.gif" /></d-figure>
+</figure>
 
 <ul>
-<li><p><strong>Problem 1: Best Estimate of Gold Distribution</strong>
-In this problem, we are supposed to estimate the amount of gold on the one-dimensional line. But we can not drill at every location. We should drill at those locations that provide us the "maximum" information about the distribution of the gold.</p></li>
+  <li>
+    <p>Here are representative animations showing the process of drilling at new locations and to reduce the uncertainty and get the best predictions showcasing the <strong>Active Learning</strong> problem.</p>
+  </li>
 
-<li><p><strong>Problem 2: Location of Maximum Gold</strong>
-In this problem, we are supposed to find the location in the one-dimensional space where the gold quantity is the maximum. This problem focuses on finding the location with the most gold content.</p></li>
-</ul>
-
-  <figure>
-  <d-figure><img src="images/MAB_gifs/active-gp.gif"/></d-figure>
-  </figure>
-
-  <figure>
-  <d-figure><img src="images/MAB_gifs/mab-gp-pi-eps0.5.gif"/></d-figure>
-  </figure>
-
-<ul>
-<li><p>Here are representative animations showing the process of drilling at new locations and to reduce the uncertainty and get the best predictions showcasing the <strong>Active Learning</strong> problem.</p></li>
-
-<li><p>And drilling at locations to get the location of the maximum gold reserve, showcasing the <strong>Bayesian Optimization</strong> problem.</p></li>
+  <li>
+    <p>And drilling at locations to get the location of the maximum gold reserve, showcasing the <strong>Bayesian Optimization</strong> problem.</p>
+  </li>
 </ul>
 
 <p>We will build the solution to both of these problems from the ground up.</p>
 
-
-
-<h3 id="activelearning">Active Learning</h3>
-
-<p><strong>Problem 1</strong> is very similar to problems we like to solve using active learning. Active learning is used to predict distribution by reducing uncertainty. One of the ways we can reduce the uncertainty is by choosing the point at which we have the maximum variance (we are most uncertain).</p>
-
-<h3 id="gaussianprocesses">Gaussian Processes</h3>
-
-<p>
-  One might want to look at this excellent distillpub article<d-cite key="görtler2019a"></d-cite> on Gaussian Processes<d-cite key="Rasmussen2004"></d-cite>.
-  As you can remember, we use Gaussian Processes to get a prediction as well as the attached uncertainty (variance) with that prediction.
-  This will turn out to be useful for us, as we wanted to drill where we were most uncertain.
-  By using Gaussian processes, we take some naive assumption that the gold distribution of nearby points is similar (smoothness).
-</p>
-
-<p>
-  Let us now try to see how our ground-truth data looks like.
-</p>
-  <figure class="smaller-img">
-  <d-figure><img src="images/MAB_gifs/GT.svg"/></d-figure>
-  </figure>
-
-
-<h4 id="priormodel">Prior Model</h4>
-
-<p>Our prior model doesn't know much and assumes a smooth relationship between points via a Matern kernel. The grey line in the graph below denotes the knowledge we have about the gold content without drilling even at a single location.</p>
-
-  <figure class="smaller-img">
-  <d-figure><img src="images/MAB_gifs/prior.svg"/></d-figure>
-  </figure>
-
-<p>
-  Also, take notice that the confidence (uncertainty) about the gold content is also the same for every location.
-</p>
-
-<h4 id="addingtrainingdata">Adding Training Data</h4>
-
-<p>Let us now add a point to the train set or in other words, drill one of the locations and see the gold content (<d-code language="python">y</d-code>). We can see how our confidence and our estimates change after we get this first information by fitting the model to the new data. I am going to add <d-code language="python">(x = 0.5, y = f(0.5))</d-code language="python"> into the train set now.</p>
-
-  <figure>
-  <d-figure><img src="images/MAB_gifs/posterior.svg"/></d-figure>
-  </figure>
-
-<p>Nice! We see now that the posterior has changed and we are very certain about the gold content in the vicinity of <d-code language="python">x = 0.5</d-code>, but, very uncertain far away from it. Also, we can see that the mean of the point closer to <d-code language="python">x = 0.5</d-code> is closer to the value that we got from drilling and seeing the gold content. So, we now come to the key idea.</p>
-
-<h4 id="activelearningprocedure">Active Learning Procedure</h4>
-
-<ol>
-  <li>Choose the point of having the highest uncertainty</li>
-  <li>Add the point to train set</li>
-  <li>Train on the new train set</li>
-  <li>Go to 1 till convergence or budget elapsed</li>
-</ol>
-
-
-<p>
-  Let us now automate this process and see how our posterior changes at every iteration where we add a sensor. For each of our iteration below, the prior was the Gaussian Process learned on the points already in the training set. We have recreated the 1st animation at the top of the post!
-</p>
-  <figure>
-  <d-figure><img src="images/MAB_gifs/active-gp.gif"/></d-figure>
-  </figure>
-
-<p>
-  There you go we have recreated one of the plots from the starting of the blog! One point to notice is that this idea of choosing the most uncertain location leads to querying of the points that are the farthest (visible when we choose the 2nd location to drill). This might not be so good as we are kind of wasting our drillings because they are at the boundary of the 1-dimensional plot.
-</p>
-
-<h3 id="bayesianoptimization">Bayesian Optimization</h3>
-
-
-<p><strong>Problem 2</strong> requires us to find the location where the gold content is maximum. Even though the problem setting may be similar, the objective is quite different than problem 1. In other words, we just want the location where we can drill to get the most gold.</p>
-
-<p>Older problem - Earlier in the active learning problem, our motivation for drilling at locations was to predict the distribution of the gold content over all the locations in the one-dimensional line. We, therefore, had chosen the next location to drill where we had maximum uncertainty about our estimate.</p>
-
-<p>In this problem, we are instead interested to know the location at which we find the maximum gold. For getting the location of maximum gold content, we might want to drill at the location where predicted mean is the highest (exploit). But unfortunately our mean is not always accurate, so we need to correct our mean (reduce variance / explore) too. Bayesian Optimization looks at both exploitation and exploration, whereas in the case of Active Learning Problem, we only cared about exploration.</p>
-
-
-<h4 id="acquisitionfunctions">Acquisition Functions</h4>
-
-<p>
-  Now, to take into account the combination of exploration and exploitation, we try to use a function which combines the two sides. These utility functions that take into account both exploration and exploitation in multi-arm bandit problem are called acquisition functions.
-</p>
-  <figure>
-  <d-figure><img src="images/MAB_gifs/acq_fn.svg"/></d-figure>
-  </figure>
-
-<p>
-  Here, we can see that mean near the location of the just added point (red point) is high. But as we go far from the red point, we see that our uncertainty increases to a maximum. As we discussed in multi-arm bandit problem, we like to have some combination of exploration and exploitation. The most basic way to do so is by linearly combining the two values.
-</p>
-
-<hr />
-
-<h3 id="acq">ACQ1</h4>
-
-<d-math block> <!-- class="l-middle.side" -->
-  \text{acq\_fn}(x) = \mu + \lambda \times \sigma
-</d-math>
-
-<p>
-  This combined value that takes into account exploration and exploitation is referred to as the acquisition value, returned by acquisition function. We see at around the location <d-code language="python">x = 1.4</d-code> we get the maximum value for the acquisition (green curve). Thus we next select this location to drill.
-</p>
-
-<p>
-  The intuition of using the acquisition function <d-code language="python">mean + lam * uncertainty</d-code> is that we are interested in finding the global mean, so taking into account the estimated mean would be a good idea. Additionally, we would like to explore too (using <d-code language="python">lam</d-code>); else we might be stuck in a local minimum if don't explore too much (see below).
-</p>
-
-<p>
-  Let us now try different hyperparameters for <d-code language="python">ACQ1</d-code>. We can see that on increasing <d-code language="python">lam</d-code> we "explore" more! In the below case we can easily see since we didn't give too much importance to the uncertainty (low <d-code language="python">lam</d-code>), we got stuck in local minima.
-</p>
-  <figure>
-  <d-figure><img src="images/MAB_gifs/mab-gp-1.gif"/></d-figure>
-  </figure>
-
-<p>
-  Below we can see that this choice of <code>lam</code> is still a little smaller than we like (we would like to see that we get to exploit the location where the gold is the most.).
-</p>
-  <figure>
-  <d-figure><img src="images/MAB_gifs/mab-gp-5.gif"/></d-figure>
-  </figure>
-
-<p>
-  Perfect! We see that setting this value of <code>lam = 10</code> resulted in finding points near the global maxima and not getting stuck in a local maximum.
-</p>
-  <figure>
-  <d-figure><img src="images/MAB_gifs/mab-gp-10.gif"/></d-figure>
-  </figure>
-
-<hr />
-
-<h3 id="random">Random</h3>
-
-<p>We had used a little intelligent acquisition function earlier, let's see is out acquisition function is not that intelligent and chooses randomly.</p>
-
-<p>We have here implemented a random method as a baseline. Notice, random method can find a location near the global maximum but is not able to exploit (try to find the global maxima that might be near this "best" location). Instead, it randomly chooses to explore (not even intelligently) here and there. Even with no intelligent, we might get good locations which might be close to the location with the most gold content.
-</p>
-  <figure>
-  <d-figure><img src="images/MAB_gifs/rand.gif"/></d-figure>
-  </figure>
-
-<hr />
-
-<h3 id="probabilityofimprovementpi">Probability of Improvement (PI)</h3>
-
-<p>
-  Let us look into our next method for the MAB maximization problem. As before, we want to balance or trade-off between exploration and exploitation. The idea behind the algorithm is fairly simple - choose the next point as the one which has the highest probability of improvement over the current max <d-math>(\mu^+)</d-math>.
-</p>
-
-<p>Let's understand this concept in two cases:</p>
-
-<ol>
-  <li><p>
-    We have two points of similar means (of function values (gold in our case)). We now want to choose one of these to obtain the labels or values. We will choose the one with higher variance. This basically says that given same exploitability, we choose the one with higher exploration value.
-  </p></li>
-  <li><p>
-    We have two points having the same variance. We would now choose the point with the higher mean. This basically says that given the same explorability, we will choose the one with higher exploitation value.
-  </p></li>
-</ol>
-<ol>
-  <li><p>
-    Let <d-math>\mu^+</d-math> be the current highest value of the function
-  </p></li>
-  <li><p>
-    Let <d-math>\epsilon</d-math> be close to zero
-  </p></li>
-
-  <li><p>
-    Choose <d-math>x^* = argmax(P(f(x)) > (\mu^+ +\epsilon))</d-math>
-  </p></li>
-</ol>
-
-<p>This can be given as: <d-math>x^* = argmax_x \Phi(\frac{\mu(x) - \mu^+ - \epsilon}{\sigma(x)})</d-math> where
-<d-math>\Phi(\cdot)</d-math> indicates the CDF.</p>
-
-
-<h4 id="intuitionbehindtheformula">Intuition behind PI</h4>
-
-<p>Below is a graph that helps to visualize how the PI values are calculated. We have calculated for 3 points <d-code language="python">x in [0.10, 0.6, 4]</d-code language="python">. We can see the CDF being shaded in the graphs below. Further, we can see if we increase <d-code language="python">eps</d-code>, we implicitly place more importance to the uncertainty of a point. If <d-code language="python">eps</d-code> is increased, the points with a larger sigma will benefit as their probability density is spread more. Thus points with more spread out sigma would have a higher value of cumulative density function on same <d-math>\mu^+ + \epsilon</d-math>.</p>
-
-  <figure>
-  <d-figure><img src="images/MAB_gifs/pi_cdf.gif"/></d-figure>
-  </figure>
-
-<p>
-  <d-math>\mu^+</d-math> refers to the maximum functional value, i.e., <d-code language="python">max(train_y)</d-code>, where <d-code language="python">train_y</d-code> refers to the gold content at the currently drilled locations.
-  We see that the probability of improvement values are calculated by finding the functional value of the cumulative density function at <d-math>\mu^+</d-math>. The Gaussian parameters for each point are the mean and standard deviation predicted from Gaussian Process Regressor for that point.
-</p>
-
-<h4 id="eps">Hyperparameter: Eps</h4>
-<p>
-  Now we possess the intuition behind how Probability of Improvement is calculated, now let's change <d-code language="python">eps</d-code> and look at its effects.
-</p>
-
-  <figure>
-  <d-figure><img src="images/MAB_gifs/mab-gp-pi-eps0.01.gif"/></d-figure>
-  </figure>
-<p>
-  Looking at the graph above we can see that we are not effectively exploring at value <d-code language="python">eps = 0.01</d-code> for the Probability of Improvement acquisition function. We are stuck.
-</p>
-
-  <figure>
-  <d-figure><img src="images/MAB_gifs/mab-gp-pi-eps0.5.gif"/></d-figure>
-  </figure>
-<p>
-  Looking above, we see increasing the value to <d-code language="python">eps = 0.5</d-code>, enables us to explore more and get to the maximum value which we wanted in the case of Multi-arm bandit problem. One can notice that the predicted values where <d-math>x \in [3, 4.5]</d-math> posses uncertainty (can be identified by the grey translucent area, but as we remember we are not interested in getting the best prediction of the gold distribution, we only care about the maximum value that we can achieve, which this acquisition function with given hyper-parameters is able to capture nicely!
-</p>
-
-<p>
-  Let's look at what happens if we increase the hyper-parameter <d-code language="python">eps</d-code> a bit more.
-</p>
-
-  <figure>
-  <d-figure><img src="images/MAB_gifs/mab-gp-pi-eps3.gif"/></d-figure>
-  </figure>
-<p>
-  We see that we made things worse! Our model now uses <d-code language="python">eps = 3</d-code>, which has effectively resulted in way too much exploration. This amount of exploration is not able to exploit when we land somewhere near a global maximum.
-</p>
-
-
-<hr />
-
-
-<h3 id="expectedimprovementei">Expected Improvement (EI)</h3>
-
-<p>
-  Probability of improvement only looked at <d-code language="python">how likely</d-code> is an improvement, but, shouldn't we be looking into <d-code language="python">how much</d-code> we can improve. The next criterion called, Expected Improvement, (EI) looks into both :)
-</p>
-
-<d-math block>
-EI(x)=
-\begin{cases}
-  (\mu(x) - \mu^+ - \epsilon)\Phi(Z) + \sigma(x)\phi(Z), & \text{if}\ \sigma(x) > 0 \\
-  0 & \text{if}\ \sigma(x) = 0 
-\end{cases}
-
-Z= \frac{\mu(x) - \mu^+ - \epsilon}{\sigma(x)}
-</d-math>
-<p>
-  where <d-math>\Phi(\cdot)</d-math> indicates CDF and <d-math>\phi(\cdot)</d-math> indicates pdf.
-</p>
-<p>We can see when our <em>Expected Improvement</em> will be high.</p>
-
-<ul>
-<li>It is high when the expected value of mean(x) - <d-math>\mu^+</d-math> is high.</li>
-
-<li>It is high when the uncertainty around a point is high.</li>
-</ul>
-
-<p>Now, if we see the role of <d-math>\epsilon</d-math> in <em>Expected Improvement</em>, it is the exact same as the role played in the case of <em>Probability of Improvement</em> (we have the same expression in PI) <d-footnote>A good introduction to the Expected Improvement Acquisition function is by <a href="https://thuijskens.github.io/2016/12/29/bayesian-optimisation/"
- target="_blank">this post</a> by Thomas Huijskens and <a href="https://people.orie.cornell.edu/pfrazier/Presentations/2018.11.INFORMS.tutorial.pdf" target="_blank">these slides</a> by Peter Frazier</d-footnote>.</p>
-
-  <figure>
-  <d-figure><img src="images/MAB_gifs/mab-gp-ei-eps0.01.gif"/></d-figure>
-  </figure>
-
-<p>
-  Like the Probability of Improvement's acquisition function, we can moderate the amount of explorability the Expected Improvement's acquisition function by setting the <d-code language="python">eps</d-code> hyper-parameter.
-</p>
-
-<p>
-  We see that having <d-code language="python">eps = 0.01</d-code> primarily results in exploitation, and we are not able to get to the global maxima due to this myopic drilling location selection.
-</p>
-
-<p>
-  Let's try increasing the <d-code language="python">eps</d-code> variable to focus a little more on explorability.
-</p>
-
-  <figure>
-  <d-figure><img src="images/MAB_gifs/mab-gp-ei-eps1.5.gif"/></d-figure>
-  </figure>
-<p>
-  As we expected, increasing the value to <d-code language="python">eps = 1.5</d-code> makes the acquisition function explore more and exploit when the time comes. We see that it moves slowly once it reaches near the global maxima, trying to find the global maxima. In this case, the exploration is effectively helping us reach a higher functional value much earlier!
-</p>
-
-<p>
-  Let's see if increasing <d-code language="python">eps</d-code> helps us more!
-</p>
-
-  <figure>
-  <d-figure><img src="images/MAB_gifs/mab-gp-ei-eps3.gif"/></d-figure>
-  </figure>
-<p>
-  Is this better than before? Turns out a yes and a no. We see that here we do too much exploration given the value of <d-code language="python">eps = 3</d-code>. Which results in early reaching something close to global maxima, but unfortunately we don't exploit to get more gains near the global maxima. We would have liked an acquisition function that tried to exploit a bit more after reaching somewhere close to the global maxima. In essence:
-<ul>
-  <li>reach near global maxima in a lower number of iterations</li>
-  <li>we don't exploit once we reach near global maxima</li>
-</ul>
-</p>
-
-<hr />
-
-<h3 id="eipi-relation">PI vs. EI</h3>
-
-
-<p>
-  We have seen two closely related methods, The <em>Probability of Improvement</em> and the <em>Expected Improvement</em>. We can think of these two to be related to the ideas that we commonly are familiar with <d-code language="python">risk</d-code> and <d-code language="python">gain</d-code>, respectively.
-</p>
-
-<p>
-  It seems natural to see how these metrics change for each of the points. We have plotted the values for both policies' acquisition function's values below, for each of the possible locations. The graph shows the relation followed between EI and PI for when we have a single training point <d-code language="python">(0.5 f(0.5))</d-code>.
-</p>
-
-  <figure class="smaller-img">
-  <d-figure><img src="images/MAB_gifs/Ei_Pi_graph/0.svg"/></d-figure>
-  </figure>
-<p>
-  If we look closely, we can see if we have an equal estimated improvement as in the case with the points with <d-code language="python">EI(x) = 0.4</d-code> it would be more beneficial to differentiate between these points which have a better value for Probability of Improvement. In other words, when <d-code language="python">gain</d-code>s are the same, we should prioritize to choose the option with lesser <d-code language="python">risk</d-code>. And similarly, when the <d-code language="python">risk</d-code>s are similar, we would likely want to go with points with greater <d-code language="python">gain</d-code>s.
-</p>
-
-<hr />
-
-<h3 id="gaussianprocessupperconfidenceboundgp_ucb">Gaussian Process Upper Confidence Bound (GP_UCB)</h3>
-
-<p>
-  GP_UCB is another formulation for acquisition function where we also have theoretical bounds on the number of iterations taken to reach near global maximum.
-</p>
-
-  <figure>
-  <d-figure><img src="images/MAB_gifs/mab-gp-gp_ucb1-1.gif"/></d-figure>
-  </figure>
-<p>
-  We seem to be exploiting too much, let's increase the exploratory hyperparameters!
-</p>
-
-  <figure>
-  <d-figure><img src="images/MAB_gifs/mab-gp-gp_ucb3-1.gif"/></d-figure>
-  </figure>
-<p>
-  Using this set of hyperparameters, we are able to get near global maxima and further "exploit" to find the global maximum. This was a result of increasing the value of <d-code language="python">v</d-code> to <d-code language="python">3</d-code>; this shows that <d-code language="python">v</d-code> gives weight to exploration.</p>
-
-  <figure>
-  <d-figure><img src="images/MAB_gifs/mab-gp-gp_ucb1-3.gif"/></d-figure>
-  </figure>
-<p>
-  Setting the values of the hyperparameters  to <d-code language="python">v = 1</d-code> and <d-code language="python">delta = 3</d-code> results in greater exploitation.</p>
-
-<hr />
-
-<h3 id="thompsonsampling">Thompson Sampling</h3>
-
-<p>One more acquisition function that is quite common is Thompson Sampling. It has a low overhead of setting up.</p>
-
-<p>The idea is to sample functions within upper and lower probabilistic bounds of a regressor; one can then optimize on these functions and chose the next query point to be the <d-math>x = argmax(\text{sampled\_f})</d-math>. In other words, sampling functions within the greyed out area in the graph below.</p>
-
-<figure>
-  <d-figure><img src="images/MAB_gifs/posterior.svg"/></d-figure>
-  </figure>
-<p>
-
-<p>Thompson Sampling<d-cite key="thompTut"></d-cite> is general enough to be useful even when we have Bernoulli (the domain of x is spatially independent) distributions modeling the function <d-math>F</d-math>, instead of Gaussian Process.</p>
-
-<figure>
-  <d-figure><img src="images/MAB_gifs/mab-gp-thomp.gif"/></d-figure>
-  </figure>
-
-<hr />
-
-<h3 id="probabilityofimprovementdlambdatimesdexpectedimprovementei_pi">Probability of Improvement + <d-math>\lambda \  \times</d-math> Expected Improvement (EI_PI)</h3>
-
-<p>Below we have tried to combine PI and EI using a linear combination as a combination of various acquisition function also results in an acquisition function. We can, therefore, combine any of the acquisition function and form a new one.</p>
-
-  <figure>
-  <d-figure><img src="images/MAB_gifs/mab-gp-ei_pi.gif"/></d-figure>
-  </figure>
-<hr />
-
-<h3 id="comparison">Comparison</h3>
-
-<p>Below we have a graph showing a comparison between the methods discussed above. We have chosen the hyper-parameters that gave us the best performance during our basic hyper-parameter search.</p>
-
-  <figure>
-  <d-figure><img src="images/MAB_gifs/comp.svg"/></d-figure>
-  </figure>
-
-<p>We see the <em>Random</em> method can find the maximum much before any of the other techniques; this can be seen when we are faced with smaller spaces. But we will soon see that when we have larger search spaces, a random method isn't that efficient. This is because the probability of finding the optimum <d-math>x</d-math> in our new <d-math>f</d-math> real-valued multivariable function would drop exponentially with increasing dimensions due to what we call, the curse of dimensionality.</p>
-
-<h2 id="observation">Observation</h2>
-
-<p>We see that the plots above show the maximum gold content detected from all the holes that have been drilled. We can see that Random performs quite nicely. We will soon see that might not be the case in higher dimensional real-valued functions.</p>
-
-<h1 id="generalization">Generalization</h1>
-
-<span>Let us now formally introduce Bayesian Optimization. Our goal is to find the <d-math>{x}</d-math> where we reached global maximum (or minimum) of a function <d-math>f: \mathbb{R}^d \text{ -> } \mathbb{R}</d-math>. Constraints in Bayesian Optimization look like below quoted from slides/talk 
-<d-footnote>Talk from Peter Fraizer from Uber on Bayesian Optimization:<br>
-    <ul>
-    <li> <a href="https://www.youtube.com/watch?v=c4KKvyWW_Xk">Youtube Talk</a></li>
-    <li> <a href="https://people.orie.cornell.edu/pfrazier/Presentations/2018.11.INFORMS.tutorial.pdf">Slide Deck</a></li></ul>
-</d-footnote> on Tutorial on Bayesian Optimization from Peter Fraizer.</span>
-
-<blockquote>
-  <p>We’d like to optimize <d-math>f: \mathbb{R}^d \text{ -> } \mathbb{R}</d-math>.<br></p>
-  
-  <p>• <d-math>f</d-math>’s feasible set <d-math>A</d-math> is simple,
-  e.g., box constraints.<br>
-  • <d-math>f</d-math> is continuous but lacks special structure,
-  e.g., concavity, that would make it easy to optimize.<br>
-  • <d-math>f</d-math> is derivative-free:
-  evaluations do not give gradient information.<br>
-  • <d-math>f</d-math> is expensive to evaluate:
-  the # of times we can evaluate it
-  is severely limited.<br>
-  • <d-math>f</d-math> may be noisy. If noise is present, we’ll assume it
-  is independent and normally distributed, with
-  common but unknown variance.<br></p>
-</blockquote>
-
-<p>Let us link the above constraints to our initial problem statement of gold mining.</p>
-
-<ul>
-<li>Our domain in the gold mining problem is a single dimensional box constraint of <d-math>0 \leq x \leq 6</d-math>.</li>
-
-<li>Our ground truth can be seen as <em>not</em> convex or concave function, which resulted in local minima as well.</li>
-
-<li>Our evaluation (by drilling) of the amount of gold content at a location didn't give us any gradient information.</li>
-
-<li>The function we used in the case of Gold Mining problem is extremely costly to evaluate (drilling costs millions).</li>
-
-<li>This constraint is still satisfied in our case as we had used 0 noise, or zero mean zero std gaussian noise.</li>
-</ul>
-
-<h1 id="higherdimensions">Higher Dimensions</h1>
-
-<p>For now we have been looking at real-valued single dimensional function, i.e. <d-math>f: \mathbb{R} \texttt{ -> } \mathbb{R}</d-math> data where we needed to find the value of <d-math>\boldsymbol{x}</d-math> where we reached global maximum. Let's move on and try to tackle real-valued functions of <d-math>n</d-math> real variables functions, i.e. <d-math>f: \mathbb{R}^n \texttt{ -> } \mathbb{R}</d-math>. We will soon see that our methods that we saw earlier for the single dimensional case can be easily ported to multi-variable functions.</p>
-
-<h2 id="whyisthiseasier">Why is this easier?</h2>
-
-<p>One valid question one might come up is that we have replaced the original optimization problem to another optimization problem (optimization of acquisition function). How is this any better than the last problem. The main reason is that evaluating the acquisition function is much cheaper, whereas in the original problem, evaluating the value at a particular was extremely costly.</p>
-
-<h2 id="bayesianoptimizationvsgradientdescent">Bayesian Optimization vs. Gradient Descent</h2>
-
-<p>Some of the main differences between BO and GD as pointed out at StackExchange<d-cite key="BOvsGD"></d-cite>:</p>
-
-<ul>
-<li>The biggest difference between Bayesian Optimization and Gradient Descent is that in the latter case, we have access to the gradient values.</li>
-
-<li>BO doesn't assume the function to be convex, in the case of Gradient Descent if you would like to get to the global minima, your function should be convex.</li>
-
-<li>BO assumes the function we are optimizing is fairly smooth.</li>
-
-<li>BO doesn't scale well with large data, as the GP inference is cubic in the number of points.</li>
-</ul>
-
-<p>There has been work done in Bayesian Optimization to make use of gradient information. The idea is based on the fact that the Gaussian Processes' predictions can be updated to take in the gradient information we get from the function we are trying to optimize. For more information, we would suggest looking at the paper Bayesian Optimization with Gradients<d-cite key="BOwtGD"></d-cite> from Wu et. al..</p>
-
-<p>Now, as we have described BO more technically, let's have a look at how we can use this method in the case of Hyperparameter Tuning. Hyperparameters, you ask?</p>
-
-<h2 id="hyperparametersvsparameters">Hyperparameters v/s Parameters</h2>
-
-<p>We all are familiar with Machine Learning and the models that we use. To show one of the use cases for Bayesian optimization, we will quickly differentiate between hyperparameters and parameters. </p>
-
-
-<p>Hyperparameters is a parameter whose value is set before the learning process begins. Parameters, on the other hand, are the parameters that are learned looking at the data. One small example that we can think of can be of linear regression, we don't really have hyperparameters, but the parameters are the <d-math>W</d-math>: weight, <d-math>c</d-math>: intercept, which is learned from the data. If we apply lasso to linear regression, we introduce a regularization hyperparameter <d-math>\lambda</d-math>.<d-footnote> For more information visit the Wikipedia article on <a href="https://en.wikipedia.org/wiki/Hyperparameter_(machine_learning)">Hyperparamters</a>.</d-footnote></p>
-
-<h2 id="hyperparametersearch">Hyperparameter Search</h2>
-
-<p>Now as we are clear on the difference between hyperparameters and parameters we would like to introduce one of the most common use case of Bayesian Optimization; <em>Hyperparameter Tuning</em>: finding best performing hyperparameters on machine learning models. At last, hyperparameter searching is an optimization problem (optimizing our score).</p>
-
-<p>Usually, when training a model isn't expensive and time-consuming, we might just do a grid search or random search. The main issues faced when using these methods are as follows:</p>
-
-<ul>
-<li>Grid Search is not feasible if getting the functional value is extremely costly, as in case of a large neural network that takes days to train. This might result in days of waiting to get the accuracy scores.</li>
-
-<li>Random and Grid Search are near brute-force methods; this causes these methods to become extremely inefficient and impossible to use when the dimensions of our search space increase (aka the curse of dimensionality). You can get the intuition for <em>the curse of dimentionality</em> from <a href="https://stats.stackexchange.com/a/169170">this</a> excellent answer on stackoverflow.com</li>
-</ul>
-
-<blockquote>
-  <p>in essence when you have more dimensions you need exponentially more samples to be able to estimate the real-valued multivariable function.</p>
-</blockquote>
-
-<p>We turn to Bayesian optimization to find counter the expensiveness of getting the functional values, and these increased dimensions.</p>
-
-<h3 id="example1">Example 1</h3>
-
-<p>Let's us use an SVM on sklearn's moons dataset and try to find the optimal hyperparameter using Bayesian optimization. Let's have a look at the dataset first.</p>
-
-  <figure class="smaller-img">
-  <d-figure><img src="images/MAB_gifs/moons.svg"/></d-figure>
-  </figure>
-
-<span>Let us now try to learn the classification problem above using a Support Vector Machine (SVM). We are aware that SVM takes in 2 important hyperparameters, <d-code language="python">gamma</d-code> and <d-code language="python">C</d-code>. Let us apply Bayesian Optimization to learn the best hyperparameters for this classification task. <d-footnote> <strong>Note</strong>: the surface plots you see for the ground truth accuracies below were calculated for each possible of hyperparameter for showcasing purposes only. We don't have these values in real applications.</d-footnote></span>
-
-  <figure>
-  <d-figure><img src="images/MAB_gifs/pi3d-0.05-mat.gif"/></d-figure>
-  </figure>
-
-<p>Above we see a gif showing the work of the <em>Probability of Improvement</em> acquisition function in finding the best hyperparameters.</p>
-
-  <figure>
-  <d-figure><img src="images/MAB_gifs/ei3d-0.0001-mat.gif"/></d-figure>
-  </figure>
-
-<p>Above we see a gif showing the work of the <em>Expected Improvement</em> acquisition function in finding the best hyperparameters.</p>
-
-  <figure>
-  <d-figure><img src="images/MAB_gifs/gp3d-1-2-mat.gif"/></d-figure>
-  </figure>
-
-<p>Above we see a gif showing the work of the <em>Guassian Processes Upper Confidence Bound</em> acquisition function in finding the best hyperparameters. This by far seems to perform the best with getting quite close to the global optimum value of hyperparameters (found using brute force).</p>
-
-  <figure>
-  <d-figure><img src="images/MAB_gifs/rand3d.gif"/></d-figure>
-  </figure>
-
-<p>Now our favorite random acquisition function. :)</p>
-
-  <figure>
-  <d-figure><img src="images/MAB_gifs/comp3d.svg"/></d-figure>
-  </figure>
-
-<p>We see GP-UCB performed the best in this case. Random that was performing really nice in the last single dimensional example seems to perform much badly in this case. This can be attributed to the increase in the number of dimensions, it's much difficult to get to the optimal value by using random search.</p>
-
-<hr />
-
-<h4 id="example2">Example 2</h4>
-
-<p>Using Bayesian Optimization in Random Forests.</p>
-
-<p>Let us now show some plots showing Bayesian Optimization for learning nice hyperparameters for our Random Forest model.</p>
-
-<figure>
-  <d-figure><img src="images/MAB_gifs/RFpi3d-0.05-mat.gif"></d-figure>
-  </figure>
-
-<p>Above we see a gif showing the work of the <em>Probability of Improvement</em> acquisition function in finding the best hyperparameters.</p>
-
-<figure>
-  <d-figure><img src="images/MAB_gifs/RFei3d-0.0001-mat.gif"></d-figure>
-  </figure>
-
-<p>Above we see a gif showing the work of the <em>Expected Improvement</em> acquisition function in finding the best hyperparameters.</p>
-
-<figure>
-  <d-figure><img src="images/MAB_gifs/RFgp3d-1-2-mat.gif"></d-figure>
-  </figure>
-
-<p>Above we see a gif showing the work of the <em>Guassian Processes Upper Confidence Bound</em> acquisition function in finding the best hyperparameters.</p>
-
-<figure>
-  <d-figure><img src="images/MAB_gifs/RFrand3d.gif"></d-figure>
-  </figure>
-
-<p>Random acquisition function. :)</p>
-
-<figure>
-  <d-figure><img src="images/MAB_gifs/RFcomp3d.svg"></d-figure>
-  </figure>
-
-<p>In the case of Random Forests, one thing to notice is that the ground truth is not that smooth. Therefore the assumption of Bayesian Optimization (smooth functions) no longer holds to the fullest. Therefore we do see that random may perform better than some of the methods. The best performing method we see is Probability of Improvement.</p>
-
-<h3 id="example3">Example 3</h3>
-
-<p>Let's train CNNs on Mnist. Here we will be using <d-code language="python">scikit-optim</d-code>, which also provides us support for optimizing our function on a mix of categorical, integral, and real variables. We won't be plotting the ground truth here, as it's extremely costly to do so. Below is some of the code that will limit the search space.</p>
-
-<d-code block language="python">
-log_batch_size = Integer(
-    low=3,
-    high=6,
-    name='log_batch_size'
-  )
-lr = Real(
-    low=1e-6,
-    high=1e0,
-    prior='log-uniform',
-    name='lr'
-  )
-activation = Categorical(
-    categories=['relu', 'sigmoid'],
-    name='activation'
-  )
-
-dimensions = [
-    dim_num_batch_size_to_base,
-    dim_learning_rate,
-    dim_activation
-  ]
-</d-code>
-
-<p>
-Moving on we will now have a minimizer function imported from <d-code language="python">scikit-optim</d-code> called <d-code language="python">gp-minimize</d-code>. The easiness can be seen from the code block below. </p>
-
-<d-code block language="python">
-# setting up default parameters (1st point)
-default_parameters = [4, 1e-1, 'relu']
-
-# bayesian optimization
-search_result = gp_minimize(
-    func=train,
-    dimensions=dimensions,
-    acq_func='EI', # Expected Improvement.
-    n_calls=11,
-    x0=default_parameters
-  )
-</d-code>
-
-There you go you now have the hyperparameters that have minimized your -ve accuracy (maximized the original accuracy).
-
-<figure>
-  <d-figure><img src="images/MAB_gifs/conv.svg"></d-figure>
-  </figure>
-
-<p>Looking at the above example, we can see that incorporating Bayesian Optimization isn't a big problem and saves a lot of time we can see that the network was able to get to an accuracy of nearly one in around three iterations. That's impressive! The example above has been inspired by Hvass Laboratories' Tutorial on <d-code language="python">scikit-optim</d-code>. <d-footnote> <a href="https://github.com/Hvass-Labs/TensorFlow-Tutorials/blob/master/19_Hyper-Parameters.ipynb">Notebook</a> showcasing hyperparameter optimization in Tensorflow. </d-footnote></p>
-
-<h2 id="conclusions">Conclusions</h2>
-
-<p>We see that for the case of Bayesian optimization, we have a different problem that we are trying to solve compared to the active learning problem. This, therefore, leads to different objective functions that we try to maximize for the query points in both of the problems.</p>
-
-<h2 id="embracebayesianoptimization">Embrace Bayesian Optimization</h2>
-
-<p>After reading through the blog post, you might have been sold on the idea about the time you can save by asking Bayesian Optimizer to find the best hyperparameters for your fantastic model. There are a plethora of Bayesian Optimization libraries available. I have linked a few known ones. Do check them out.</p>
-
-<ul>
-<li><a href="https://scikit-optimize.github.io/">scikit-optimize</a><d-footnote>Really nice tutorial showcasing hyperparameter optimization on a neural network available at this <a href="https://github.com/Hvass-Labs/TensorFlow-Tutorials/blob/master/19_Hyper-Parameters.ipynb">link</a>.</d-footnote></li>
-
-<li><a href="https://app.sigopt.com/docs/overview/python">sigopt</a></li>
-
-<li><a href="http://hyperopt.github.io/hyperopt/">hyperopt</a></li>
-
-<li><a href="https://github.com/HIPS/Spearmint">spearmint</a></li>
-
-<li><a href="https://github.com/Yelp/MOE">MOE</a></li>
-</ul>
-
-<h3 id="caution">Caution</h3>
-
-<p>We need to take care while using Bayesian Optimization. Bayesian Optimization based on Gaussian Processes Regression is highly sensitive to the kernel used. For example, if you are using <a href="https://scikit-learn.org/stable/modules/generated/sklearn.gaussian_process.kernels.Matern.html">Matern</a> kernel, we are implicitly assuming that the function we are trying to optimize is first order differentiable.</p>
-
-<p>A nice list of tips and tricks one should have a look at if you aim to use Bayesian Optimization in your workflow is from this fantastic post by Thomas on <a href="https://thuijskens.github.io/2016/12/29/bayesian-optimisation/">Bayesian Optimization with sklearn</a>.</p>
-
-<p>Let's save us some time and money by delegating hyperparameter search to bayesian optimizers from now. Go get started see our <a href="#FurtherReading">Further Reading</a> section.</p>
-
-</d-article>
-
-
-
-
-<d-appendix>
-    
-<h3 id="FurtherReading">Further Reading</h3>
-  <ul>
-  <li><a href="http://jmlr.csail.mit.edu/papers/v12/pedregosa11a.html">Scikit-learn: Machine Learning in Python</a>, Pedregosa et al., JMLR 12, pp. 2825-2830, 2011.</li>
-  </ul>
-
-  <p>Youtube Videos</p>
-
-  <ul>
-  <li><a href="https://www.youtube.com/watch?v=c4KKvyWW_Xk">Bayesian Optimization Tutorial</a> by Peter Frazier, Uber
-
-  <ul>
-  <li><a href="https://people.orie.cornell.edu/pfrazier/Presentations/2018.11.INFORMS.tutorial.pdf">slides</a></li>
-
-  <li><a href="https://arxiv.org/abs/1807.02811">paper</a></li></ul>
-  </li>
-
-  <li><a href="https://www.youtube.com/watch?v=jtRPxRnOXnk">Bayesian Optimization with scikit-learn</a> by Thomas Huijskens at PyData London</li>
-
-  <li><a href="https://www.youtube.com/watch?v=vz3D36VXefI">Bayesian Optimization and Multi-Armed Bandit</a> by Nando de Freitas</li>
-  </ul>
-
-  <p>Misc:</p>
-
-  <ul>
-  <li><a href="https://nipunbatra.github.io/blog/2019/GP-1.html">Programatically understand Gaussian Processes</a></li>
-  </ul>
-
-  <d-bibliography src="references.bib"></d-bibliography>
-</d-appendix>
-
-</body>
 </html>
