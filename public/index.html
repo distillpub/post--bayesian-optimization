@@ -460,10 +460,11 @@
 
             <h3 id="gaussianprocessupperconfidenceboundgp_ucb">Gaussian Process Upper Confidence Bound (GP-UCB)</h3>
 
-            <p>
-              GP-UCB is another formulation for acquisition function where we have theoretical bounds on the number of iterations taken to reach near global maximum.
-            </p>
-
+            <p>Before talking about GP-UCB, let us quickly talk about regret. Imagine if the maximum gold was <d-math>a</d-math> units and our optimization instead samples a location containing <d-math>b < a</d-math> units, then our regret is
+                  <d-math>a - b</d-math>. If we accumulate the regret over <d-math>n</d-math> iterations, we get what is called <strong> cumulative regret. </strong>
+              <br />
+              GP-UCB is an interesting acquisition function as it gives us theoretical bounds on the convergence rates, or in other words, bounds the cumulative regret. Its formulation is given by: . We can see how this formulation looks fairly
+              similar to the first vanilla acquisition function that we had described.</p>
             <figure>
               <d-figure><img src="images/MAB_gifs/mab-gp-gp_ucb1-1.gif" /></d-figure>
             </figure>
@@ -491,7 +492,8 @@
 
             <p>One more acquisition function that is quite common is Thompson Sampling. It has a low overhead of setting up.</p>
 
-            <p>The idea is to sample functions within upper and lower probabilistic bounds of a regressor; one can then optimize on these functions and chose the next query point to be the <d-math>x = argmax(\text{sampled\_f})</d-math>. In other
+            <p>The idea is to sample functions within upper and lower probabilistic bounds of a regressor; one can then optimize on these functions and chose the next query point to be the <d-math>x = argmax(\text{sampled\_f})</d-math>. In
+              other
               words,
               sampling functions within the greyed out area in the graph below.</p>
 
@@ -512,7 +514,8 @@
 
               <p>We had used a little intelligent acquisition function earlier, let's see is out acquisition function is not that intelligent and chooses randomly.</p>
 
-              <p>We have here implemented a random method as a baseline. Notice, random method can find a location near the global maximum but is not able to exploit (try to find the global maxima that might be near this "best" location). Instead, it
+              <p>We have here implemented a random method as a baseline. Notice, random method can find a location near the global maximum but is not able to exploit (try to find the global maxima that might be near this "best" location).
+                Instead, it
                 randomly chooses to explore (not even intelligently) here and there. Even with no intelligent, we might get good locations which might be close to the location with the most gold content.
               </p>
               <figure>
@@ -523,7 +526,8 @@
 
               <h3 id="probabilityofimprovementdlambdatimesdexpectedimprovementei_pi">Probability of Improvement + <d-math>\lambda \ \times</d-math> Expected Improvement (EI_PI)</h3>
 
-              <p>Below we have tried to combine PI and EI using a linear combination as a combination of various acquisition function also results in an acquisition function. We can, therefore, combine any of the acquisition function and form a new
+              <p>Below we have tried to combine PI and EI using a linear combination as a combination of various acquisition function also results in an acquisition function. We can, therefore, combine any of the acquisition function and form a
+                new
                 one.</p>
 
               <figure>
@@ -539,20 +543,17 @@
                 <d-figure><img src="images/MAB_gifs/comp.svg" /></d-figure>
               </figure>
 
-              <p>We see the <em>Random</em> method can find the maximum much before any of the other techniques; this can be seen when we are faced with smaller spaces. But we will soon see that when we have larger search spaces, a random method
+              <p>We see the <em>Random</em> method can find the maximum much before any of the other techniques; this can be seen when we are faced with smaller spaces. But we will soon see that when we have larger search spaces, a random
+                method
                 isn't
-                that efficient. This is because the probability of finding the optimum <d-math>x</d-math> in our new <d-math>f</d-math> real-valued multivariable function would drop exponentially with increasing dimensions due to what we call, the
+                that efficient. This is because the probability of finding the optimum <d-math>x</d-math> in our new <d-math>f</d-math> real-valued multivariable function would drop exponentially with increasing dimensions due to what we call,
+                the
                 curse of dimensionality.</p>
 
-              <h2 id="observation">Observation</h2>
 
-              <p>We see that the plots above show the maximum gold content detected from all the holes that have been drilled. We can see that Random performs quite nicely. We will soon see that might not be the case in higher dimensional
-                real-valued
-                functions.</p>
+              <h2 id="generalization">Formalizing Bayesian Optimization</h2>
 
-              <h1 id="generalization">Generalization</h1>
-
-              <span>Let us now formally introduce Bayesian Optimization. Our goal is to find the <d-math>{x}</d-math> where we reached global maximum (or minimum) of a function <d-math>f: \mathbb{R}^d \text{ -> } \mathbb{R}</d-math>. Constraints in
+              <span>Let us now formally introduce Bayesian Optimization. Our goal is to find the <d-math>{x}</d-math> where we reached global maximum (or minimum) of a function <d-math>f: \mathbb{R}^d \mapsto \mathbb{R}</d-math>. Constraints in
                 Bayesian Optimization look like below quoted from slides/talk
                 <d-footnote>Talk from Peter Fraizer from Uber on Bayesian Optimization:<br>
                   <ul>
@@ -561,22 +562,34 @@
                   </ul>
                 </d-footnote> on Tutorial on Bayesian Optimization from Peter Fraizer.</span>
 
-              <blockquote>
-                <p>We’d like to optimize <d-math>f: \mathbb{R}^d \text{ -> } \mathbb{R}</d-math>.<br></p>
 
-                <p>• <d-math>f</d-math>’s feasible set <d-math>A</d-math> is simple,
-                  e.g., box constraints.<br>
-                  • <d-math>f</d-math> is continuous but lacks special structure,
-                  e.g., concavity, that would make it easy to optimize.<br>
-                  • <d-math>f</d-math> is derivative-free:
-                  evaluations do not give gradient information.<br>
-                  • <d-math>f</d-math> is expensive to evaluate:
+              <p>We’d like to optimize <d-math>f: \mathbb{R}^d \mapsto \mathbb{R}</d-math>.<br></p>
+
+              <ul>
+                <li>
+                  <d-math>f</d-math>’s feasible set <d-math>A</d-math> is simple,
+                  e.g., box constraints.
+                </li>
+                <li>
+                  <d-math>f</d-math> is continuous but lacks special structure,
+                  e.g., concavity, that would make it easy to optimize.
+                </li>
+                <li>
+                  <d-math>f</d-math> is derivative-free:
+                  evaluations do not give gradient information.
+                </li>
+                <li>
+                  <d-math>f</d-math> is expensive to evaluate:
                   the # of times we can evaluate it
-                  is severely limited.<br>
-                  • <d-math>f</d-math> may be noisy. If noise is present, we’ll assume it
+                  is severely limited.
+                </li>
+                <li>
+                  <d-math>f</d-math> may be noisy. If noise is present, we’ll assume it
                   is independent and normally distributed, with
-                  common but unknown variance.<br></p>
-              </blockquote>
+                  common but unknown variance.
+                </li>
+              </ul>
+
 
               <p>Let us link the above constraints to our initial problem statement of gold mining.</p>
 
@@ -587,258 +600,238 @@
 
                 <li>Our evaluation (by drilling) of the amount of gold content at a location didn't give us any gradient information.</li>
 
-                <li>The function we used in the case of Gold Mining problem is extremely costly to evaluate (drilling costs millions).</li>
+                <li>The function we used in the case of gold mining problem is extremely costly to evaluate (drilling costs millions).</li>
 
                 <li>This constraint is still satisfied in our case as we had used 0 noise, or zero mean zero std gaussian noise.</li>
               </ul>
-
+              <!--
               <h1 id="higherdimensions">Higher Dimensions</h1>
 
-              <p>For now we have been looking at real-valued single dimensional function, i.e. <d-math>f: \mathbb{R} \texttt{ -> } \mathbb{R}</d-math> data where we needed to find the value of <d-math>\boldsymbol{x}</d-math> where we reached global
-                maximum. Let's move on and try to tackle real-valued functions of <d-math>n</d-math> real variables functions, i.e. <d-math>f: \mathbb{R}^n \texttt{ -> } \mathbb{R}</d-math>. We will soon see that our methods that we saw earlier for
+              <p>For now we have been looking at real-valued single dimensional function, i.e. <d-math>f: \mathbb{R} \texttt{ -> } \mathbb{R}</d-math> data where we needed to find the value of <d-math>\boldsymbol{x}</d-math> where we reached
+                global
+                maximum. Let's move on and try to tackle real-valued functions of <d-math>n</d-math> real variables functions, i.e. <d-math>f: \mathbb{R}^n \texttt{ -> } \mathbb{R}</d-math>. We will soon see that our methods that we saw earlier
+                for
                 the
                 single dimensional case can be easily ported to multi-variable functions.</p>
+              -->
+              <h3 id="whyisthiseasier">Why is this easier?</h3>
 
-              <h2 id="whyisthiseasier">Why is this easier?</h2>
-
-              <p>One valid question one might come up is that we have replaced the original optimization problem to another optimization problem (optimization of acquisition function). How is this any better than the last problem. The main reason
+              <p>One valid question one might come up is that we have replaced the original optimization problem (optimizing the given black-box function) to another optimization problem (optimization of acquisition function). How is this any better
+                than the last problem? The main
+                reason
                 is
                 that evaluating the acquisition function is much cheaper, whereas in the original problem, evaluating the value at a particular was extremely costly.</p>
 
-              <h2 id="bayesianoptimizationvsgradientdescent">Bayesian Optimization vs. Gradient Descent</h2>
 
-              <p>Some of the main differences between BO and GD as pointed out at StackExchange<d-cite key="BOvsGD"></d-cite>:</p>
+              <h2 id="hyperparametersvsparameters">Hyperparameter Tuning</h2>
 
-              <ul>
-                <li>The biggest difference between Bayesian Optimization and Gradient Descent is that in the latter case, we have access to the gradient values.</li>
-
-                <li>BO doesn't assume the function to be convex, in the case of Gradient Descent if you would like to get to the global minima, your function should be convex.</li>
-
-                <li>BO assumes the function we are optimizing is fairly smooth.</li>
-
-                <li>BO doesn't scale well with large data, as the GP inference is cubic in the number of points.</li>
-              </ul>
-
-              <p>There has been work done in Bayesian Optimization to make use of gradient information. The idea is based on the fact that the Gaussian Processes' predictions can be updated to take in the gradient information we get from the
-                function
-                we are trying to optimize. For more information, we would suggest looking at the paper Bayesian Optimization with Gradients<d-cite key="BOwtGD"></d-cite> from Wu et. al..</p>
-
-              <p>Now, as we have described BO more technically, let's have a look at how we can use this method in the case of Hyperparameter Tuning. Hyperparameters, you ask?</p>
-
-              <h2 id="hyperparametersvsparameters">Hyperparameters v/s Parameters</h2>
-
-              <p>We all are familiar with Machine Learning and the models that we use. To show one of the use cases for Bayesian optimization, we will quickly differentiate between hyperparameters and parameters. </p>
+              <p>Before we talk about Bayesian optimization for hyperparameter tuning, we will quickly differentiate between hyperparameters and parameters. </p>
 
 
-              <p>Hyperparameters is a parameter whose value is set before the learning process begins. Parameters, on the other hand, are the parameters that are learned looking at the data. One small example that we can think of can be of linear
+              <p>Hyperparameters are parameters whose value is set before the learning process begins. Parameters, on the other hand, are the parameters that are learned looking at the data. One small example that we can think of can be of
+                linear
                 regression, we don't really have hyperparameters, but the parameters are the <d-math>W</d-math>: weight, <d-math>c</d-math>: intercept, which is learned from the data. If we apply lasso to linear regression, we introduce a
                 regularization hyperparameter <d-math>\lambda</d-math>.<d-footnote> For more information visit the Wikipedia article on <a href="https://en.wikipedia.org/wiki/Hyperparameter_(machine_learning)">Hyperparamters</a>.</d-footnote>
               </p>
 
-              <h2 id="hyperparametersearch">Hyperparameter Search</h2>
-
               <p>Now as we are clear on the difference between hyperparameters and parameters we would like to introduce one of the most common use case of Bayesian Optimization; <em>Hyperparameter Tuning</em>: finding best performing
                 hyperparameters
-                on machine learning models. At last, hyperparameter searching is an optimization problem (optimizing our score).</p>
+                on machine learning models. At last, hyperparameter tuning is an optimization problem (optimizing our metric of choice).</p>
 
-              <p>Usually, when training a model isn't expensive and time-consuming, we might just do a grid search or random search. The main issues faced when using these methods are as follows:</p>
+              <p>Usually, when training a model isn't expensive and time-consuming, we might just do a grid search. The main issue with grid search is that it is not feasible if getting the functional value is extremely costly, as in case of a large
+                neural network that takes days to train. This might result in days of waiting to get the accuracy scores.
 
-              <ul>
-                <li>Grid Search is not feasible if getting the functional value is extremely costly, as in case of a large neural network that takes days to train. This might result in days of waiting to get the accuracy scores.</li>
 
-                <li>Random and Grid Search are near brute-force methods; this causes these methods to become extremely inefficient and impossible to use when the dimensions of our search space increase (aka the curse of dimensionality). You can get
+
+                <p>We turn to Bayesian optimization to find counter the expensiveness of getting the functional values, and these increased dimensions.</p>
+
+                <h3 id="example1">Example 1</h3>
+
+                <p>Let's us use an SVM on sklearn's moons dataset and try to find the optimal hyperparameter using Bayesian optimization. Let's have a look at the dataset first.</p>
+
+                <figure class="smaller-img">
+                  <d-figure><img src="images/MAB_gifs/moons.svg" /></d-figure>
+                </figure>
+
+                <span>Let us now try to learn the classification problem above using a Support Vector Machine (SVM). We are aware that SVM takes in 2 important hyperparameters, <d-code language="python">gamma</d-code> and <d-code language="python">
+                    C
+                  </d-code>. Let us apply Bayesian Optimization to learn the best hyperparameters for this classification task. <d-footnote> <strong>Note</strong>: the surface plots you see for the ground truth accuracies below were calculated
+                    for
+                    each
+                    possible of hyperparameter for showcasing purposes only. We don't have these values in real applications.</d-footnote></span>
+
+                <figure>
+                  <d-figure><img src="images/MAB_gifs/pi3d-0.05-mat.gif" /></d-figure>
+                </figure>
+
+                <p>Above we see a gif showing the work of the <em>Probability of Improvement</em> acquisition function in finding the best hyperparameters.</p>
+
+                <figure>
+                  <d-figure><img src="images/MAB_gifs/ei3d-0.0001-mat.gif" /></d-figure>
+                </figure>
+
+                <p>Above we see a gif showing the work of the <em>Expected Improvement</em> acquisition function in finding the best hyperparameters.</p>
+
+                <figure>
+                  <d-figure><img src="images/MAB_gifs/gp3d-1-2-mat.gif" /></d-figure>
+                </figure>
+
+                <p>Above we see a gif showing the work of the <em>Guassian Processes Upper Confidence Bound</em> acquisition function in finding the best hyperparameters. This by far seems to perform the best with getting quite close to the
+                  global
+                  optimum value of hyperparameters (found using brute force).</p>
+
+                <figure>
+                  <d-figure><img src="images/MAB_gifs/rand3d.gif" /></d-figure>
+                </figure>
+
+                <p>Now our favorite random acquisition function. :)</p>
+
+                <figure>
+                  <d-figure><img src="images/MAB_gifs/comp3d.svg" /></d-figure>
+                </figure>
+
+                <p>We see GP-UCB performed the best in this case. Random that was performing really nice in the last single dimensional example seems to perform much badly in this case. This can be attributed to the increase in the number of
+                  dimensions,
+                  it's much difficult to get to the optimal value by using random search.</p>
+
+                <hr />
+
+                <h4 id="example2">Example 2</h4>
+
+                <p>Using Bayesian Optimization in Random Forests.</p>
+
+                <p>Let us now show some plots showing Bayesian Optimization for learning nice hyperparameters for our Random Forest model.</p>
+
+                <figure>
+                  <d-figure><img src="images/MAB_gifs/RFpi3d-0.05-mat.gif"></d-figure>
+                </figure>
+
+                <p>Above we see a gif showing the work of the <em>Probability of Improvement</em> acquisition function in finding the best hyperparameters.</p>
+
+                <figure>
+                  <d-figure><img src="images/MAB_gifs/RFei3d-0.0001-mat.gif"></d-figure>
+                </figure>
+
+                <p>Above we see a gif showing the work of the <em>Expected Improvement</em> acquisition function in finding the best hyperparameters.</p>
+
+                <figure>
+                  <d-figure><img src="images/MAB_gifs/RFgp3d-1-2-mat.gif"></d-figure>
+                </figure>
+
+                <p>Above we see a gif showing the work of the <em>Guassian Processes Upper Confidence Bound</em> acquisition function in finding the best hyperparameters.</p>
+
+                <figure>
+                  <d-figure><img src="images/MAB_gifs/RFrand3d.gif"></d-figure>
+                </figure>
+
+                <p>Random acquisition function. :)</p>
+
+                <figure>
+                  <d-figure><img src="images/MAB_gifs/RFcomp3d.svg"></d-figure>
+                </figure>
+
+                <p>In the case of Random Forests, one thing to notice is that the ground truth is not that smooth. Therefore the assumption of Bayesian Optimization (smooth functions) no longer holds to the fullest. Therefore we do see that
+                  random
+                  may
+                  perform better than some of the methods. The best performing method we see is Probability of Improvement.</p>
+
+                <h3 id="example3">Example 3</h3>
+
+                <p>Let's train CNNs on Mnist. Here we will be using <d-code language="python">scikit-optim</d-code>, which also provides us support for optimizing our function on a mix of categorical, integral, and real variables. We won't be
+                  plotting
+                  the ground truth here, as it's extremely costly to do so. Below is some of the code that will limit the search space.</p>
+
+                <d-code block language="python">
+                  log_batch_size = Integer(
+                  low=3,
+                  high=6,
+                  name='log_batch_size'
+                  )
+                  lr = Real(
+                  low=1e-6,
+                  high=1e0,
+                  prior='log-uniform',
+                  name='lr'
+                  )
+                  activation = Categorical(
+                  categories=['relu', 'sigmoid'],
+                  name='activation'
+                  )
+
+                  dimensions = [
+                  dim_num_batch_size_to_base,
+                  dim_learning_rate,
+                  dim_activation
+                  ]
+                </d-code>
+
+                <p>
+                  Moving on we will now have a minimizer function imported from <d-code language="python">scikit-optim</d-code> called <d-code language="python">gp-minimize</d-code>. The easiness can be seen from the code block below. </p>
+
+                <d-code block language="python">
+                  # setting up default parameters (1st point)
+                  default_parameters = [4, 1e-1, 'relu']
+
+                  # bayesian optimization
+                  search_result = gp_minimize(
+                  func=train,
+                  dimensions=dimensions,
+                  acq_func='EI', # Expected Improvement.
+                  n_calls=11,
+                  x0=default_parameters
+                  )
+                </d-code>
+
+                There you go you now have the hyperparameters that have minimized your -ve accuracy (maximized the original accuracy).
+
+                <figure>
+                  <d-figure><img src="images/MAB_gifs/conv.svg"></d-figure>
+                </figure>
+
+                <p>Looking at the above example, we can see that incorporating Bayesian Optimization isn't a big problem and saves a lot of time we can see that the network was able to get to an accuracy of nearly one in around three iterations.
+                  That's
+                  impressive! The example above has been inspired by Hvass Laboratories' Tutorial on <d-code language="python">scikit-optim</d-code>. <d-footnote> <a
+                      href="https://github.com/Hvass-Labs/TensorFlow-Tutorials/blob/master/19_Hyper-Parameters.ipynb">Notebook</a> showcasing hyperparameter optimization in Tensorflow. </d-footnote>
+                </p>
+
+                <h2 id="conclusions">Conclusions</h2>
+
+                <p>We see that for the case of Bayesian optimization, we have a different problem that we are trying to solve compared to the active learning problem. This, therefore, leads to different objective functions that we try to maximize
+                  for
                   the
-                  intuition for <em>the curse of dimentionality</em> from <a href="https://stats.stackexchange.com/a/169170">this</a> excellent answer on stackoverflow.com</li>
-              </ul>
+                  query points in both of the problems.</p>
 
-              <blockquote>
-                <p>in essence when you have more dimensions you need exponentially more samples to be able to estimate the real-valued multivariable function.</p>
-              </blockquote>
+                <h2 id="embracebayesianoptimization">Embrace Bayesian Optimization</h2>
 
-              <p>We turn to Bayesian optimization to find counter the expensiveness of getting the functional values, and these increased dimensions.</p>
+                <p>After reading through the blog post, you might have been sold on the idea about the time you can save by asking Bayesian Optimizer to find the best hyperparameters for your fantastic model. There are a plethora of Bayesian
+                  Optimization
+                  libraries available. I have linked a few known ones. Do check them out.</p>
 
-              <h3 id="example1">Example 1</h3>
+                <ul>
+                  <li><a href="https://scikit-optimize.github.io/">scikit-optimize</a>
+                    <d-footnote>Really nice tutorial showcasing hyperparameter optimization on a neural network available at this <a href="https://github.com/Hvass-Labs/TensorFlow-Tutorials/blob/master/19_Hyper-Parameters.ipynb">link</a>.
+                    </d-footnote>
+                  </li>
 
-              <p>Let's us use an SVM on sklearn's moons dataset and try to find the optimal hyperparameter using Bayesian optimization. Let's have a look at the dataset first.</p>
+                  <li><a href="https://app.sigopt.com/docs/overview/python">sigopt</a></li>
 
-              <figure class="smaller-img">
-                <d-figure><img src="images/MAB_gifs/moons.svg" /></d-figure>
-              </figure>
+                  <li><a href="http://hyperopt.github.io/hyperopt/">hyperopt</a></li>
 
-              <span>Let us now try to learn the classification problem above using a Support Vector Machine (SVM). We are aware that SVM takes in 2 important hyperparameters, <d-code language="python">gamma</d-code> and <d-code language="python">C
-                </d-code>. Let us apply Bayesian Optimization to learn the best hyperparameters for this classification task. <d-footnote> <strong>Note</strong>: the surface plots you see for the ground truth accuracies below were calculated for
-                  each
-                  possible of hyperparameter for showcasing purposes only. We don't have these values in real applications.</d-footnote></span>
+                  <li><a href="https://github.com/HIPS/Spearmint">spearmint</a></li>
 
-              <figure>
-                <d-figure><img src="images/MAB_gifs/pi3d-0.05-mat.gif" /></d-figure>
-              </figure>
+                  <li><a href="https://github.com/Yelp/MOE">MOE</a></li>
+                </ul>
 
-              <p>Above we see a gif showing the work of the <em>Probability of Improvement</em> acquisition function in finding the best hyperparameters.</p>
+                <h3 id="caution">Caution</h3>
 
-              <figure>
-                <d-figure><img src="images/MAB_gifs/ei3d-0.0001-mat.gif" /></d-figure>
-              </figure>
+                <p>We need to take care while using Bayesian Optimization. Bayesian Optimization based on Gaussian Processes Regression is highly sensitive to the kernel used. For example, if you are using <a
+                    href="https://scikit-learn.org/stable/modules/generated/sklearn.gaussian_process.kernels.Matern.html">Matern</a> kernel, we are implicitly assuming that the function we are trying to optimize is first order differentiable.</p>
 
-              <p>Above we see a gif showing the work of the <em>Expected Improvement</em> acquisition function in finding the best hyperparameters.</p>
+                <p>A nice list of tips and tricks one should have a look at if you aim to use Bayesian Optimization in your workflow is from this fantastic post by Thomas on <a
+                    href="https://thuijskens.github.io/2016/12/29/bayesian-optimisation/">Bayesian
+                    Optimization with sklearn</a>.</p>
 
-              <figure>
-                <d-figure><img src="images/MAB_gifs/gp3d-1-2-mat.gif" /></d-figure>
-              </figure>
-
-              <p>Above we see a gif showing the work of the <em>Guassian Processes Upper Confidence Bound</em> acquisition function in finding the best hyperparameters. This by far seems to perform the best with getting quite close to the global
-                optimum value of hyperparameters (found using brute force).</p>
-
-              <figure>
-                <d-figure><img src="images/MAB_gifs/rand3d.gif" /></d-figure>
-              </figure>
-
-              <p>Now our favorite random acquisition function. :)</p>
-
-              <figure>
-                <d-figure><img src="images/MAB_gifs/comp3d.svg" /></d-figure>
-              </figure>
-
-              <p>We see GP-UCB performed the best in this case. Random that was performing really nice in the last single dimensional example seems to perform much badly in this case. This can be attributed to the increase in the number of
-                dimensions,
-                it's much difficult to get to the optimal value by using random search.</p>
-
-              <hr />
-
-              <h4 id="example2">Example 2</h4>
-
-              <p>Using Bayesian Optimization in Random Forests.</p>
-
-              <p>Let us now show some plots showing Bayesian Optimization for learning nice hyperparameters for our Random Forest model.</p>
-
-              <figure>
-                <d-figure><img src="images/MAB_gifs/RFpi3d-0.05-mat.gif"></d-figure>
-              </figure>
-
-              <p>Above we see a gif showing the work of the <em>Probability of Improvement</em> acquisition function in finding the best hyperparameters.</p>
-
-              <figure>
-                <d-figure><img src="images/MAB_gifs/RFei3d-0.0001-mat.gif"></d-figure>
-              </figure>
-
-              <p>Above we see a gif showing the work of the <em>Expected Improvement</em> acquisition function in finding the best hyperparameters.</p>
-
-              <figure>
-                <d-figure><img src="images/MAB_gifs/RFgp3d-1-2-mat.gif"></d-figure>
-              </figure>
-
-              <p>Above we see a gif showing the work of the <em>Guassian Processes Upper Confidence Bound</em> acquisition function in finding the best hyperparameters.</p>
-
-              <figure>
-                <d-figure><img src="images/MAB_gifs/RFrand3d.gif"></d-figure>
-              </figure>
-
-              <p>Random acquisition function. :)</p>
-
-              <figure>
-                <d-figure><img src="images/MAB_gifs/RFcomp3d.svg"></d-figure>
-              </figure>
-
-              <p>In the case of Random Forests, one thing to notice is that the ground truth is not that smooth. Therefore the assumption of Bayesian Optimization (smooth functions) no longer holds to the fullest. Therefore we do see that random
-                may
-                perform better than some of the methods. The best performing method we see is Probability of Improvement.</p>
-
-              <h3 id="example3">Example 3</h3>
-
-              <p>Let's train CNNs on Mnist. Here we will be using <d-code language="python">scikit-optim</d-code>, which also provides us support for optimizing our function on a mix of categorical, integral, and real variables. We won't be
-                plotting
-                the ground truth here, as it's extremely costly to do so. Below is some of the code that will limit the search space.</p>
-
-              <d-code block language="python">
-                log_batch_size = Integer(
-                low=3,
-                high=6,
-                name='log_batch_size'
-                )
-                lr = Real(
-                low=1e-6,
-                high=1e0,
-                prior='log-uniform',
-                name='lr'
-                )
-                activation = Categorical(
-                categories=['relu', 'sigmoid'],
-                name='activation'
-                )
-
-                dimensions = [
-                dim_num_batch_size_to_base,
-                dim_learning_rate,
-                dim_activation
-                ]
-              </d-code>
-
-              <p>
-                Moving on we will now have a minimizer function imported from <d-code language="python">scikit-optim</d-code> called <d-code language="python">gp-minimize</d-code>. The easiness can be seen from the code block below. </p>
-
-              <d-code block language="python">
-                # setting up default parameters (1st point)
-                default_parameters = [4, 1e-1, 'relu']
-
-                # bayesian optimization
-                search_result = gp_minimize(
-                func=train,
-                dimensions=dimensions,
-                acq_func='EI', # Expected Improvement.
-                n_calls=11,
-                x0=default_parameters
-                )
-              </d-code>
-
-              There you go you now have the hyperparameters that have minimized your -ve accuracy (maximized the original accuracy).
-
-              <figure>
-                <d-figure><img src="images/MAB_gifs/conv.svg"></d-figure>
-              </figure>
-
-              <p>Looking at the above example, we can see that incorporating Bayesian Optimization isn't a big problem and saves a lot of time we can see that the network was able to get to an accuracy of nearly one in around three iterations.
-                That's
-                impressive! The example above has been inspired by Hvass Laboratories' Tutorial on <d-code language="python">scikit-optim</d-code>. <d-footnote> <a
-                    href="https://github.com/Hvass-Labs/TensorFlow-Tutorials/blob/master/19_Hyper-Parameters.ipynb">Notebook</a> showcasing hyperparameter optimization in Tensorflow. </d-footnote>
-              </p>
-
-              <h2 id="conclusions">Conclusions</h2>
-
-              <p>We see that for the case of Bayesian optimization, we have a different problem that we are trying to solve compared to the active learning problem. This, therefore, leads to different objective functions that we try to maximize for
-                the
-                query points in both of the problems.</p>
-
-              <h2 id="embracebayesianoptimization">Embrace Bayesian Optimization</h2>
-
-              <p>After reading through the blog post, you might have been sold on the idea about the time you can save by asking Bayesian Optimizer to find the best hyperparameters for your fantastic model. There are a plethora of Bayesian
-                Optimization
-                libraries available. I have linked a few known ones. Do check them out.</p>
-
-              <ul>
-                <li><a href="https://scikit-optimize.github.io/">scikit-optimize</a>
-                  <d-footnote>Really nice tutorial showcasing hyperparameter optimization on a neural network available at this <a href="https://github.com/Hvass-Labs/TensorFlow-Tutorials/blob/master/19_Hyper-Parameters.ipynb">link</a>.
-                  </d-footnote>
-                </li>
-
-                <li><a href="https://app.sigopt.com/docs/overview/python">sigopt</a></li>
-
-                <li><a href="http://hyperopt.github.io/hyperopt/">hyperopt</a></li>
-
-                <li><a href="https://github.com/HIPS/Spearmint">spearmint</a></li>
-
-                <li><a href="https://github.com/Yelp/MOE">MOE</a></li>
-              </ul>
-
-              <h3 id="caution">Caution</h3>
-
-              <p>We need to take care while using Bayesian Optimization. Bayesian Optimization based on Gaussian Processes Regression is highly sensitive to the kernel used. For example, if you are using <a
-                  href="https://scikit-learn.org/stable/modules/generated/sklearn.gaussian_process.kernels.Matern.html">Matern</a> kernel, we are implicitly assuming that the function we are trying to optimize is first order differentiable.</p>
-
-              <p>A nice list of tips and tricks one should have a look at if you aim to use Bayesian Optimization in your workflow is from this fantastic post by Thomas on <a
-                  href="https://thuijskens.github.io/2016/12/29/bayesian-optimisation/">Bayesian
-                  Optimization with sklearn</a>.</p>
-
-              <p>Let's save us some time and money by delegating hyperparameter search to bayesian optimizers from now. Go get started see our <a href="#FurtherReading">Further Reading</a> section.</p>
+                <p>Let's save us some time and money by delegating hyperparameter search to bayesian optimizers from now. Go get started see our <a href="#FurtherReading">Further Reading</a> section.</p>
 
   </d-article>
 
@@ -899,5 +892,26 @@
 </ul>
 
 <p>We will build the solution to both of these problems from the ground up.</p>
+
+
+<h2 id="bayesianoptimizationvsgradientdescent">Bayesian Optimization vs. Gradient Descent</h2>
+
+<p>Some of the main differences between BO and GD as pointed out at StackExchange<d-cite key="BOvsGD"></d-cite>:</p>
+
+<ul>
+  <li>The biggest difference between Bayesian Optimization and Gradient Descent is that in the latter case, we have access to the gradient values.</li>
+
+  <li>BO doesn't assume the function to be convex, in the case of Gradient Descent if you would like to get to the global minima, your function should be convex.</li>
+
+  <li>BO assumes the function we are optimizing is fairly smooth.</li>
+
+  <li>BO doesn't scale well with large data, as the GP inference is cubic in the number of points.</li>
+</ul>
+
+<p>There has been work done in Bayesian Optimization to make use of gradient information. The idea is based on the fact that the Gaussian Processes' predictions can be updated to take in the gradient information we get from the
+  function
+  we are trying to optimize. For more information, we would suggest looking at the paper Bayesian Optimization with Gradients<d-cite key="BOwtGD"></d-cite> from Wu et. al..</p>
+
+<p>Now, as we have described BO more technically, let's have a look at how we can use this method in the case of Hyperparameter Tuning. Hyperparameters, you ask?</p>
 
 </html>
