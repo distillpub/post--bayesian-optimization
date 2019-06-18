@@ -806,25 +806,25 @@
 
       <d-code block language="python">
         log_batch_size = Integer(
-        low=3,
-        high=6,
-        name='log_batch_size'
+            low=3,
+            high=6,
+            name='log_batch_size'
         )
         lr = Real(
-        low=1e-6,
-        high=1e0,
-        prior='log-uniform',
-        name='lr'
+            low=1e-6,
+            high=1e0,
+            prior='log-uniform',
+            name='lr'
         )
         activation = Categorical(
-        categories=['relu', 'sigmoid'],
-        name='activation'
+            categories=['relu', 'sigmoid'],
+            name='activation'
         )
 
         dimensions = [
-        dim_num_batch_size_to_base,
-        dim_learning_rate,
-        dim_activation
+            dim_num_batch_size_to_base,
+            dim_learning_rate,
+            dim_activation
         ]
       </d-code>
 
@@ -838,11 +838,11 @@
 
         # bayesian optimization
         search_result = gp_minimize(
-        func=train,
-        dimensions=dimensions,
-        acq_func='EI', # Expected Improvement.
-        n_calls=11,
-        x0=default_parameters
+            func=train,
+            dimensions=dimensions,
+            acq_func='EI', # Expected Improvement.
+            n_calls=11,
+            x0=default_parameters
         )
       </d-code>
 
@@ -867,9 +867,7 @@
       <h2 id="embracebayesianoptimization">Embrace Bayesian Optimization</h1>
 
       <p>
-        After reading through the blog post, you might have been sold on the idea about the time you can save by asking Bayesian Optimizer to find the best hyperparameters for your fantastic model. There are a plethora of Bayesian
-        Optimization
-        libraries are available. I have linked a few below. Do check them out.
+        After reading through the blog post, you might have been sold on the idea about the time you can save by asking Bayesian Optimizer to find the best hyperparameters for your fantastic model. There are a plethora of Bayesian Optimization libraries available. I have linked a few below. Do check them out.
       </p>
 
       <ul>
@@ -895,13 +893,11 @@
       </p>
 
       <p>
-        A nice list of tips and tricks one should have a look at if you aim to use Bayesian Optimization in your workflow is from this fantastic post by Thomas on <a
-          href="https://thuijskens.github.io/2016/12/29/bayesian-optimisation/">Bayesian
-          Optimization with sklearn</a>.
+        A nice list of tips and tricks one should have a look at if you aim to use Bayesian Optimization in your workflow is from this fantastic post by Thomas on <a href="https://thuijskens.github.io/2016/12/29/bayesian-optimisation/">Bayesian Optimization with sklearn</a>.
       </p>
 
       <p>
-        Let's save us some time and money by delegating hyperparameter search to bayesian optimizers from now. Go get started see our <a href="#FurtherReading">Further Reading</a> section.
+        Let's save us some time and money by delegating hyperparameter search to bayesian optimizers from now. Go get started by looking at our <a href="#FurtherReading">Further Reading</a> section.
       </p>
 
   </d-article>
@@ -941,6 +937,9 @@
   </d-appendix>
 
 </body>
+
+</html>
+
 <!-- 
 <figure>
   <d-figure><img src="images/MAB_gifs/active-gp.gif" /></d-figure>
