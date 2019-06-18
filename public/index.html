@@ -729,9 +729,19 @@
 
       <h3 id="example2">Example 2</h4>
 
-      <p>Using Bayesian Optimization in Random Forests.</p>
+      <p>
+        Using Bayesian Optimization in a Random Forest Regressor.<d-cite key="scikit"></d-cite>
+      </p>
 
-      <p>Let us now show some plots showing Bayesian Optimization for learning nice hyperparameters for our Random Forest model.</p>
+      <p>
+        We will continue now to train a Random Forest on the moons dataset we had used previously to learn the Support Vector Machine. The main hyperparameters of Random Forests we would like to optimize our accuracy are <d-code language="python">number</d-code> of Decision Trees we would like to have, <d-code language="python">maximum depth</d-code> for each of those decision trees.
+      </p>
+      <p>
+        The parameters of the Random Forest the individual Decision Trees that are formed.
+      </p>
+      <p>
+        We will be again using Gaussian Processes with Matern kernel to estimate and predict the accuracy function over the two hyperparameters.
+      </p>
 
       <figure>
         <d-figure><img src="images/MAB_gifs/RFpi3d-0.05-mat.gif"></d-figure>
