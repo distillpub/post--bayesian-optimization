@@ -48,7 +48,7 @@
   </d-front-matter>
 
   <d-title style="padding-bottom: 0">
-    <h1>Exploring Bayesian Optimization</h1>
+    <h2>Exploring Bayesian Optimization</h2>
     <p>Breaking Bayesian Optimization into small, sizable chunks.</p>
 
     <!-- <d-figure id="Teaser" class="l-screen shaded-figure" style="border-bottom: none"></d-figure> -->
@@ -61,7 +61,7 @@
     <p> We are increasingly getting used to deep(er) neural networks! These networks often come with a huge number of hyperparameters: like the number of layers, the dropout rate, the learning rate. How do we efficiently optimize these? In this
       article, we will talk about Bayesian Optimization - which is an effective suite of techniques often used to efficiently tune the hyperparameters.</p>
     <p> Before we talk in depth about Bayesian Optimization and its applicability in hyperparameter tuning, we will look into an example problem: maximizing a black box function!
-      <h2 id="mininggold">Mining Gold!</h2>
+      <h1 id="mininggold">Mining Gold!</h1>
       <p> Let us start the discussion about mining gold. For now, let us make a simplifying assumption, the gold content lies in a one-dimensional space, i.e., we are talking gold distribution only about a line.
         Our aim is to find the location along this line where we would get maximum returns and drill at that location. Now, at the start of the activity, we have no idea about the amount of gold at different locations.
         The only way we can get the information about the amount of gold is by drilling at a location.
@@ -88,7 +88,7 @@
 
 
 
-        <h1 id="activelearning">Active Learning</h3>
+        <h2 id="activelearning">Active Learning</h3>
 
         <p>In machine learning problems, often, unlabelled data is very easily available, but labelling could be an expensive task. As an example, for a speech-to-text task, the ground truth labelling or annotation task requires expert(s) to manually
           label words and sentences. In our gold mining problem, drilling is an expensive operation and we would like to minimize it. But, without drilling we can not estimate the gold estimate. Active learning would solve this problem by posing a
@@ -161,7 +161,7 @@
           make our estimates better.
         </p>
 
-        <h1 id="bayesianoptimization">Bayesian Optimization</h3>
+        <h2 id="bayesianoptimization">Bayesian Optimization</h3>
         <p><strong>Problem 2</strong> requires us to find the location where the gold content is maximum. Even though the problem setting may be similar, the objective is quite different than problem 1. In other words, we just want the location where
           we can drill to get the most gold.</p>
 
@@ -424,7 +424,7 @@
               Is this better than before? Turns out a yes and a no. We see that here we do too much exploration given the value of <d-math>\epsilon = 3</d-math>. Which results in early reaching something close to global maxima, but unfortunately we don't exploit to get more gains near the global maxima. We would have liked an acquisition function that tried to exploit a bit more after reaching somewhere close to the global maxima.
             </p>
 
-            <h3 id="eipi-relation">PI vs. EI</h3>
+            <h4 id="eipi-relation">PI vs. EI</h3>
 
 
             <p>
@@ -489,7 +489,7 @@
             </figure>
             <p>
 
-              <p>Thompson Sampling<d-cite key="thompTut"></d-cite> is general enough to be useful even when we have Bernoulli (the domain of x is spatially independent) distributions modeling the function <d-math>F</d-math>, instead of Gaussian
+              <p>Thompson Sampling<d-cite key="thompTut"></d-cite> is general enough to be useful even when we have Bernoulli (the domain of <d-math>x</d-math> is spatially independent) distributions modeling the function <d-math>F</d-math>, instead of Gaussian
                 Process.</p>
 
               <figure>
@@ -535,7 +535,7 @@
 
               <hr />
 
-              <h2 id="generalization">Formalizing Bayesian Optimization</h2>
+              <h1 id="generalization">Formalizing Bayesian Optimization</h1>
 
               <span>Let us now formally introduce Bayesian Optimization. Our goal is to find the <d-math>{x}</d-math> where we reached global maximum (or minimum) of a function <d-math>f: \mathbb{R}^d \mapsto \mathbb{R}</d-math>. Constraints in
                 Bayesian Optimization look like below quoted from slides/talk
@@ -589,7 +589,7 @@
                 <li>This constraint is still satisfied in our case as we had used 0 noise, or zero mean zero std gaussian noise.</li>
               </ul>
               <!--
-              <h1 id="higherdimensions">Higher Dimensions</h1>
+              <h2 id="higherdimensions">Higher Dimensions</h2>
 
               <p>For now we have been looking at real-valued single dimensional function, i.e. <d-math>f: \mathbb{R} \texttt{ -> } \mathbb{R}</d-math> data where we needed to find the value of <d-math>\boldsymbol{x}</d-math> where we reached
                 global
@@ -607,7 +607,7 @@
                 that evaluating the acquisition function is much cheaper, whereas in the original problem, evaluating the value at a particular was extremely costly.</p>
 
 
-              <h1 id="hyperparametersvsparameters">Hyperparameter Tuning</h2>
+              <h2 id="hyperparametersvsparameters">Hyperparameter Tuning</h1>
 
               <p>Before we talk about Bayesian optimization for hyperparameter tuning, we will quickly differentiate between hyperparameters and parameters. </p>
 
@@ -637,12 +637,12 @@
                   <d-figure><img src="images/MAB_gifs/moons.svg" /></d-figure>
                 </figure>
 
-                <span>Let us now try to learn the classification problem above using a Support Vector Machine (SVM). We are aware that SVM takes in 2 important hyperparameters, <d-code language="python">gamma</d-code> and <d-code language="python">
-                    C
-                  </d-code>. Let us apply Bayesian Optimization to learn the best hyperparameters for this classification task. <d-footnote> <strong>Note</strong>: the surface plots you see for the ground truth accuracies below were calculated
-                    for
-                    each
-                    possible of hyperparameter for showcasing purposes only. We don't have these values in real applications.</d-footnote></span>
+                <span>
+                  Let us now try to learn the classification problem above using a Support Vector Machine (SVM). We are aware that SVM takes in 2 important hyperparameters, 
+                    <d-code language="python">gamma</d-code> and 
+                    <d-code language="python">C</d-code>.
+                  Let us apply Bayesian Optimization to learn the best hyperparameters for this classification task. <d-footnote> <strong>Note</strong>: the surface plots you see for the Ground Truth Accuracies below were calculated for each possible of hyperparameter for showcasing purposes only. We don't have these values in real applications.
+                </d-footnote></span>
 
                 <figure>
                   <d-figure><img src="images/MAB_gifs/pi3d-0.05-mat.gif" /></d-figure>
@@ -678,9 +678,7 @@
                   dimensions,
                   it's much difficult to get to the optimal value by using random search.</p>
 
-                <hr />
-
-                <h4 id="example2">Example 2</h4>
+                <h3 id="example2">Example 2</h4>
 
                 <p>Using Bayesian Optimization in Random Forests.</p>
 
@@ -778,18 +776,18 @@
                       href="https://github.com/Hvass-Labs/TensorFlow-Tutorials/blob/master/19_Hyper-Parameters.ipynb">Notebook</a> showcasing hyperparameter optimization in Tensorflow. </d-footnote>
                 </p>
 
-                <h2 id="conclusions">Conclusions</h2>
+                <h1 id="conclusions">Conclusions</h1>
 
                 <p>We see that for the case of Bayesian optimization, we have a different problem that we are trying to solve compared to the active learning problem. This, therefore, leads to different objective functions that we try to maximize
                   for
                   the
                   query points in both of the problems.</p>
 
-                <h2 id="embracebayesianoptimization">Embrace Bayesian Optimization</h2>
+                <h2 id="embracebayesianoptimization">Embrace Bayesian Optimization</h1>
 
                 <p>After reading through the blog post, you might have been sold on the idea about the time you can save by asking Bayesian Optimizer to find the best hyperparameters for your fantastic model. There are a plethora of Bayesian
                   Optimization
-                  libraries available. I have linked a few known ones. Do check them out.</p>
+                  libraries available. I have linked a few below. Do check them out.</p>
 
                 <ul>
                   <li><a href="https://scikit-optimize.github.io/">scikit-optimize</a>
@@ -806,7 +804,7 @@
                   <li><a href="https://github.com/Yelp/MOE">MOE</a></li>
                 </ul>
 
-                <h3 id="caution">Caution</h3>
+                <h2 id="caution">Caution</h3>
 
                 <p>We need to take care while using Bayesian Optimization. Bayesian Optimization based on Gaussian Processes Regression is highly sensitive to the kernel used. For example, if you are using <a
                     href="https://scikit-learn.org/stable/modules/generated/sklearn.gaussian_process.kernels.Matern.html">Matern</a> kernel, we are implicitly assuming that the function we are trying to optimize is first order differentiable.</p>
@@ -856,7 +854,7 @@
   </d-appendix>
 
 </body>
-
+<!-- 
 <figure>
   <d-figure><img src="images/MAB_gifs/active-gp.gif" /></d-figure>
 </figure>
@@ -878,7 +876,7 @@
 <p>We will build the solution to both of these problems from the ground up.</p>
 
 
-<h2 id="bayesianoptimizationvsgradientdescent">Bayesian Optimization vs. Gradient Descent</h2>
+<h1 id="bayesianoptimizationvsgradientdescent">Bayesian Optimization vs. Gradient Descent</h1>
 
 <p>Some of the main differences between BO and GD as pointed out at StackExchange<d-cite key="BOvsGD"></d-cite>:</p>
 
@@ -898,4 +896,4 @@
 
 <p>Now, as we have described BO more technically, let's have a look at how we can use this method in the case of Hyperparameter Tuning. Hyperparameters, you ask?</p>
 
-</html>
+</html> -->
