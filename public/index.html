@@ -347,21 +347,36 @@
               <d-figure><img src="images/MAB_gifs/mab-gp-pi-eps3.gif" /></d-figure>
             </figure>
             <p>
-              We see that we made things worse! Our model now uses <d-math>\epsilon = 3</d-math>, which has effectively resulted in way too much exploration. This amount of exploration is not able to exploit when we land somewhere near
-              a
-              global maximum.
+              We see that we made things worse! Our model now uses <d-math>\epsilon = 3</d-math>, which has effectively resulted in way too much exploration. This amount of exploration is not able to exploit when we land somewhere near a global maximum.
             </p>
-
-
-
-
 
             <h3 id="expectedimprovementei">Expected Improvement (EI)</h3>
 
             <p>
-              Probability of improvement only looked at <d-code language="python">how likely</d-code> is an improvement, but, shouldn't we be looking into <d-code language="python">how much</d-code> we can improve? The next criterion called,
-              Expected
-              Improvement, (EI) does exactly that!
+              Probability of improvement only looked at <d-code language="python">how likely</d-code> is an improvement, but, shouldn't we be looking into <d-code language="python">how much</d-code> we can improve? The next criterion called, Expected Improvement, (EI) does exactly that!
+            </p>
+
+            <p>
+              In this acquisition function, <d-math>n + 1^{th}</d-math> query point, <d-math>x_{n+1}</d-math>, is selected according to the equation below.
+            </p>
+            <p>
+              Where, <d-math>f</d-math> is the actual ground truth function, <d-math>f_{t}</d-math> is our prediction of the ground truth at <d-math>t^{th}</d-math> timestep and <d-math>x^\star</d-math> is the actual position where the ground truth function takes the maximum value.
+            </p>
+
+            <d-math block>
+              x_{n+1} = argmin_x \mathbb{E} \left( ||f_{n+1}(x) - f(x^\star ) || \ | \ \mathcal{D}_n \right)
+            </d-math>
+
+            <p>
+              In essence we are trying to select the point that minimizes the distance to the objective evaluated at the maximum. Unfortunetly we don't know the ground truth, <d-math>f</d-math>. Mockus<d-cite key="mockusEI"></d-cite> proposed the following acquisition function to overcome the issue.
+            </p>
+
+            <d-math block>
+              x = argmax_x \mathbb{E} \left( {max} \{ 0, f_{n+1}(x) - f^{max} \} \ | \ \mathcal{D}_n \right)
+            </d-math>
+
+            <p>
+              Where <d-math>f^{max}</d-math> is the maximum value that has been encountered so far. This equation can be easily converted analytically to a closed form equation shown below.
             </p>
 
             <d-math block>
@@ -520,7 +535,7 @@
 
               <h3 id="comparison">Comparison</h3>
 
-              <p>Below we have a graph showing a comparison between the methods discussed above. We have chosen the hyper-parameters that gave us the best performance during our basic hyper-parameter search.</p>
+              <p>Below we have a graph showing a comparison between the methods discussed above. We have chosen the hyper-parameters that gave us the best performance during our basic hyper-parameter search.<d-footnotes>To know more about the difference between acquisition functions look at <a href="https://www.cs.ubc.ca/~nando/540-2013/lectures/l7.pdf">these</a> amazing slides from Nando De Freitas</d-footnotes></p>
 
               <figure>
                 <d-figure><img src="images/MAB_gifs/comp.svg" /></d-figure>
