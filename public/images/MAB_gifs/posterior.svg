@@ -29,7 +29,7 @@ z
    <g id="matplotlib.axis_1">
     <g id="xtick_1">
      <g id="line2d_1">
-      <path clip-path="url(#p998c550d75)" d="M 48.955511 244.0482 
+      <path clip-path="url(#p560df4acaa)" d="M 48.955511 244.0482 
 L 48.955511 26.6082 
 " style="fill:none;stroke:#cbcbcb;"/>
      </g>
@@ -74,7 +74,7 @@ z
     </g>
     <g id="xtick_2">
      <g id="line2d_3">
-      <path clip-path="url(#p998c550d75)" d="M 105.900966 244.0482 
+      <path clip-path="url(#p560df4acaa)" d="M 105.900966 244.0482 
 L 105.900966 26.6082 
 " style="fill:none;stroke:#cbcbcb;"/>
      </g>
@@ -103,7 +103,7 @@ z
     </g>
     <g id="xtick_3">
      <g id="line2d_5">
-      <path clip-path="url(#p998c550d75)" d="M 162.84642 244.0482 
+      <path clip-path="url(#p560df4acaa)" d="M 162.84642 244.0482 
 L 162.84642 26.6082 
 " style="fill:none;stroke:#cbcbcb;"/>
      </g>
@@ -158,7 +158,7 @@ z
     </g>
     <g id="xtick_4">
      <g id="line2d_7">
-      <path clip-path="url(#p998c550d75)" d="M 219.791875 244.0482 
+      <path clip-path="url(#p560df4acaa)" d="M 219.791875 244.0482 
 L 219.791875 26.6082 
 " style="fill:none;stroke:#cbcbcb;"/>
      </g>
@@ -222,7 +222,7 @@ z
     </g>
     <g id="xtick_5">
      <g id="line2d_9">
-      <path clip-path="url(#p998c550d75)" d="M 276.73733 244.0482 
+      <path clip-path="url(#p560df4acaa)" d="M 276.73733 244.0482 
 L 276.73733 26.6082 
 " style="fill:none;stroke:#cbcbcb;"/>
      </g>
@@ -261,7 +261,7 @@ z
     </g>
     <g id="xtick_6">
      <g id="line2d_11">
-      <path clip-path="url(#p998c550d75)" d="M 333.682784 244.0482 
+      <path clip-path="url(#p560df4acaa)" d="M 333.682784 244.0482 
 L 333.682784 26.6082 
 " style="fill:none;stroke:#cbcbcb;"/>
      </g>
@@ -312,7 +312,7 @@ z
     </g>
     <g id="xtick_7">
      <g id="line2d_13">
-      <path clip-path="url(#p998c550d75)" d="M 390.628239 244.0482 
+      <path clip-path="url(#p560df4acaa)" d="M 390.628239 244.0482 
 L 390.628239 26.6082 
 " style="fill:none;stroke:#cbcbcb;"/>
      </g>
@@ -400,7 +400,7 @@ z
    <g id="matplotlib.axis_2">
     <g id="ytick_1">
      <g id="line2d_15">
-      <path clip-path="url(#p998c550d75)" d="M 31.871875 212.700573 
+      <path clip-path="url(#p560df4acaa)" d="M 31.871875 212.700573 
 L 407.711875 212.700573 
 " style="fill:none;stroke:#cbcbcb;"/>
      </g>
@@ -414,7 +414,7 @@ L 407.711875 212.700573
     </g>
     <g id="ytick_2">
      <g id="line2d_17">
-      <path clip-path="url(#p998c550d75)" d="M 31.871875 169.599165 
+      <path clip-path="url(#p560df4acaa)" d="M 31.871875 169.599165 
 L 407.711875 169.599165 
 " style="fill:none;stroke:#cbcbcb;"/>
      </g>
@@ -428,7 +428,7 @@ L 407.711875 169.599165
     </g>
     <g id="ytick_3">
      <g id="line2d_19">
-      <path clip-path="url(#p998c550d75)" d="M 31.871875 126.497757 
+      <path clip-path="url(#p560df4acaa)" d="M 31.871875 126.497757 
 L 407.711875 126.497757 
 " style="fill:none;stroke:#cbcbcb;"/>
      </g>
@@ -442,7 +442,7 @@ L 407.711875 126.497757
     </g>
     <g id="ytick_4">
      <g id="line2d_21">
-      <path clip-path="url(#p998c550d75)" d="M 31.871875 83.396349 
+      <path clip-path="url(#p560df4acaa)" d="M 31.871875 83.396349 
 L 407.711875 83.396349 
 " style="fill:none;stroke:#cbcbcb;"/>
      </g>
@@ -456,7 +456,7 @@ L 407.711875 83.396349
     </g>
     <g id="ytick_5">
      <g id="line2d_23">
-      <path clip-path="url(#p998c550d75)" d="M 31.871875 40.294941 
+      <path clip-path="url(#p560df4acaa)" d="M 31.871875 40.294941 
 L 407.711875 40.294941 
 " style="fill:none;stroke:#cbcbcb;"/>
      </g>
@@ -1965,14 +1965,14 @@ L 50.096322 -144.283702
 L 49.525917 -143.395616 
 L 48.955511 -142.508525 
 z
-" id="m3c922c542d" style="stroke:#808080;stroke-opacity:0.4;stroke-width:0.5;"/>
+" id="m6862ff0aa2" style="stroke:#808080;stroke-opacity:0.4;stroke-width:0.5;"/>
     </defs>
-    <g clip-path="url(#p998c550d75)">
-     <use style="fill:#808080;fill-opacity:0.4;stroke:#808080;stroke-opacity:0.4;stroke-width:0.5;" x="0" xlink:href="#m3c922c542d" y="279.888825"/>
+    <g clip-path="url(#p560df4acaa)">
+     <use style="fill:#808080;fill-opacity:0.4;stroke:#808080;stroke-opacity:0.4;stroke-width:0.5;" x="0" xlink:href="#m6862ff0aa2" y="279.888825"/>
     </g>
    </g>
    <g id="line2d_25">
-    <path clip-path="url(#p998c550d75)" d="M 48.955511 124.026662 
+    <path clip-path="url(#p560df4acaa)" d="M 48.955511 124.026662 
 L 55.229969 116.357035 
 L 59.222805 111.802903 
 L 62.645237 108.235176 
@@ -2029,7 +2029,7 @@ L 390.628239 212.613866
 " style="fill:none;stroke:#000000;stroke-width:2.7;"/>
    </g>
    <g id="line2d_26">
-    <path clip-path="url(#p998c550d75)" d="M 48.955511 151.351752 
+    <path clip-path="url(#p560df4acaa)" d="M 48.955511 151.351752 
 L 52.948348 142.30778 
 L 56.941184 133.808218 
 L 60.934021 125.883872 
@@ -2151,7 +2151,7 @@ L 407.711875 26.6082
 " style="fill:none;stroke:#f0f0f0;stroke-linecap:square;stroke-linejoin:miter;stroke-width:3;"/>
    </g>
    <g id="text_15">
-    <!-- Plotting Posterior -->
+    <!-- Posterior -->
     <defs>
      <path d="M 27 70 
 Q 41.59375 70 49.4375 64.453125 
@@ -2181,59 +2181,6 @@ Q 38.703125 60.296875 35.203125 60.890625
 Q 31.703125 61.5 27.796875 61.5 
 z
 " id="Ubuntu-80"/>
-     <path d="M 17.296875 0 
-L 8 0 
-L 8 52 
-L 17.296875 52 
-z
-M 12.59375 61.40625 
-Q 10.09375 61.40625 8.34375 63.046875 
-Q 6.59375 64.703125 6.59375 67.5 
-Q 6.59375 70.296875 8.34375 71.9375 
-Q 10.09375 73.59375 12.59375 73.59375 
-Q 15.09375 73.59375 16.84375 71.9375 
-Q 18.59375 70.296875 18.59375 67.5 
-Q 18.59375 64.703125 16.84375 63.046875 
-Q 15.09375 61.40625 12.59375 61.40625 
-z
-" id="Ubuntu-105"/>
-     <path d="M 40.59375 5.203125 
-Q 39.40625 4.40625 35.953125 3.15625 
-Q 32.5 1.90625 27.90625 1.90625 
-Q 23.203125 1.90625 19.046875 3.40625 
-Q 14.90625 4.90625 11.796875 8.046875 
-Q 8.703125 11.203125 6.890625 15.890625 
-Q 5.09375 20.59375 5.09375 27.09375 
-Q 5.09375 32.796875 6.796875 37.546875 
-Q 8.5 42.296875 11.75 45.75 
-Q 15 49.203125 19.703125 51.140625 
-Q 24.40625 53.09375 30.296875 53.09375 
-Q 36.796875 53.09375 41.640625 52.140625 
-Q 46.5 51.203125 49.796875 50.40625 
-L 49.796875 4 
-Q 49.796875 -8 43.59375 -13.390625 
-Q 37.40625 -18.796875 24.796875 -18.796875 
-Q 19.90625 -18.796875 15.546875 -18 
-Q 11.203125 -17.203125 8 -16.09375 
-L 9.703125 -8 
-Q 12.5 -9.09375 16.546875 -9.9375 
-Q 20.59375 -10.796875 25 -10.796875 
-Q 33.296875 -10.796875 36.9375 -7.5 
-Q 40.59375 -4.203125 40.59375 3 
-z
-M 40.5 43.796875 
-Q 39.09375 44.203125 36.75 44.546875 
-Q 34.40625 44.90625 30.40625 44.90625 
-Q 22.90625 44.90625 18.84375 40 
-Q 14.796875 35.09375 14.796875 27 
-Q 14.796875 22.5 15.9375 19.296875 
-Q 17.09375 16.09375 19.046875 14 
-Q 21 11.90625 23.546875 10.90625 
-Q 26.09375 9.90625 28.796875 9.90625 
-Q 32.5 9.90625 35.59375 10.953125 
-Q 38.703125 12 40.5 13.40625 
-z
-" id="Ubuntu-103"/>
      <path d="M 20.09375 6.703125 
 Q 25.796875 6.703125 28.546875 8.203125 
 Q 31.296875 9.703125 31.296875 13 
@@ -2288,26 +2235,33 @@ Q 11.296875 51 16.1875 52.046875
 Q 21.09375 53.09375 27.203125 53.09375 
 z
 " id="Ubuntu-114"/>
+     <path d="M 17.296875 0 
+L 8 0 
+L 8 52 
+L 17.296875 52 
+z
+M 12.59375 61.40625 
+Q 10.09375 61.40625 8.34375 63.046875 
+Q 6.59375 64.703125 6.59375 67.5 
+Q 6.59375 70.296875 8.34375 71.9375 
+Q 10.09375 73.59375 12.59375 73.59375 
+Q 15.09375 73.59375 16.84375 71.9375 
+Q 18.59375 70.296875 18.59375 67.5 
+Q 18.59375 64.703125 16.84375 63.046875 
+Q 15.09375 61.40625 12.59375 61.40625 
+z
+" id="Ubuntu-105"/>
     </defs>
-    <g transform="translate(149.545975 20.6082)scale(0.1728 -0.1728)">
+    <g transform="translate(183.336475 20.6082)scale(0.1728 -0.1728)">
      <use xlink:href="#Ubuntu-80"/>
-     <use x="60.799988" xlink:href="#Ubuntu-108"/>
-     <use x="88.099976" xlink:href="#Ubuntu-111"/>
-     <use x="147.09996" xlink:href="#Ubuntu-116"/>
-     <use x="187.299957" xlink:href="#Ubuntu-116"/>
-     <use x="227.499954" xlink:href="#Ubuntu-105"/>
-     <use x="252.799942" xlink:href="#Ubuntu-110"/>
-     <use x="310.199936" xlink:href="#Ubuntu-103"/>
-     <use x="367.999924" xlink:href="#Ubuntu-32"/>
-     <use x="391.099915" xlink:href="#Ubuntu-80"/>
-     <use x="451.868652" xlink:href="#Ubuntu-111"/>
-     <use x="510.868637" xlink:href="#Ubuntu-115"/>
-     <use x="555.468628" xlink:href="#Ubuntu-116"/>
-     <use x="595.653" xlink:href="#Ubuntu-101"/>
-     <use x="651.552994" xlink:href="#Ubuntu-114"/>
-     <use x="690.152985" xlink:href="#Ubuntu-105"/>
-     <use x="715.452972" xlink:href="#Ubuntu-111"/>
-     <use x="774.452957" xlink:href="#Ubuntu-114"/>
+     <use x="60.768738" xlink:href="#Ubuntu-111"/>
+     <use x="119.768723" xlink:href="#Ubuntu-115"/>
+     <use x="164.368713" xlink:href="#Ubuntu-116"/>
+     <use x="204.553085" xlink:href="#Ubuntu-101"/>
+     <use x="260.453079" xlink:href="#Ubuntu-114"/>
+     <use x="299.05307" xlink:href="#Ubuntu-105"/>
+     <use x="324.353058" xlink:href="#Ubuntu-111"/>
+     <use x="383.353043" xlink:href="#Ubuntu-114"/>
     </g>
    </g>
    <g id="legend_1">
@@ -2472,10 +2426,10 @@ C -7.747755 -4.499694 -8.660254 -2.296726 -8.660254 0
 C -8.660254 2.296726 -7.747755 4.499694 -6.123724 6.123724 
 C -4.499694 7.747755 -2.296726 8.660254 0 8.660254 
 z
-" id="m23d0598467" style="stroke:#ff0000;stroke-width:0.5;"/>
+" id="mde69ee840c" style="stroke:#ff0000;stroke-width:0.5;"/>
      </defs>
      <g>
-      <use style="fill:#ff0000;stroke:#ff0000;stroke-width:0.5;" x="445.545475" xlink:href="#m23d0598467" y="96.4632"/>
+      <use style="fill:#ff0000;stroke:#ff0000;stroke-width:0.5;" x="445.545475" xlink:href="#mde69ee840c" y="96.4632"/>
      </g>
     </g>
     <g id="text_19">
@@ -2581,14 +2535,14 @@ z
     </g>
    </g>
    <g id="PathCollection_2">
-    <g clip-path="url(#p998c550d75)">
-     <use style="fill:#ff0000;stroke:#ff0000;stroke-width:0.5;" x="77.428239" xlink:href="#m23d0598467" y="99.724009"/>
+    <g clip-path="url(#p560df4acaa)">
+     <use style="fill:#ff0000;stroke:#ff0000;stroke-width:0.5;" x="77.428239" xlink:href="#mde69ee840c" y="99.724009"/>
     </g>
    </g>
   </g>
  </g>
  <defs>
-  <clipPath id="p998c550d75">
+  <clipPath id="p560df4acaa">
    <rect height="217.44" width="375.84" x="31.871875" y="26.6082"/>
   </clipPath>
  </defs>
