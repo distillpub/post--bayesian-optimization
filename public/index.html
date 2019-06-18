@@ -106,7 +106,7 @@
     <h2 id="activelearning">Active Learning</h3>
 
     <p>
-      In machine learning problems, often, unlabelled data is very easily available, but labelling could be an expensive task. As an example, for a speech-to-text task, the ground truth labelling or annotation task requires expert(s) to manually label words and sentences. In our gold mining problem, drilling is an expensive operation and we would like to minimize it. But, without drilling we can not estimate the gold estimate. 
+      In machine learning problems, often, unlabelled data is very easily available, but labeling could be an expensive task. As an example, for a speech-to-text task, the ground truth labeling or annotation task requires expert(s) to manually label words and sentences. In our gold mining problem, drilling is an expensive operation, and we would like to minimize it. But, without drilling, we can not estimate the gold estimate.
       Active learning would solve this problem by posing a smart strategy to choose the next drilling site. While there are various methods and techniques in the active learning literature, for the sake of brevity, we will look only at <strong>uncertainty reduction</strong>, which chooses the next query point as the one our model is the most uncertain about. One of the ways we can reduce the uncertainty is by choosing the point at which we have the maximum variance (we are most uncertain). 
       We will now look into Gaussian Processes, which not only give us predictions, but also uncertainty estimates, which will be useful for active learning.
     </p>
@@ -224,10 +224,8 @@
     </figure>
 
     <p>
-      In the figure above, we can see an instantiation of the above mentioned acquisition function (shown in green) for some value of <d-math>\lambda</d-math>.
-      We can observe that mean near the location (predicted) of the just added point (red point) is high. Also, as we go far
-      from the red point, we see that our uncertainty increases to a maximum. We can see that the acquisition function is low at the sampled point (part of train set), as there is no uncertainty at the point. However, as we move away from the red point, our variance increases and so does our acquisition function. But, beyond a certain value, the acquistion function keeps on decreasing. This is due to the fact
-      that while the variance or uncertainty is high for such points, the posterior mean is low.
+      In the figure above, we can see an instantiation of the above-mentioned acquisition function (shown in green) for some value of <d-math>\lambda</d-math>.
+      We can observe that mean near the location (predicted) of the just added point (red point) is high. Also, as we go far from the red point, we see that our uncertainty increases to a maximum. We can see that the acquisition function is low at the sampled point (part of the train set), as there is no uncertainty at the point. However, as we move away from the red point, our variance increases, and so does our acquisition function. But, beyond a certain value, the acquisition function keeps on decreasing. This is because while the variance or uncertainty is high for such points, the posterior mean is low.
 
       We see at around the location 
         <d-code language="python">x = 1.4</d-code> 
@@ -521,10 +519,27 @@
 
     <p>One more acquisition function that is quite common is Thompson Sampling. It has a low overhead of setting up.</p>
 
-    <p>The idea is to sample functions within upper and lower probabilistic bounds of a regressor; one can then optimize on these functions and chose the next query point to be the <d-math>x = argmax(\text{sampled\_f})</d-math>. In
-      other
-      words,
-      sampling functions within the greyed out area in the graph below.</p>
+    <p>
+      The idea is to sample functions within upper and lower probabilistic bounds of a regressor. In other words, we sample functions from the learned Gaussain Process. Once we have sampled a function <d-math>h_t</d-math> for the <d-math>t^{th}</d-math> timestep, we choose point <d-math>x_{t+1}</d-math> that maximizes the function <d-math>h_t</d-math> as the next query point to be evaluated.
+    </p>
+
+    <p>
+      The intuition behind Thompson sampling can be understood by clearly noticing two important observations.
+      <ul>
+        <li>
+          <p>
+            Locations <d-math>x</d-math> with high variance (<d-math>\sigma(x)</d-math>) will show a larger variance in the functional value of the sampled function. This might help in exploration as high variation might lead to the having the sampled functions more prone to having high value at locations with high variance. This will ensure a <strong>exploratory</strong> behaviour.
+          </p>
+        </li>
+        <li>
+          <p>
+            The current max value evaluated be denoted by <d-math>f(x^+)</d-math>. The sampled functions will need to pass through or closely from current max value (due to low <d-math>\sigma(x)</d-math>) at the evalutated locations. This will ensure a <strong>exploiting</strong> behaviour of the acquisition function.
+          </p>
+        </li>
+      </ul>
+      <p>
+        Combining the above two observations, the acquisition function would accordingly do explorations and exploitation.
+      </p>
 
     <figure>
       <d-figure><img src="images/MAB_gifs/posterior.svg" /></d-figure>
@@ -613,7 +628,7 @@
       </li>
       <li>
         <d-math>f</d-math> is expensive to evaluate:
-        the # of times we can evaluate it
+        the number of times we can evaluate it
         is severely limited.
       </li>
       <li>
@@ -776,13 +791,17 @@
       </figure>
 
       <p>
-        In the case of Random Forests, one thing to notice is that the ground truth is not that smooth. Therefore the assumption of Bayesian Optimization (smooth functions) no longer holds to the fullest. Therefore we do see that random may perform better than some of the methods. The best performing method we see is Probability of Improvement.
+        We see that the optimization is in two dimensions. Therefore it is expected that random would perform much worse than in the case of a single dimension.
       </p>
 
       <h3 id="example3">Example 3</h3>
 
       <p>
-        Let's train CNNs on Mnist. Here we will be using <d-code language="python">scikit-optim</d-code>, which also provides us support for optimizing our function on a mix of categorical, integral, and real variables. We won't be plotting the ground truth here, as it's extremely costly to do so. Below is some of the code that will limit the search space.
+        Let's take this example to get an idea of how to apply Bayesian Optimization to training neural networks like CNNs on Mnist. Here we will be using <d-code language="python">scikit-optim</d-code>, which also provides us support for optimizing our function on a mix of categorical, integral, and real variables. We won't be plotting the ground truth here, as it's extremely costly to do so. Below are some code snippets that go into adding Bayesian Optimization for hyperparameter tuning.
+      </p>
+
+      <p>
+        The code below declares the search space for the optimization problem (hyperparameter tuning).
       </p>
 
       <d-code block language="python">
@@ -810,7 +829,8 @@
       </d-code>
 
       <p>
-        Moving on we will now have a minimizer function imported from <d-code language="python">scikit-optim</d-code> called <d-code language="python">gp-minimize</d-code>. The easiness can be seen from the code block below. </p>
+        Moving on, we have a minimizer function imported from <d-code language="python">scikit-optim</d-code> called <d-code language="python">gp-minimize</d-code>. One can easily change the acquisition function from a number of available options. Below we have a code snippet showing the calling of the optimization function with the selected acquisition function.
+      </p>
 
       <d-code block language="python">
         # setting up default parameters (1st point)
@@ -827,16 +847,14 @@
       </d-code>
 
       <p>
-        There you go you now have the hyperparameters that have minimized your -ve accuracy (maximized the original accuracy).
+        There you go you now have the hyperparameters that have minimized your negated (-ve) accuracy (maximized the original accuracy).
       </p>
 
       <figure>
         <d-figure><img src="images/MAB_gifs/conv.svg"></d-figure>
       </figure>
 
-      <p>Looking at the above example, we can see that incorporating Bayesian Optimization isn't a big problem and saves a lot of time we can see that the network was able to get to an accuracy of nearly one in around three iterations.
-        That's
-        impressive! The example above has been inspired by Hvass Laboratories' Tutorial on <d-code language="python">scikit-optim</d-code>. <d-footnote> <a
+      <p>Looking at the above example, we can see that incorporating Bayesian Optimization isn't a big problem and saves a lot of time we can see that the network was able to get to an accuracy of nearly one in around three iterations. That's impressive! The example above has been inspired by Hvass Laboratories' Tutorial on <d-code language="python">scikit-optim</d-code>. <d-footnote> <a
             href="https://github.com/Hvass-Labs/TensorFlow-Tutorials/blob/master/19_Hyper-Parameters.ipynb">Notebook</a> showcasing hyperparameter optimization in Tensorflow. </d-footnote>
       </p>
 
@@ -851,7 +869,7 @@
       <p>
         After reading through the blog post, you might have been sold on the idea about the time you can save by asking Bayesian Optimizer to find the best hyperparameters for your fantastic model. There are a plethora of Bayesian
         Optimization
-        libraries available. I have linked a few below. Do check them out.
+        libraries are available. I have linked a few below. Do check them out.
       </p>
 
       <ul>
