@@ -107,7 +107,7 @@
 
 
 
-    <h2 id="activelearning">Active Learning</h3>
+    <h2 id="activelearning">Active Learning</h2>
 
       <p>
         In machine learning problems, often, unlabelled data is very easily available, but labeling could be an expensive task. As an example, for a speech-to-text task, the ground truth labeling or annotation task requires expert(s) to manually
@@ -118,7 +118,7 @@
         We will now look into Gaussian Processes, which not only give us predictions, but also uncertainty estimates, which will be useful for active learning.
       </p>
 
-      <h3 id="gaussianprocesses">Gaussian Processes</h4>
+      <h3 id="gaussianprocesses">Gaussian Processes</h3>
 
         <p>
           One might want to look at this excellent distillpub article<d-cite key="görtler2019a"></d-cite> on Gaussian Processes<d-cite key="Rasmussen2004"></d-cite>.
@@ -134,7 +134,7 @@
         </figure>
 
 
-        <h4 id="priormodel">Prior Model</h5>
+        <h4 id="priormodel">Prior Model</h4>
 
           <p>
             We will choose a simple prior about the gold content along the one-dimensional space. Our prior assumes a smooth relationship between points via a Matern kernel<d-footnote>See <a href="http://www.gaussianprocess.org/gpml/">Rasmussen and
@@ -168,7 +168,7 @@
           </p>
 
           <h3 id="activelearningprocedure">Active Learning Procedure
-        </h4>
+        </h3>
 
         <ol>
           <li>Choose the point of having the highest uncertainty</li>
@@ -190,8 +190,7 @@
           </strong> to make our estimates better.
         </p>
 
-        <h2 id="bayesianoptimization">Bayesian Optimization
-      </h3>
+        <h2 id="bayesianoptimization">Bayesian Optimization</h2>
       <p>
         <strong>Problem 2</strong> requires us to find the location where the gold content is maximum. Even though the problem setting may be similar, the objective is quite different than Problem 1. In other words, we just want the location where we
         can drill to get the most gold.
@@ -478,7 +477,7 @@
         exploit to get more gains near the global maxima. We would have liked an acquisition function that tried to exploit a bit more after reaching somewhere close to the global maxima.
       </p>
 
-      <h4 id="eipi-relation">PI vs. EI</h3>
+      <h4 id="eipi-relation">PI vs. EI</h4>
 
 
         <p>
@@ -607,14 +606,29 @@
             Below we have tried to combine PI and EI using a linear combination as a combination of various acquisition function also results in an acquisition function. We can, therefore, combine any of the acquisition function and form a new one.
           </p>
 
+          <P>
+            One reason we might want to combine two methods is to overcome the limitations of the individual methods. Furthermore, since we combined the two acquisition functions, we also have individual hyperparameters included in this combined acquisition function. Let us list the final hyperparameters for ease:
+            <ul>
+              <li>
+                <d-math>\epsilon_{PI}</d-math> -- Controls the <d-math>\epsilon</d-math> for <em>Probability of Improvement</em>.
+              </li>
+              <li>
+                <d-math>\epsilon_{EI}</d-math> -- Controls the <d-math>\epsilon</d-math> for <em>Expected Improvement</em>.
+              </li>
+              <li>
+                <d-math>\lambda</d-math> -- Controls the linear weightage given <em>Expected Improvement</em> over <em>Probability of Improvement</em>.
+              </li>
+          </P>
+
           <figure>
             <d-figure><img src="images/MAB_gifs/mab-gp-ei_pi.gif" /></d-figure>
           </figure>
 
           <h3 id="comparison">Comparison</h3>
 
+     
           <p>
-            Below we have a graph showing a comparison between the methods<d-footnote>To know more about the difference between acquisition functions look at <a href="https://www.cs.ubc.ca/~nando/540-2013/lectures/l7.pdf">these</a> amazing slides from Nando De Freitas</d-footnote> discussed above. We have chosen the hyperparameters that gave us the best performance during our basic hyperparameter search.
+            Below we have a graph showing a comparison of different acquisition functions<d-footnote>To know more about the difference between acquisition functions look at <a href="https://www.cs.ubc.ca/~nando/540-2013/lectures/l7.pdf">these</a> amazing slides from Nando De Freitas</d-footnote> discussed above. We have chosen the hyperparameters that gave us the best performance during our basic hyperparameter search.
 
             We had run the Random acquisition function several times with different seeds. We have plotted the mean and the standard deviation below. We can see the standard deviation (variance) is quite high, which is expected as we are randomly choosing points <d-math>x</d-math> to evaluate our black box function <d-math>f</d-math>.
           </p>
@@ -704,18 +718,15 @@
             that evaluating the acquisition function is much cheaper, whereas in the original problem, evaluating the value at a particular was extremely costly.</p>
 
 
-          <h2 id="hyperparametersvsparameters">Hyperparameter Tuning</h1>
+          <h2 id="hyperparametersvsparameters">Hyperparameter Tuning</h2>
 
             <p>Before we talk about Bayesian optimization for hyperparameter tuning<d-cite key="Snoek2012,NIPS2011_4443,Bergstra"></d-cite>, we will quickly differentiate between hyperparameters and parameters. </p>
 
-
-            <p>Hyperparameters are parameters whose value is set before the learning process begins. Parameters, on the other hand, are the parameters that are learned looking at the data. One small example that we can think of can be of
-              linear
-              regression, we don't really have hyperparameters, but the parameters are the <d-math>W</d-math>: weight, <d-math>c</d-math>: intercept, which is learned from the data. If we apply lasso to linear regression, we introduce a
-              regularization hyperparameter <d-math>\lambda</d-math><d-footnote> For more information visit the Wikipedia article on <a href="https://en.wikipedia.org/wiki/Hyperparameter_(machine_learning)">Hyperparamters</a>.</d-footnote>.
+            <p>
+              Hyperparameters<d-footnote> For definitions visit the Wikipedia article on <a href="https://en.wikipedia.org/wiki/Hyperparameter_(machine_learning)">Hyperparameters</a>.</d-footnote> are parameters whose value is set before the learning process begins. Parameters, on the other hand, are the parameters that are learned looking at the data. One small example that we can think of can be of Ridge Regression. In Ridge Regression, we have the usual parameters, <d-math>W</d-math>: weight matrix, <d-math>c</d-math>: the intercept, both of which are learned from the data. We further have a hyperparameter we need to set to get regularization effect, the regularization coefficient <d-math>\lambda \geq 0</d-math>.
             </p>
 
-            <p>Now as we are clear on the difference between hyperparameters and parameters we would like to introduce one of the most common use case of Bayesian Optimization; <em>Hyperparameter Tuning</em>: finding best performing
+            <p>Now as we are clear on the difference between hyperparameters and parameters we would like to introduce one of the most common use case of Bayesian Optimization; <em>Hyperparameter Tuning</em>: finding the best performing
               hyperparameters
               on machine learning models. At last, hyperparameter tuning is an optimization problem (optimizing our metric of choice).</p>
 
@@ -790,8 +801,7 @@
                 dimensions,
                 it's much difficult to get to the optimal value by using random search.</p>
 
-              <h3 id="example2">Example 2
-      </h4>
+              <h3 id="example2">Example 2</h3>
 
       <p>
         Using Bayesian Optimization in a Random Forest Classifier.<d-cite key="scikit"></d-cite>
@@ -934,10 +944,13 @@
         points in both of the problems.
       </p>
 
-      <h2 id="embracebayesianoptimization">Embrace Bayesian Optimization</h1>
+      <h2 id="embracebayesianoptimization">Embrace Bayesian Optimization</h2>
 
         <p>
-          After reading through the blog post, you might have been sold on the idea about the time you can save by asking Bayesian Optimizer to find the best hyperparameters for your fantastic model. There are a plethora of Bayesian Optimization
+          Optimizing or tuning hyperparams is an important facet of modern machine learning algorithms and BO is an efficient way of tuning the same.
+        </p>
+        <p>
+          Having reading all the way through, you might have been sold on the idea about the time you can save by asking Bayesian Optimizer to find the best hyperparameters for your fantastic model. There are a plethora of Bayesian Optimization
           libraries available. We have linked a few below. Do check them out.
         </p>
 
@@ -956,18 +969,6 @@
           <li><a href="https://github.com/Yelp/MOE">MOE</a></li>
         </ul>
 
-        <h2 id="caution">Caution</h3>
-
-          <p>
-            We need to take care while using Bayesian Optimization. Bayesian Optimization based on Gaussian Processes Regression is highly sensitive to the kernel used. For example, if you are using <a
-              href="https://scikit-learn.org/stable/modules/generated/sklearn.gaussian_process.kernels.Matern.html">Matern</a> kernel, we are implicitly assuming that the function we are trying to optimize is first order differentiable.
-          </p>
-
-          <p>
-            A nice list of tips and tricks one should have a look at if you aim to use Bayesian Optimization in your workflow is from this fantastic post by Thomas on <a href="https://thuijskens.github.io/2016/12/29/bayesian-optimisation/">Bayesian
-              Optimization with sklearn</a>.
-          </p>
-
           <p>
             We hope you had a good time reading the article and hope you are ready to <strong>exploit</strong> the power of BO. In case you wish to <strong>explore</strong> more, please read the <a href="#FurtherReading">Further Reading</a> section below.
           </p>
@@ -977,19 +978,62 @@
   <d-appendix>
 
     <h3 id="FurtherReading">Further Reading</h3>
-<!-- 
-    <p>Youtube Videos</p>
-
-      <li><a href="https://www.youtube.com/watch?v=jtRPxRnOXnk">Bayesian Optimization with scikit-learn</a> by Thomas Huijskens at PyData London</li>
-
-      <li><a href="https://www.youtube.com/watch?v=vz3D36VXefI">Bayesian Optimization and Multi-Armed Bandit</a> by Nando de Freitas</li>
-    </ul>
-
-    <p>Misc:</p>
-
-    <ul>
-      <li><a href="https://nipunbatra.github.io/blog/2019/GP-1.html">Programatically understand Gaussian Processes</a></li>
-    </ul> -->
+    <ol>
+      <li><p>Using gradient information when it is available.</p>
+        <ul>
+          <li>
+            Suppose we have gradient information available, we should possibly try to use the information. This could result in a much faster approach to the global maxima. To have a look at this interesting domain of research look at the paper by Wu, et. al.<d-cite key="BOwtGD"></d-cite>.
+          </li>
+        </ul>
+      </li>
+      <li>
+        <p>
+          To have a quick view of differences between BO and Gradient Descent, one can look at <a href="https://stats.stackexchange.com/q/161936">this</a> amazing answer at stackoverflow.
+        </p>
+      </li>
+      <li>
+        <p>
+          Things to take care when using BO.
+        </p>
+        <ul>
+          <li>
+            While working on the blog, we once scaled the accuracy from the range <d-math>[0, \ 1]</d-math> to <d-math>[0, \ 100]</d-math>. This changed broke havoc as the Gaussian Processes we were using had certain hyperparameters, which needed to be scaled with the accuracy to maintain scale invariance. We wanted to point this out as it might be helpful for the readers who would like to start using on BO.
+          </li>
+          <li>
+            <p>
+              We need to take care while using Bayesian Optimization. Bayesian Optimization based on Gaussian Processes Regression is highly sensitive to the kernel used. For example, if you are using <a href="https://scikit-learn.org/stable/modules/generated/sklearn.gaussian_process.kernels.Matern.html">Matern</a> kernel, we are implicitly assuming that the function we are trying to optimize is first order differentiable.
+            </p>
+          </li>
+          <li>
+            <p>
+              A nice list of tips and tricks one should have a look at if you aim to use Bayesian Optimization in your workflow is from this fantastic post by Thomas on <a href="https://thuijskens.github.io/2016/12/29/bayesian-optimisation/">Bayesian Optimization with sklearn</a>.
+            </p>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <p>
+          BO applications.
+        </p>
+        <ul>
+          <li>
+            <p>
+              BO has been applied to sensor placement
+            </p>
+          </li>
+          <li>
+            <p>
+              Application in uber
+            </p>
+          </li>
+          <li>
+            <p>
+              Application on yelp
+            </p>
+          </li>
+        </ul>
+      </li>
+    </ol>
 
     <d-bibliography src="references.bib"></d-bibliography>
   </d-appendix>
