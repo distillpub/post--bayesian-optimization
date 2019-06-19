@@ -735,12 +735,20 @@
               </figure>
 
               <span>
-                Let us now try to learn the classification problem above using a Support Vector Machine (SVM). We are aware that SVM takes in 2 important hyperparameters,
-                <d-math>\gamma</d-math> and
-                <d-math>C</d-math>.
-                Let us apply Bayesian Optimization to learn the best hyperparameters for this classification task<d-footnote> <strong>Note</strong>: the surface plots you see for the Ground Truth Accuracies below were calculated for each possible
-                  of hyperparameter for showcasing purposes only. We don't have these values in real applications.
-                </d-footnote>.</span>
+                Let us now try to learn the classification problem above using a Support Vector Machine (SVM). We are aware that a SVM takes in two important hyperparameters,
+                <ul>
+                  <li>
+                    <d-math>\gamma</d-math> -- modifies the behavior of the SVM's kernel. Intuitively it is a measure of how far the influence of a single training example reaches<d-footnote>Stackoverflow <a href="https://stackoverflow.com/questions/35848210/support-vector-machine-what-are-c-gamma">answer</a> for intuition behind the hyperparameters.</d-footnote>.
+                  </li>
+                  <li>
+                    <d-math>C</d-math> -- modifies the slackness of the classification, the higher the C is, the more sensitive is SVM towards the noise.
+                  </li>
+                </ul>
+                <p>
+                  Let us apply Bayesian Optimization to learn the best hyperparameters for this classification task<d-footnote> <strong>Note</strong>: the surface plots you see for the Ground Truth Accuracies below were calculated for each possible hyperparameter for showcasing purposes only. We don't have these values in real applications.
+                </d-footnote>.
+                </p>
+              </span>
 
               <figure>
                 <d-figure><img src="images/MAB_gifs/pi3d-0.05-mat.gif" /></d-figure>
@@ -786,7 +794,7 @@
       </h4>
 
       <p>
-        Using Bayesian Optimization in a Random Forest Regressor.<d-cite key="scikit"></d-cite>
+        Using Bayesian Optimization in a Random Forest Classifier.<d-cite key="scikit"></d-cite>
       </p>
 
       <p>
