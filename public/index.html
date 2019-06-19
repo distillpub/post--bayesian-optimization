@@ -61,7 +61,7 @@
     <p>
       We are increasingly getting used to deep(er) neural networks! These networks often come with a huge number of hyperparameters: like the number of layers, the dropout rate, the learning rate, among others. How do we efficiently tune these
       hyperparameters to optimize our machine learning model? In this
-      article, we will talk about Bayesian Optimization<d-cite key="nandoBOtut"></d-cite> (BO) - which is an effective suite of techniques often used to efficiently tune the hyperparameters. Besides being used in tuning hyperparameters, BO is a general suite of techniques for
+      article, we will talk about Bayesian Optimization (BO) - which is an effective suite of techniques often used to efficiently tune the hyperparameters. Besides being used in tuning hyperparameters, BO is a general suite of techniques for
       optimizing a black-box function.
     </p>
 
@@ -96,7 +96,7 @@
         <p>
           <strong>Problem 2: Location of Maximum Gold</strong><br />
           In this problem, we will find the location in the one-dimensional space where the gold quantity is the maximum. This problem focuses on finding the location with the most gold content. This problem is akin to <strong>Bayesian
-            Optimization<d-cite key="humanOut"></d-cite>.</strong>
+            Optimization<d-cite key="humanOut,nandoBOtut"></d-cite>.</strong>
         </p>
       </li>
     </ul>
@@ -292,7 +292,7 @@
         the highest probability of improvement over the current max <d-math>f(x^+)</d-math>, where <d-math> x^+ = argmax_{x_i \in x_{1:t}}f(x_i)</d-math> and <d-math>x_i</d-math> is the location queried at <d-math>i^{th}</d-math> time step.
       </p>
 
-      <p>Let's understand this concept in two cases:</p>
+      <p>Let us understand this concept in two cases:</p>
 
       <ol>
         <li>
@@ -327,7 +327,11 @@
       </ol>
 
       <p>
-        This can be given as: <d-math>x_{t+1} = argmax_x \Phi(\frac{\mu(x) - f(x^+) - \epsilon}{\sigma(x)})</d-math> where <d-math>\Phi(\cdot)</d-math> indicates the CDF.
+        This can be given as:
+      </p>
+        <d-math block>x_{t+1} = argmax_x \Phi(\frac{\mu_t(x) - f(x^+) - \epsilon}{\sigma_t(x)})</d-math>
+      <p>
+        where <d-math>\Phi(\cdot)</d-math> indicates the CDF.
       </p>
 
 
@@ -349,7 +353,7 @@
       </p>
 
       <p>
-        Now we possess the intuition behind how Probability of Improvement is calculated, now let's change <d-math>\epsilon</d-math> and look at its effects.
+        Now we possess the intuition behind how Probability of Improvement is calculated, now let us change <d-math>\epsilon</d-math> and look at its effects.
       </p>
 
       <figure>
@@ -371,7 +375,7 @@
       </p>
 
       <p>
-        Let's look at what happens if we increase the hyperparameter <d-math>\epsilon</d-math> a bit more.
+        Let us look at what happens if we increase the hyperparameter <d-math>\epsilon</d-math> a bit more.
       </p>
 
       <figure>
@@ -392,13 +396,12 @@
         In this acquisition function, <d-math>t + 1^{th}</d-math> query point, <d-math>x_{t+1}</d-math>, is selected according to the equation below.
       </p>
       <d-math block>
-        x_{t+1} = argmin_x \mathbb{E} \left( ||f_{t+1}(x) - f(x^\star) || \ | \ \mathcal{D}_n \right)
+        x_{t+1} = argmin_x \mathbb{E} \left( ||f_{t+1}(x) - f(x^\star) || \ | \ \mathcal{D}_t \right)
       </d-math>
       <p>
-        Where, <d-math>f</d-math> is the actual ground truth function, <d-math>f_{t}</d-math> is our prediction of the ground truth at <d-math>t^{th}</d-math> timestep and <d-math>x^\star</d-math> is the actual position where the ground truth
+        Where, <d-math>f</d-math> is the actual ground truth function, <d-math>f_{t+1}</d-math> is our GP posterior of the ground truth for <d-math>t+1^{th}</d-math> timestep, <d-math>\mathcal{D}_t</d-math> is the training data <d-math>\{(x_i, f(x_i))\} \ \forall x \in x_{1:t}</d-math> and <d-math>x^\star</d-math> is the actual position where the ground truth
         function takes the maximum value.
       </p>
-
 
       <p>
         In essence we are trying to select the point that minimizes the distance to the objective evaluated at the maximum. Unfortunately, we don't know the ground truth function, <d-math>f</d-math>. Mockus<d-cite key="mockusEI"></d-cite> proposed
@@ -406,7 +409,7 @@
       </p>
 
       <d-math block>
-        x = argmax_x \mathbb{E} \left( {max} \{ 0, \ f_{t+1}(x) - f(x^+) \} \ | \ \mathcal{D}_n \right)
+        x_{t+1} = argmax_x \mathbb{E} \left( {max} \{ 0, \ f_{t+1}(x) - f(x^+) \} \ | \ \mathcal{D}_t \right)
       </d-math>
 
       <p>
@@ -428,9 +431,9 @@
       <p>We can see when our <em>Expected Improvement</em> will be high.</p>
 
       <ul>
-        <li>It is high when the expected value of mean(x) - <d-math>f(x^+)</d-math> is high.</li>
+        <li>It is high when the expected value of <d-math>\mu(x) - f(x^+)</d-math> is high.</li>
 
-        <li>It is high when the uncertainty around a point is high.</li>
+        <li>It is high when the uncertainty <d-math>\sigma(x)</d-math> around a point is high.</li>
       </ul>
 
       <p>Now, if we see the role of <d-math>\epsilon</d-math> in <em>Expected Improvement</em>, it is the exact same as the role played in the case of <em>Probability of Improvement</em> (we have the same expression in PI) <d-footnote>A good
@@ -451,7 +454,7 @@
       </p>
 
       <p>
-        Let's try increasing the <d-math>\epsilon</d-math> variable to focus a little more on explorability.
+        Let us try increasing the <d-math>\epsilon</d-math> variable to focus a little more on explorability.
       </p>
 
       <figure>
@@ -464,7 +467,7 @@
       </p>
 
       <p>
-        Let's see if increasing <d-math>\epsilon</d-math> helps us more!
+        Let us see if increasing <d-math>\epsilon</d-math> helps us more!
       </p>
 
       <figure>
@@ -512,14 +515,13 @@
         <d-math block>
           \alpha_{GP-UCB}(x) = \mu(x) + \sqrt{\mathcal{v}\tau_t}\sigma(x)
         </d-math>
-        <p>Where,</p>
+        <p>Where <d-math>t</d-math> is the timestep and <d-math>\tau_t</d-math> is,</p>
         <d-math block>
           \tau_t = 2log \left( \frac{t^{d/2 + 2}\pi^{2}}{3\delta} \right)
         </d-math>
 
         <p>
-          We can see how this formulation looks fairly
-          similar to the first vanilla acquisition function that we had described.
+          We can see how this formulation looks fairly similar to the first vanilla acquisition function that we had described. The difference here compared to <em>UCB</em> is that the <d-math>\lambda</d-math> here is a function of the timestep/iterations <d-math>t</d-math>. This helps in some of the theoretical bounds which for which we would like to refer the original paper on <em>GP-UCB</em><d-cite key="gpucb"></d-cite>.
         </p>
 
         <figure>
@@ -527,7 +529,7 @@
         </figure>
 
         <p>
-          We seem to be exploiting too much, let's increase the exploratory hyperparameters!
+          We seem to be exploiting too much, let us increase the exploratory hyperparameters!
         </p>
 
         <figure>
@@ -554,6 +556,11 @@
           </d-math> timestep, we choose point <d-math>x_{t+1}</d-math> that maximizes the function <d-math>h_t</d-math> as the next query point to be evaluated.
         </p>
 
+          <figure>
+            <d-figure><img src="images/MAB_gifs/posterior.svg" /></d-figure>
+          </figure>
+          
+
         <p>
           The intuition behind Thompson sampling can be understood by clearly noticing two important observations.
           <ul>
@@ -572,16 +579,6 @@
           </ul>
           <p>
             Combining the above two observations, the acquisition function would accordingly do explorations and exploitation.
-          </p>
-
-          <figure>
-            <d-figure><img src="images/MAB_gifs/posterior.svg" /></d-figure>
-          </figure>
-
-          <p>
-            Thompson Sampling<d-cite key="thompTut"></d-cite> is general enough to be useful even when we have Bernoulli (the domain of <d-math>x</d-math> is spatially independent) distributions modeling the function <d-math>F</d-math>, instead of
-            Gaussian
-            Process.
           </p>
 
           <figure>
@@ -617,8 +614,9 @@
           <h3 id="comparison">Comparison</h3>
 
           <p>
-            Below we have a graph showing a comparison between the methods discussed above. We have chosen the hyperparameters that gave us the best performance during our basic hyperparameter search.<d-footnotes>To know more about the difference
-              between acquisition functions look at <a href="https://www.cs.ubc.ca/~nando/540-2013/lectures/l7.pdf">these</a> amazing slides from Nando De Freitas</d-footnotes>
+            Below we have a graph showing a comparison between the methods<d-footnotes>To know more about the difference between acquisition functions look at <a href="https://www.cs.ubc.ca/~nando/540-2013/lectures/l7.pdf">these</a> amazing slides from Nando De Freitas</d-footnotes> discussed above. We have chosen the hyperparameters that gave us the best performance during our basic hyperparameter search.
+
+            We had run the Random acquisition function several times with different seeds. We have plotted the mean and the standard deviation below. We can see the standard deviation (variance) is quite high, which is expected as we are randomly choosing points <d-math>x</d-math> to evaluate our black box function <d-math>f</d-math>.
           </p>
 
           <figure>
@@ -730,7 +728,7 @@
 
               <h3 id="example1">Example 1</h3>
 
-              <p>Let's us use an SVM on sklearn's moons dataset and try to find the optimal hyperparameter using Bayesian optimization. Let's have a look at the dataset first.</p>
+              <p>Let us us use an SVM on sklearn's moons dataset and try to find the optimal hyperparameter using Bayesian optimization. Let us have a look at the dataset first.</p>
 
               <figure class="smaller-img">
                 <d-figure><img src="images/MAB_gifs/moons.svg" /></d-figure>
@@ -770,6 +768,12 @@
 
               <p>Now our favorite random acquisition function. :)</p>
 
+              <h3 id="comparison">Comparison</h3>
+
+              <p>
+                Below we will compare the acquisition functions in finding the best hyperparameters for our SVM model. We had again ran the Random acquisition function several times with different seeds.
+              </p>
+
               <figure>
                 <d-figure><img src="images/MAB_gifs/comp3d.svg" /></d-figure>
               </figure>
@@ -786,8 +790,8 @@
       </p>
 
       <p>
-        We will continue now to train a Random Forest on the moons dataset we had used previously to learn the Support Vector Machine. The main hyperparameters of Random Forests we would like to optimize our accuracy are <d-code language="python">
-          number</d-code> of Decision Trees we would like to have, <d-code language="python">maximum depth</d-code> for each of those decision trees.
+        We will continue now to train a Random Forest on the moons dataset we had used previously to learn the Support Vector Machine. The main hyperparameters of Random Forests we would like to optimize our accuracy are <strong>
+          number</strong> of Decision Trees we would like to have, <strong">maximum depth</strong> for each of those decision trees.
       </p>
       <p>
         The parameters of the Random Forest the individual Decision Trees that are formed.
@@ -835,7 +839,7 @@
       <h3 id="example3">Example 3</h3>
 
       <p>
-        Let's take this example to get an idea of how to apply Bayesian Optimization to training neural networks like CNNs on Mnist. Here we will be using <d-code language="python">scikit-optim</d-code>, which also provides us support for optimizing
+        Let us take this example to get an idea of how to apply Bayesian Optimization to training neural networks like CNNs on Mnist. Here we will be using <d-code language="python">scikit-optim</d-code>, which also provides us support for optimizing
         our function on a mix of categorical, integral, and real variables. We won't be plotting the ground truth here, as it's extremely costly to do so. Below are some code snippets that go into adding Bayesian Optimization for hyperparameter
         tuning.
       </p>
@@ -942,7 +946,7 @@
           </p>
 
           <p>
-            Let's save us some time and money by delegating hyperparameter search to bayesian optimizers from now. Go get started by looking at our <a href="#FurtherReading">Further Reading</a> section.
+            Let us save us some time and money by delegating hyperparameter search to bayesian optimizers from now. Go get started by looking at our <a href="#FurtherReading">Further Reading</a> section.
           </p>
 
   </d-article>
