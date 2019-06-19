@@ -856,13 +856,23 @@
         The code below declares the search space for the optimization problem (hyperparameter tuning). In this example we are limiting the search space to be the following:
         <ul>
           <li>
-            batch_size -- 2
+            batch_size -- Our search space for the possible batch sizes consists of integer values s.t. batch_size = <d-math>2^i \ \forall \ 2 \leq i \leq 7 \ \& \ i \in \mathbb{Z}</d-math>.<br />
+            This hyperparameter sets the number of training examples to combine to find the gradients for a single step in gradient descent.
+          </li>
+          <li>
+            learning rate -- We will be searching all the real numbers from the range <d-math>[10^{-6}, \ 1]</d-math>.<br />
+            This hyperparamter sets the stepsize with which we will perform gradient descent in the neural network.
+          </li>
+          <li>
+            activation -- We will have one categorical variable, i.e. the activation to apply to our neural network layers. This variable can take on values in the set <d-math>\{ relu, \ sigmoid \}</d-math>.
+          </li>
+        </ul>
       </p>
 
       <d-code block language="python">
         log_batch_size = Integer(
-        low=3,
-        high=6,
+        low=2, 
+        high=7, 
         name='log_batch_size'
         )
         lr = Real(
@@ -884,8 +894,10 @@
       </d-code>
 
       <p>
-        Moving on, we have a minimizer function imported from <em>scikit-optim</em> called <d-code language="python">gp-minimize</d-code>. One can easily change the acquisition function from a number of available options.
-        Below we have a code snippet showing the calling of the optimization function with the selected acquisition function.
+        Moving on, we have a minimizer function imported from <d-code language="python">scikit-optim</d-code> called <d-code language="python">gp-minimize</d-code>. One can easily change the acquisition function from a number of available options.
+        Below we have a code snippet showing the calling of the optimization function with the <em>Expected Improvement</em> acquisition function.
+
+        <strong>Note</strong>: One will need to negate the accuracy values as we are using the minimizer function from <d-code language="python">scikit-optim</d-code>.
       </p>
 
       <d-code block language="python">
