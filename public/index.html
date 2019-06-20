@@ -734,7 +734,13 @@
 
       <p>
         Hyperparameters<d-footnote> For definitions visit the Wikipedia article on <a href="https://en.wikipedia.org/wiki/Hyperparameter_(machine_learning)">Hyperparameters</a>.</d-footnote> are parameters whose value is set before the learning
-        process begins. Parameters, on the other hand, are the parameters that are learned looking at the data. One small example that we can think of can be of Ridge Regression. In Ridge Regression, we have the usual parameters, <d-math>W</d-math>:
+        process begins. Parameters, on the other hand, are the parameters that are learned looking at the data. One small example that we can think of can be of Ridge Regression.
+      </p>
+      <d-math block>
+
+      </d-math>
+      <p>
+        In Ridge Regression, we have the usual parameters, <d-math>W</d-math>:
         weight matrix, <d-math>c</d-math>: the intercept, both of which are learned from the data. We further have a hyperparameter we need to set to get regularization effect, the regularization coefficient <d-math>\lambda \geq 0</d-math>.
       </p>
 
@@ -793,15 +799,15 @@
           <d-figure><img src="images/MAB_gifs/gp3d-1-2-mat.gif" /></d-figure>
         </figure>
 
-        <p>Above we see a gif showing the work of the <em>Gaussian Processes Upper Confidence Bound</em> acquisition function in finding the best hyperparameters. This by far seems to perform the best with getting quite close to the
-          global
-          optimum value of hyperparameters (found using brute force).</p>
+        <p>
+          Above we see a gif showing the work of the <em>Gaussian Processes Upper Confidence Bound</em> acquisition function in finding the best hyperparameters. This by far seems to perform the best with getting quite close to the global optimum value of hyperparameters (found using brute force).
+        </p>
 
         <figure>
           <d-figure><img src="images/MAB_gifs/rand3d.gif" /></d-figure>
         </figure>
 
-        <p>Now our favorite random acquisition function. :)</p>
+        <p>Now our favorite random acquisition function.</p>
 
         <h3 id="comparison">Comparison</h3>
 
@@ -860,7 +866,7 @@
           <d-figure><img src="images/MAB_gifs/RFrand3d.gif"></d-figure>
         </figure>
 
-        <p>Random acquisition function. :)</p>
+        <p>Let us now use Random acquisition function.</p>
 
         <figure>
           <d-figure><img src="images/MAB_gifs/RFcomp3d.svg"></d-figure>
@@ -943,7 +949,7 @@
         </d-code>
 
         <figure class="smaller-img">
-          <d-figure><img src="images/MAB_gifs/conv.svg"></d-figure>
+          <d-figure><img src="images/MAB_gifs/conv2.svg"></d-figure>
         </figure>
 
         <p>
@@ -1070,8 +1076,7 @@
           </li>
           <li>
             <p>
-              Netflix and <a href="https://engineeringblog.yelp.com/2014/10/using-moe-the-metric-optimization-engine-to-optimize-an-ab-testing-experiment-framework.html">Yelp</a> use Metrics Optimization<d-cite key="yelpBO"></d-cite>software like <a
-                href="http://github.com/Yelp/MOE">MOE</a> which essentially are for BO.
+              Netflix and <a href="https://engineeringblog.yelp.com/2014/10/using-moe-the-metric-optimization-engine-to-optimize-an-ab-testing-experiment-framework.html">Yelp</a> use Metrics Optimization software like <a href="http://github.com/Yelp/MOE">Metrics Optimization Engine (MOE)</a> which take advantage of Parallel Bayesian Optimization<d-cite key="yelpBO"></d-cite>.
             </p>
           </li>
         </ul>
