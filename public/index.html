@@ -926,12 +926,12 @@
         )
       </d-code>
 
-      <figure>
+      <figure class="smaller-img">
         <d-figure><img src="images/MAB_gifs/conv.svg"></d-figure>
       </figure>
       
       <p>      
-        There you go you now have the hyperparameters that have minimized your negated (-ve) accuracy (maximized the original accuracy). In the graph above the y-axis denotes the negated and the x-axis denotes the number of times we have queried the Neural Network with some set of given hyperparameters.
+        There you go you now have the hyperparameters that have maximized your accuracy. In the graph above the y-axis denotes the <d-math>\left( f(x^+) \right)</d-math> and the x-axis denotes the number of times we have queried <d-math>(t)</d-math> the Neural Network with some set of given hyperparameters.
       </p>
 
       <p>
@@ -1002,11 +1002,18 @@
         </p>
         <ul>
           <li>
-            While working on the blog, we once scaled the accuracy from the range <d-math>[0, \ 1]</d-math> to <d-math>[0, \ 100]</d-math>. This changed broke havoc as the Gaussian Processes we were using had certain hyperparameters, which needed to be scaled with the accuracy to maintain scale invariance. We wanted to point this out as it might be helpful for the readers who would like to start using on BO.
+            <p>
+              While working on the blog, we once scaled the accuracy from the range <d-math>[0, \ 1]</d-math> to <d-math>[0, \ 100]</d-math>. This changed broke havoc as the Gaussian Processes we were using had certain hyperparameters, which needed to be scaled with the accuracy to maintain scale invariance. We wanted to point this out as it might be helpful for the readers who would like to start using on BO.
+            </p>
           </li>
           <li>
             <p>
               We need to take care while using Bayesian Optimization. Bayesian Optimization based on Gaussian Processes Regression is highly sensitive to the kernel used. For example, if you are using <a href="https://scikit-learn.org/stable/modules/generated/sklearn.gaussian_process.kernels.Matern.html">Matern</a> kernel, we are implicitly assuming that the function we are trying to optimize is first order differentiable.
+            </p>
+          </li>
+          <li>
+            <p>
+              Searching for the hyperparameters, and the choice of the acquisition function to use in BO are interesting problems in themselves. There has been amazing work done, looking at this problem. As mentioned previously in the post, there has been work done in strategies using multiple acquisition function<d-cite key="multiACQ"></d-cite> to deal with these interesting issues.
             </p>
           </li>
           <li>
