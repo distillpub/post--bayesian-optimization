@@ -967,6 +967,16 @@
             optimization in Tensorflow. </d-footnote> on <d-code language="python">scikit-optim</d-code>.
         </p>
 
+        <p>
+          While running the experiment on our laptops, each of the evaluation costed us an approximate of 15 minutes. Looking at the number of evaluations required by the Bayesian Optimization approach, we were able to get to an accuracy of nearly 1.0 in just 5 iterations.
+        </p>
+        <p>
+          The parameters selected by the optimizer were <d-math langugage="python">[4, 0.001903225581761389, 'relu']</d-math>, i.e., batch size of 8, learning rate of 1.9e-2 and 'relu' activation function.
+        </p>
+        <p>
+          If we would have performed a naive grid search, it would have taken us a lot more number iterations <d-math>(5 \times 2 \times 7)</d-math> and we still wouldn't have testing a learning rate near the learning rate returned by the optimizer.
+        </p>
+
         <h1 id="conclusions">Conclusions</h1>
 
         <p>
