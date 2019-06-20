@@ -974,7 +974,11 @@
           The parameters selected by the optimizer were <d-math langugage="python">[4, 0.001903225581761389, 'relu']</d-math>, i.e., batch size of 8, learning rate of 1.9e-2 and 'relu' activation function.
         </p>
         <p>
-          If we would have performed a naive grid search, it would have taken us a lot more number iterations <d-math>(5 \times 2 \times 7)</d-math> and we still wouldn't have testing a learning rate near the learning rate returned by the optimizer.
+          If we had performed a naive grid search, it would have taken us a lot more number iterations <d-math>(5 \times 2 \times 7)</d-math>, and we still wouldn't have tested a learning rate near the learning rate returned by the optimizer. Suppose using grid search resulted in us to take 25 iterations. If we convert it to the time we spent over the Bayesian Optimization approach; we will get a better idea of the amount of time that can be saved when evaluation of the ground truth functions is even more costly.
+        </p>
+
+        <p>
+          We would have saved around 5 hours by using BO for our hypothetical scenario of using Grid Search.
         </p>
 
         <h1 id="conclusions">Conclusions</h1>
