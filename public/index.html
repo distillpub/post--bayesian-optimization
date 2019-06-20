@@ -924,17 +924,20 @@
         )
       </d-code>
 
-      <p>
-        There you go you now have the hyperparameters that have minimized your negated (-ve) accuracy (maximized the original accuracy).
-      </p>
-
       <figure>
         <d-figure><img src="images/MAB_gifs/conv.svg"></d-figure>
       </figure>
+      
+      <p>      
+        There you go you now have the hyperparameters that have minimized your negated (-ve) accuracy (maximized the original accuracy). In the graph above the y axis denotes the negated and the x axis denotes the number of times we have queried the Neural Network with some set of given hyperparameters.
+      </p>
 
-      <p>Looking at the above example, we can see that incorporating Bayesian Optimization isn't a big problem and saves a lot of time we can see that the network was able to get to an accuracy of nearly one in around three iterations. That's
-        impressive! The example above has been inspired by Hvass Laboratories' Tutorial<d-footnote> <a
-            href="https://github.com/Hvass-Labs/TensorFlow-Tutorials/blob/master/19_Hyper-Parameters.ipynb">Notebook</a> showcasing hyperparameter optimization in Tensorflow. </d-footnote> on <d-code language="python">scikit-optim</d-code>
+      <p>
+        We can easily apply the BO for more dimentions (more hyperparameters), even if the dimentions which are categorical (as 'relu' vs 'sigmoid' above) can easily be incorporated into BO.
+      </p>
+
+      <p>
+        Looking at the above example, we can see that incorporating Bayesian Optimization isn't a big problem and saves a lot of time we can see that the network was able to get to an accuracy of nearly one in around three iterations. That's impressive! The example above has been inspired by Hvass Laboratories' Tutorial<d-footnote> <a href="https://github.com/Hvass-Labs/TensorFlow-Tutorials/blob/master/19_Hyper-Parameters.ipynb">Notebook</a> showcasing hyperparameter optimization in Tensorflow. </d-footnote> on <d-code language="python">scikit-optim</d-code>
       </p>.
 
       <h1 id="conclusions">Conclusions</h1>
@@ -1031,7 +1034,7 @@
           </li>
           <li>
             <p>
-              Netflix and <a href="https://engineeringblog.yelp.com/2014/10/using-moe-the-metric-optimization-engine-to-optimize-an-ab-testing-experiment-framework.html">Yelp</a> use Metrics Optimization<d-cite key="yelpBO"></d-cite>softwares like <a href="http://github.com/Yelp/MOE">MOE</a>.
+              Netflix and <a href="https://engineeringblog.yelp.com/2014/10/using-moe-the-metric-optimization-engine-to-optimize-an-ab-testing-experiment-framework.html">Yelp</a> use Metrics Optimization<d-cite key="yelpBO"></d-cite>softwares like <a href="http://github.com/Yelp/MOE">MOE</a> which essentially are for BO.
             </p>
           </li>
         </ul>
