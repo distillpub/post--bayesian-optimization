@@ -551,7 +551,7 @@
         <p>One more acquisition function that is quite common is Thompson Sampling. It has a low overhead of setting up.</p>
 
         <p>
-          The idea is to sample functions within upper and lower probabilistic bounds of a regressor. In other words, we sample functions from the learned Gaussain Process. Once we have sampled a function <d-math>h_t</d-math> for the <d-math>t^{th}
+          The idea is to sample functions within upper and lower probabilistic bounds of a regressor. In other words, we sample functions from the learned Gaussian Process. Once we have sampled a function <d-math>h_t</d-math> for the <d-math>t^{th}
           </d-math> timestep, we choose point <d-math>x_{t+1}</d-math> that maximizes the function <d-math>h_t</d-math> as the next query point to be evaluated.
         </p>
 
@@ -566,7 +566,7 @@
             <li>
               <p>
                 Locations <d-math>x</d-math> with high variance (<d-math>\sigma(x)</d-math>) will show a larger variance in the functional value of the sampled function. This might help in exploration as high variation might lead to the having the
-                sampled functions more prone to having high value at locations with high variance. This will ensure a <strong>exploratory</strong> behaviour.
+                sampled functions more prone to having high value at locations with high variance. This will ensure an <strong>exploratory</strong> behaviour.
               </p>
             </li>
             <li>
@@ -745,8 +745,10 @@
                 <d-figure><img src="images/MAB_gifs/moons.svg" /></d-figure>
               </figure>
 
-              <span>
+              <p>
                 Let us now try to learn the classification problem above using a Support Vector Machine (SVM). We are aware that a SVM takes in two important hyperparameters,
+              </p>
+              <p>
                 <ul>
                   <li>
                     <d-math>\gamma</d-math> -- modifies the behavior of the SVM's kernel. Intuitively it is a measure of how far the influence of a single training example reaches<d-footnote>Stackoverflow <a href="https://stackoverflow.com/questions/35848210/support-vector-machine-what-are-c-gamma">answer</a> for intuition behind the hyperparameters.</d-footnote>.
@@ -755,11 +757,11 @@
                     <d-math>C</d-math> -- modifies the slackness of the classification, the higher the C is, the more sensitive is SVM towards the noise.
                   </li>
                 </ul>
+              </p>
                 <p>
                   Let us apply Bayesian Optimization to learn the best hyperparameters for this classification task<d-footnote> <strong>Note</strong>: the surface plots you see for the Ground Truth Accuracies below were calculated for each possible hyperparameter for showcasing purposes only. We don't have these values in real applications.
                 </d-footnote>.
                 </p>
-              </span>
 
               <figure>
                 <d-figure><img src="images/MAB_gifs/pi3d-0.05-mat.gif" /></d-figure>
@@ -777,7 +779,7 @@
                 <d-figure><img src="images/MAB_gifs/gp3d-1-2-mat.gif" /></d-figure>
               </figure>
 
-              <p>Above we see a gif showing the work of the <em>Guassian Processes Upper Confidence Bound</em> acquisition function in finding the best hyperparameters. This by far seems to perform the best with getting quite close to the
+              <p>Above we see a gif showing the work of the <em>Gaussian Processes Upper Confidence Bound</em> acquisition function in finding the best hyperparameters. This by far seems to perform the best with getting quite close to the
                 global
                 optimum value of hyperparameters (found using brute force).</p>
 
@@ -808,8 +810,7 @@
       </p>
 
       <p>
-        We will continue now to train a Random Forest on the moons dataset we had used previously to learn the Support Vector Machine. The main hyperparameters of Random Forests we would like to optimize our accuracy are <strong>
-          number</strong> of Decision Trees we would like to have, <strong">maximum depth</strong> for each of those decision trees.
+        We will continue now to train a Random Forest on the moons dataset we had used previously to learn the Support Vector Machine. The main hyperparameters of Random Forests we would like to optimize our accuracy are <strong> number</strong> of Decision Trees we would like to have, <strong>maximum depth</strong> for each of those decision trees.
       </p>
       <p>
         The parameters of the Random Forest the individual Decision Trees that are formed.
@@ -837,7 +838,7 @@
       </figure>
 
       <p>
-        Above we see a gif showing the work of the <em>Guassian Processes Upper Confidence Bound</em> acquisition function in finding the best hyperparameters.
+        Above we see a gif showing the work of the <em>Gaussianf Processes Upper Confidence Bound</em> acquisition function in finding the best hyperparameters.f
       </p>
 
       <figure>
@@ -905,8 +906,9 @@
 
       <p>
         Moving on, we have a minimizer function imported from <d-code language="python">scikit-optim</d-code> called <d-code language="python">gp-minimize</d-code>. One can easily change the acquisition function from a number of available options.
-        Below we have a code snippet showing the calling of the optimization function with the <em>Expected Improvement</em> acquisition function. <br />
-
+        Below we have a code snippet showing the calling of the optimization function with the <em>Expected Improvement</em> acquisition function.
+      </p>
+      <p>
         <strong>Note</strong>: One will need to negate the accuracy values as we are using the minimizer function from <d-code language="python">scikit-optim</d-code>.
       </p>
 
@@ -929,16 +931,16 @@
       </figure>
       
       <p>      
-        There you go you now have the hyperparameters that have minimized your negated (-ve) accuracy (maximized the original accuracy). In the graph above the y axis denotes the negated and the x axis denotes the number of times we have queried the Neural Network with some set of given hyperparameters.
+        There you go you now have the hyperparameters that have minimized your negated (-ve) accuracy (maximized the original accuracy). In the graph above the y-axis denotes the negated and the x-axis denotes the number of times we have queried the Neural Network with some set of given hyperparameters.
       </p>
 
       <p>
-        We can easily apply the BO for more dimentions (more hyperparameters), even if the dimentions which are categorical (as 'relu' vs 'sigmoid' above) can easily be incorporated into BO.
+        We can easily apply the BO for more dimensions (more hyperparameters), even if the dimensions which are categorical (as 'relu' vs 'sigmoid' above) can easily be incorporated into BO.
       </p>
 
       <p>
-        Looking at the above example, we can see that incorporating Bayesian Optimization isn't a big problem and saves a lot of time we can see that the network was able to get to an accuracy of nearly one in around three iterations. That's impressive! The example above has been inspired by Hvass Laboratories' Tutorial<d-footnote> <a href="https://github.com/Hvass-Labs/TensorFlow-Tutorials/blob/master/19_Hyper-Parameters.ipynb">Notebook</a> showcasing hyperparameter optimization in Tensorflow. </d-footnote> on <d-code language="python">scikit-optim</d-code>
-      </p>.
+        Looking at the above example, we can see that incorporating Bayesian Optimization isn't a big problem and saves a lot of time we can see that the network was able to get to an accuracy of nearly one in around three iterations. That's impressive! The example above has been inspired by Hvass Laboratories' Tutorial<d-footnote> <a href="https://github.com/Hvass-Labs/TensorFlow-Tutorials/blob/master/19_Hyper-Parameters.ipynb">Notebook</a> showcasing hyperparameter optimization in Tensorflow. </d-footnote> on <d-code language="python">scikit-optim</d-code>.
+      </p>
 
       <h1 id="conclusions">Conclusions</h1>
 
@@ -953,7 +955,7 @@
           Optimizing or tuning hyperparams is an important facet of modern machine learning algorithms and BO is an efficient way of tuning the same.
         </p>
         <p>
-          Having reading all the way through, you might have been sold on the idea about the time you can save by asking Bayesian Optimizer to find the best hyperparameters for your fantastic model. There are a plethora of Bayesian Optimization
+          Having read all the way through, you might have been sold on the idea about the time you can save by asking Bayesian Optimizer to find the best hyperparameters for your fantastic model. There are a plethora of Bayesian Optimization
           libraries available. We have linked a few below. Do check them out.
         </p>
 
@@ -1026,7 +1028,7 @@
           </li>
           <li>
             <p>
-              Pater Faizer in his <a href="https://www.youtube.com/watch?v=c4KKvyWW_Xk">talk mentioned that Uber uses Bayesian Optimization for tuning algorithms via backtesting. 
+              Pater Faizer in his <a href="https://www.youtube.com/watch?v=c4KKvyWW_Xk">talk</a> mentioned that Uber uses Bayesian Optimization for tuning algorithms via backtesting. 
             </p>
           </li>
           <li>
@@ -1034,7 +1036,7 @@
           </li>
           <li>
             <p>
-              Netflix and <a href="https://engineeringblog.yelp.com/2014/10/using-moe-the-metric-optimization-engine-to-optimize-an-ab-testing-experiment-framework.html">Yelp</a> use Metrics Optimization<d-cite key="yelpBO"></d-cite>softwares like <a href="http://github.com/Yelp/MOE">MOE</a> which essentially are for BO.
+              Netflix and <a href="https://engineeringblog.yelp.com/2014/10/using-moe-the-metric-optimization-engine-to-optimize-an-ab-testing-experiment-framework.html">Yelp</a> use Metrics Optimization<d-cite key="yelpBO"></d-cite>software like <a href="http://github.com/Yelp/MOE">MOE</a> which essentially are for BO.
             </p>
           </li>
         </ul>
