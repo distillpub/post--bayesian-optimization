@@ -737,11 +737,11 @@
         process begins. Parameters, on the other hand, are the parameters that are learned looking at the data. One small example that we can think of can be of Ridge Regression.
       </p>
       <d-math block>
-
+        \hat{\beta}^{ridge} = argmin_{\beta \ \in \ \mathbb{R}^p} \sum\limits_{i=1}^{n} \left(y_i - x_i^T\beta \right)^2 + \lambda \sum\limits_{i=1}^{p} \beta^2_j
       </d-math>
       <p>
-        In Ridge Regression, we have the usual parameters, <d-math>W</d-math>:
-        weight matrix, <d-math>c</d-math>: the intercept, both of which are learned from the data. We further have a hyperparameter we need to set to get regularization effect, the regularization coefficient <d-math>\lambda \geq 0</d-math>.
+        In Ridge Regression, we have the usual parameter, <d-math>\beta</d-math>: the weight matrix which is learned from the data. We further have a hyperparameter we need to set to get regularization effect, the regularization coefficient <d-math>\lambda \geq 0</d-math>. <br />
+        In the case of using a Gradient Descent optimization technique  to optimize the above expression, we further introduce another hyperparameter, the learning rate <d-math>\alpha</d-math>.
       </p>
 
       <p>Now as we are clear on the difference between hyperparameters and parameters we would like to introduce one of the most common use case of Bayesian Optimization; <em>Hyperparameter Tuning</em>: finding the best performing
