@@ -75,7 +75,7 @@
       Our aim is to find the location along this line where we would get maximum returns and drill at that location. Now, at the start of the activity, we have no idea about the amount of gold at different locations.
       The only way we can get the information about the amount of gold is by drilling at different locations.
       This drilling is costly and involves expensive sensors to be used.
-      We, therefore, want to <strong>minimize the number of drillings required</strong> while still being able to <strong>quickly find location of maximum gold</strong>.
+      We, therefore, want to <strong>minimize the number of drillings required</strong> while still being able to <strong>find the location of maximum gold quickly</strong>.
     </p>
 
     <p>
@@ -111,7 +111,7 @@
 
     <p>
       In machine learning problems, often, unlabelled data is very easily available, but labeling could be an expensive task. As an example, for a speech-to-text task, the ground truth labeling or annotation task requires expert(s) to manually
-      label words and sentences. In our gold mining problem, drilling (akin to labelling) is an expensive operation, and we would like to minimize it. But, without drilling, we can not estimate the gold estimate.
+      label words and sentences. In our gold mining problem, drilling (akin to labeling) is an expensive operation, and we would like to minimize it. But, without drilling, we can not estimate the gold estimate.
       Active learning would solve this problem by posing a smart strategy to choose the next drilling site. While there are various methods and techniques in the active learning literature, for the sake of brevity, we will look only at
       <strong>uncertainty reduction</strong>, which chooses the next query point as the one our model is the most uncertain about. One of the ways we can reduce the uncertainty is by choosing the point at which we have the maximum variance (we are
       most uncertain).
@@ -122,12 +122,12 @@
 
     <p>
       One might want to look at this excellent distillpub article<d-cite key="görtler2019a"></d-cite> on Gaussian Processes<d-cite key="Rasmussen2004"></d-cite>.
-      We will be using Gaussian Processes regression to model the gold distribution along the one-dimensional line. By using Gaussian processes, we take make an assumption that the gold distribution of nearby points is similar (smoothness).
-      Such an assumption is usually true.
+      We will be using Gaussian Processes regression to model the gold distribution along the one-dimensional line. By using Gaussian processes, we assume that the gold distribution of nearby points is similar (smoothness).
+      Such an assumption is usually valid.
     </p>
 
     <p>
-      Let us now try to see how our groundtruth function <d-math>f(x)</d-math> looks like. The gold distribution in our data looks to be bi-modal with a maximum value around <d-math>x = 5</d-math>. For now, let us not worry about the X-axis or the
+      Let us now try to see how our ground truth function <d-math>f(x)</d-math> looks like. The gold distribution in our data looks to be bi-modal with a maximum value around <d-math>x = 5</d-math>. For now, let us not worry about the X-axis or the
       Y-axis units.
     </p>
     <figure class="smaller-img">
@@ -138,7 +138,7 @@
     <h4 id="priormodel">Prior Model</h4>
 
     <p>
-      We will choose a simple prior about the gold content along the one-dimensional space. Our prior assumes a smooth relationship between points via a Matern kernel<d-footnote>See <a href="http://www.gaussianprocess.org/gpml/">Rasmussen and
+      We will choose a simple prior to the gold content along a one-dimensional space. Our prior assumes a smooth relationship between points via a Matern kernel<d-footnote>See <a href="http://www.gaussianprocess.org/gpml/">Rasmussen and
           Williams 2004</a> and <a href="https://scikit-learn.org/stable/modules/generated/sklearn.gaussian_process.kernels.Matern.html">scikit-learn</a>, for details regarding the Matern kernel.</d-footnote>. The black line in the graph below
       denotes the knowledge we have about the gold content without drilling even at a single location.
     </p>
@@ -187,7 +187,7 @@
 
     <p>
       One point to notice is that this idea of choosing the most uncertain location leads to querying of the points that are the farthest (visible when we choose the
-      2nd location to drill). Through this animation, we can notice that just in a few iterations, we are able to estimate the true distribution of gold. At every iteration, our active learning procedure carries out an <strong> exploration
+      2nd location to drill). Through this animation, we can notice that just in a few iterations, we are able to estimate the true distribution of gold. At every iteration, our active learning procedure carries out <strong> exploration
       </strong> to make our estimates better.
     </p>
 
@@ -203,7 +203,7 @@
     </p>
 
     <p>
-      In this problem, we are instead interested to know the location at which we find the maximum gold. For getting the location of maximum gold content, we might want to drill at the location where predicted mean is the highest, i.e. to
+      In this problem, we are instead interested to know the location at which we find the maximum gold. To get the location of maximum gold content, we might want to drill at the location where predicted mean is the highest, i.e. to
       <strong>exploit</strong>. But unfortunately our mean is not always accurate, so we need to correct our mean which can be done by reducing variance or <strong>exploration</strong>. Bayesian Optimization looks at both
       <strong>exploitation</strong> and <strong>exploration</strong>, whereas in the case of Active Learning Problem, we only cared
       about <strong>exploration</strong>.
@@ -408,7 +408,7 @@
     </p>
 
     <p>
-      In essence we are trying to select the point that minimizes the distance to the objective evaluated at the maximum. Unfortunately, we don't know the ground truth function, <d-math>f</d-math>. Mockus<d-cite key="mockusEI"></d-cite> proposed
+      In essence, we are trying to select the point that minimizes the distance to the objective evaluated at the maximum. Unfortunately, we don't know the ground truth function, <d-math>f</d-math>. Mockus<d-cite key="mockusEI"></d-cite> proposed
       the following acquisition function to overcome the issue.
     </p>
 
@@ -439,7 +439,7 @@
       <li>It is high when the uncertainty <d-math>\sigma_t(x)</d-math> around a point is high.</li>
     </ul>
 
-    <p>Now, if we see the role of <d-math>\epsilon</d-math> in <em>Expected Improvement</em>, it is the exact same as the role played in the case of <em>Probability of Improvement</em> (we have the same expression in PI) <d-footnote>A good
+    <p>Now, if we see the role of <d-math>\epsilon</d-math> in <em>Expected Improvement</em>, it is precisely the same as in the case of <em>Probability of Improvement</em> (we have the same expression in PI) <d-footnote>A good
         introduction to the Expected Improvement Acquisition function is by <a href="https://thuijskens.github.io/2016/12/29/bayesian-optimisation/" target="_blank">this post</a> by Thomas Huijskens and <a
           href="https://people.orie.cornell.edu/pfrazier/Presentations/2018.11.INFORMS.tutorial.pdf" target="_blank">these slides</a> by Peter Frazier</d-footnote>.
     </p>
@@ -500,7 +500,7 @@
     <p>
       We can see that the <d-math>\alpha_{EI}</d-math> has its maximum value corresponding to <d-math>\alpha_{PI}</d-math> close to 0.25. But, <d-math>\alpha_{PI}</d-math> has a maximum of around 0.375, for which <d-math>\alpha_{EI}</d-math>
       is low. Choosing a point with low <d-math>\alpha_{PI}</d-math> and high <d-math>\alpha_{EI}</d-math> means taking more risk, but getting a high reward.
-      In other words, when reward is the same for multiple points (<d-math>\alpha_{EI}</d-math>), we should prioritize to choose the option with lesser risk (or higher <d-math>\alpha_{PI}</d-math>). And similarly,
+      In other words, when the reward is the same for multiple points (<d-math>\alpha_{EI}</d-math>), we should prioritize to choose the option with lesser risk (or higher <d-math>\alpha_{PI}</d-math>). And similarly,
       when
       the risks are the same (same <d-math>\alpha_{PI}</d-math>), we would want to go with points with greater reward (higher <d-math>\alpha_{EI}</d-math>).
     </p>
@@ -571,14 +571,13 @@
       <ul>
         <li>
           <p>
-            Locations <d-math>x</d-math> with high variance (<d-math>\sigma(x)</d-math>) will show a larger variance in the functional value of the sampled function. This might help in exploration as high variation might lead to the having the
-            sampled functions more prone to having high value at locations with high variance. This will ensure an <strong>exploratory</strong> behaviour.
+            Locations <d-math>x</d-math> with high variance (<d-math>\sigma(x)</d-math>) will show a larger variance in the functional value of the sampled function. This might help in exploration as high variation might lead to having the sampled functions more prone to having high value at locations with high variance. This will ensure an <strong>exploratory</strong> behaviour.
           </p>
         </li>
         <li>
           <p>
-            The current max value evaluated be denoted by <d-math>f(x^+)</d-math>. The sampled functions will need to pass through or closely from current max value (due to low <d-math>\sigma(x)</d-math>) at the evalutated locations. This will
-            ensure a <strong>exploiting</strong> behaviour of the acquisition function.
+            The current max value evaluated be denoted by <d-math>f(x^+)</d-math>. The sampled functions will need to pass through or closely from the current max value (due to low <d-math>\sigma(x)</d-math>) at the evaluated locations. This will
+            ensure an <strong>exploiting</strong> behaviour of the acquisition function.
           </p>
         </li>
       </ul>
@@ -748,7 +747,7 @@
         hyperparameters
         on machine learning models. At last, hyperparameter tuning is an optimization problem (optimizing our metric of choice).</p>
 
-      <p>Usually, when training a model isn't expensive and time-consuming, we might just do a grid search. The main issue with grid search is that it is not feasible if getting the functional value is extremely costly, as in case of a large
+      <p>Usually, when training a model isn't expensive and time-consuming, we might just do a grid search. The primary issue with grid search is that it is not feasible if getting the functional value is extremely costly, as in case of a large
         neural network that takes days to train. This might result in days of waiting to get the accuracy scores.
 
 
@@ -769,7 +768,7 @@
         <p>
           <ul>
             <li>
-              <d-math>\gamma</d-math> -- modifies the behavior of the SVM's kernel. Intuitively it is a measure of how far the influence of a single training example reaches<d-footnote>Stackoverflow <a
+              <d-math>\gamma</d-math> -- modifies the behavior of the SVM's kernel. Intuitively it is a measure of how far the influence of a single training example reaches<d-footnote>StackOverflow <a
                   href="https://stackoverflow.com/questions/35848210/support-vector-machine-what-are-c-gamma">answer</a> for intuition behind the hyperparameters.</d-footnote>.
             </li>
             <li>
@@ -830,11 +829,11 @@
         </p>
 
         <p>
-          We will continue now to train a Random Forest on the moons dataset we had used previously to learn the Support Vector Machine. The main hyperparameters of Random Forests we would like to optimize our accuracy are <strong> number</strong> of
-          Decision Trees we would like to have, <strong>maximum depth</strong> for each of those decision trees.
+          We will continue now to train a Random Forest on the moons dataset we had used previously to learn the Support Vector Machine model. The primary hyperparameters of Random Forests we would like to optimize our accuracy are the <strong> number</strong> of
+          Decision Trees we would like to have, the <strong>maximum depth</strong> for each of those decision trees.
         </p>
         <p>
-          The parameters of the Random Forest the individual Decision Trees that are formed.
+          The parameters of the Random Forest are the individual trained Decision Trees models.
         </p>
         <p>
           We will be again using Gaussian Processes with Matern kernel to estimate and predict the accuracy function over the two hyperparameters.
@@ -859,7 +858,7 @@
         </figure>
 
         <p>
-          Above we see a gif showing the work of the <em>Gaussianf Processes Upper Confidence Bound</em> acquisition function in finding the best hyperparameters.f
+          Above we see a gif showing the work of the <em>Gaussian Processes Upper Confidence Bound</em> acquisition function in finding the best hyperparameters.f
         </p>
 
         <figure>
@@ -893,7 +892,7 @@
               This hyperparameter sets the number of training examples to combine to find the gradients for a single step in gradient descent.
             </li>
             <li>
-              learning rate -- We will be searching all the real numbers from the range <d-math>[10^{-6}, \ 1]</d-math>. We would be using logarithmic uniform distribution as our prior distribution if we are to sample random points from this space.<br />
+              learning rate -- We will be searching all the real numbers from the range <d-math>[10^{-6}, \ 1]</d-math>. We will be using logarithmic uniform distribution as our prior distribution if we are to sample random points from this space.<br />
               This hyperparamter sets the stepsize with which we will perform gradient descent in the neural network.
             </li>
             <li>
@@ -968,18 +967,18 @@
         </p>
 
         <p>
-          While running the experiment on our laptops, each of the evaluation costed us an approximate of 15 minutes. Looking at the number of evaluations required by the Bayesian Optimization approach, we were able to get to an accuracy of nearly 1.0 in just 5 iterations.
+          While running the experiment on our laptops, each of the evaluation cost us an approximate of 15 minutes. Looking at the number of evaluations required by the Bayesian Optimization approach, we were able to get to an accuracy of nearly 1.0 in just 5 iterations.
         </p>
         <p>
           The parameters selected by the optimizer were <d-math langugage="python">[4, 0.001903225581761389, 'relu']</d-math>, i.e., batch size of 8, learning rate of 1.9e-2 and 'relu' activation function.
         </p>
         <p>
-          If we had performed a naive grid search, it would have taken us a lot more number iterations <d-math>(5 \times 2 \times 7)</d-math>, and we still wouldn't have tested a learning rate near the learning rate returned by the optimizer. Suppose using grid search resulted in us to take 25 iterations. If we convert it to the time we spent over the Bayesian Optimization approach; we will get a better idea of the amount of time that can be saved when evaluation of the ground truth functions is even more costly.
+          If we had performed a naive grid search, it would have taken us a lot more iterations <d-math>(5 \times 2 \times 7)</d-math>, and we still wouldn't have tested a learning rate near the learning rate returned by the optimizer. Suppose using grid search resulted in us to take 25 iterations. If we convert it to the time we spent over the Bayesian Optimization approach; we will get a better idea of the amount of time that can be saved when evaluation of the ground truth functions is even more costly.
         </p>
 
         <p>
           We would have saved around 5 hours by using BO for our hypothetical scenario of using Grid Search.
-        </p>
+        </p>j
 
         <h1 id="conclusions">Conclusions</h1>
 
@@ -1029,14 +1028,14 @@
         <p>Using gradient information when it is available.</p>
         <ul>
           <li>
-            Suppose we have gradient information available, we should possibly try to use the information. This could result in a much faster approach to the global maxima. To have a look at this interesting domain of research look at the paper by
+            Suppose we have gradient information available, we should possibly try to use the information. This could result in a much faster approach to the global maxima. To know more about this exciting domain of research look at the paper by
             Wu, et. al.<d-cite key="BOwtGD"></d-cite>.
           </li>
         </ul>
       </li>
       <li>
         <p>
-          To have a quick view of differences between BO and Gradient Descent, one can look at <a href="https://stats.stackexchange.com/q/161936">this</a> amazing answer at stackoverflow.
+          To have a quick view of differences between BO and Gradient Descent, one can look at <a href="https://stats.stackexchange.com/q/161936">this</a> amazing answer at StackOverflow.
         </p>
       </li>
       <li>
