@@ -970,7 +970,7 @@
           While running the experiment on our laptops, each of the evaluation cost us an approximate of 15 minutes. Looking at the number of evaluations required by the Bayesian Optimization approach, we were able to get to an accuracy of nearly 1.0 in just 5 iterations.
         </p>
         <p>
-          The parameters selected by the optimizer were <d-math langugage="python">[4, 0.001903225581761389, 'relu']</d-math>, i.e., batch size of 8, learning rate of 1.9e-2 and 'relu' activation function.
+          The parameters selected by the optimizer were <d-math langugage="python">[4, 0.0019, `relu`]</d-math>, i.e., batch size of 8, learning rate of 1.9e-2 and 'relu' activation function.
         </p>
         <p>
           If we had performed a naive grid search, it would have taken us a lot more iterations <d-math>(5 \times 2 \times 7)</d-math>, and we still wouldn't have tested a learning rate near the learning rate returned by the optimizer. Suppose using grid search resulted in us to take 25 iterations. If we convert it to the time we spent over the Bayesian Optimization approach; we will get a better idea of the amount of time that can be saved when evaluation of the ground truth functions is even more costly.
@@ -978,7 +978,7 @@
 
         <p>
           We would have saved around 5 hours by using BO for our hypothetical scenario of using Grid Search.
-        </p>j
+        </p>
 
         <h1 id="conclusions">Conclusions</h1>
 
@@ -1037,6 +1037,28 @@
         <p>
           To have a quick view of differences between BO and Gradient Descent, one can look at <a href="https://stats.stackexchange.com/q/161936">this</a> amazing answer at StackOverflow.
         </p>
+      </li>
+      <li>
+        <p>
+          When the datasets are extremely large, human experts tend to test hyperparameters on smaller subsets of the dataset and iteratively improve the accuracy for their models. There has been work in Bayesian Optimization, taking into account these approaches<d-cite key="hyperband,largeBO"></d-cite> when datasets are of such sizes.
+        </p>
+      </li>
+      <li>
+        <p>
+          We have been using GP in our BO for getting predictions, but we can have any other predictor or mean and variance in our BO.
+        </p>
+        <ul>
+          <li>
+            <p>
+              One can look at <a href="http://aad.informatik.uni-freiburg.de/~hutter/ML3.pdf">this</a> slide deck by Frank Hutter discussing some limitations of a GP-based Bayesian Optimization over a Random Forest based Bayesian Optimization.
+            </p>
+          </li>
+          <li>
+            <p>
+              There has been work on even using Deep Neural Networks in BO<d-cite key="NNbasedBO"></d-cite> for a more scalable approach compared to GP. The paper talks about how GP-based Bayesian Optimization scales cubically with the number of operations, compared to their novel method that scales linearly.
+            </p>
+          </li>
+        </ul>
       </li>
       <li>
         <p>
