@@ -1,14 +1,27 @@
 # Post -- Exploring Bayesian Optimization
-Breaking Bayesian Optimization into small, sizable chunks.
+### Breaking Bayesian Optimization into small, sizable chunks.
 
-For hosted online version of our post visit - https://nipunbatra.github.io/distillpub/public/index.html
+To view the rendered version of the post, visit: https://nipunbatra.github.io/distillpub/public/index.html
 
-Authors:
+![](https://nipunbatra.github.io/distillpub/public/images/MAB_gifs/mab-gp-10.gif)
 
-- Apoorv Agnihotri\*
-- Nipun Batra\*
+Authors
+-------
+[Apoorv Agnihotri](https://apoorvagnihotri.github.io/) and [Nipun Batra](https://nipunbatra.github.io/) (both IIT Gandhinagar)
 
-\*Indian Insitute of Technology Gandhinagar
+Offline viewing
+---------------
 
-## Experimentation Notebook
+Run the following command to view the post.
+```sh
+./view.sh
+```
+
+or, just plainly open `public/index.html` in your browser.
+
+*NB - the citations may not appear correctly in the offline render*
+
+Experimentation Notebook
+---------------
+
 Experiments were performed on ipynb linked [here](https://github.com/nipunbatra/distillpub/blob/master/public/images/bandit-learning-gp.ipynb).
