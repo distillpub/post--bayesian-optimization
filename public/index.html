@@ -1045,6 +1045,11 @@
       </li>
       <li>
         <p>
+          Now, suppose we are trying to optimize a function where it must always be the case that if we evaluate a function, the evaluated values should be above a certain security threshold<d-cite key="SafeExplore"></d-cite>. One toy example is the possible configurations for a flying robot to maximize its stability. If we tried a point with terrible stability, we might crash the robot, and therefore we would like to explore the configuration space more diligently.
+        </p>
+      </li>
+      <li>
+        <p>
           We have been using GP in our BO for getting predictions, but we can have any other predictor or mean and variance in our BO.
         </p>
         <ul>
@@ -1055,7 +1060,7 @@
           </li>
           <li>
             <p>
-              There has been work on even using Deep Neural Networks in BO<d-cite key="NNbasedBO"></d-cite> for a more scalable approach compared to GP. The paper talks about how GP-based Bayesian Optimization scales cubically with the number of operations, compared to their novel method that scales linearly.
+              There has been work on even using Deep Neural Networks in BO<d-cite key="NNbasedBO"></d-cite> for a more scalable approach compared to GP. The paper talks about how GP-based Bayesian Optimization scales cubically with the number of observations, compared to their novel method that scales linearly.
             </p>
           </li>
         </ul>
