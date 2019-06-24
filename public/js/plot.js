@@ -11,7 +11,7 @@ function updateplot() {
 
     // Set the ranges
     var eps = document.getElementById("slider").value;
-    console.log(eps);
+    console.log('eps selected: ' + eps);
     var x = d3.time.scale().range([0, width]);
     var y = d3.scale.linear().range([height, 0]);
 
@@ -38,7 +38,6 @@ function updateplot() {
 
     // Get the data
     d3.csv("./data/data.csv", function(data) {
-        console.log('Hello data here: ' + data);
         data.forEach( function(d) {
             d.date = parseDate(d.date);
             d.close = +d.close;
