@@ -41,7 +41,7 @@ path {
   shape-rendering: crispEdges;
 }
 
-#Teaser > svg {
+.Teaser {
   display: block;
 }
 

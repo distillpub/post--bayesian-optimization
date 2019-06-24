@@ -7,13 +7,13 @@
   <title>Exploring Bayesian Optimization</title>
   <script defer src="js/template.v2.js"></script>
   <link rel="stylesheet" type="text/css" href="css/styles.css">
-  <script defer src="https://d3js.org/d3.v3.min.js"></script>
+  <script defer src="https://d3js.org/d3.v4.min.js"></script>
   <script defer src="js/plot.js"></script>
   <!-- <link rel="stylesheet" type="text/css" href="css/style.css"> -->
 
 </head>
 
-<body onload="updateplot();">
+<body>
 
   <d-front-matter>
     <script id='distill-front-matter' type="text/json">
@@ -51,9 +51,8 @@
   <d-title style="padding-bottom: 0">
     <p>Breaking Bayesian Optimization into small, sizable chunks.</p>
     <p>
-      <input id="slider" type="range" min="0.0"
-        max="0.25" value="0.0" step="0.05" list="ticks"
-        onchange="updateplot();">
+      <input id="slider" type="range" min="0.0",
+        max="0.25" value="0.0" step="0.05" list="ticks">
       <datalist id="ticks">
           <option>0.00</option>
           <option>0.05</option>
@@ -63,7 +62,10 @@
           <option>0.25</option>
       </datalist>
     </p>
-    <d-figure id="Teaser" class="l-screen shaded-figure" style="border-bottom: none"></d-figure>
+    <d-figure id="TeaserP" class="l-screen shaded-figure" style="border-bottom: none">
+      <div class="Teaser" id="Teaser1"></div>
+      <div class="Teaser" id="Teaser2"></div>
+    </d-figure>
   </d-title>
 
   <d-byline></d-byline>
