@@ -1,14 +1,47 @@
 // https://www.d3-graph-gallery.com/graph/density_slider.html
+// Function to compute density
+function kernelDensityEstimator(kernel, X) {
+  return function(V) {
+    return X.map(function(x) {
+      return [x, d3.mean(V, function(v) { return kernel(x - v); })];
+    });
+  };
+}
+function kernelEpanechnikov(k) {
+  return function(v) {
+    return Math.abs(v /= k) <= 1 ? 0.75 * (1 - v * v) / k : 0;
+  };
+}
+
+function returnCurrAlpha(data, curr_eps) {
+  console.log("insisfe retrn funciron.");
+  var curr_data = new Array();
+  var ll = data[curr_eps].store['x'].length;
+  var i;
+  for (i=0; i<ll; i++) {
+    curr_data.push({
+      x: data[curr_eps].store['x'][i],
+      alphaPI: data[curr_eps].store['alphaPI'][i]
+    });
+  }
+  return curr_data;
+}
+
 
 // get the data
-d3.csv("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/1_OneNum.csv", function(data) {
+d3.json("data/pi_cdf.json", function(data) {
+  console.log('Logging json read!')
+  console.log(data);
+
+  var curr_eps = "0";
+  var curr_data = returnCurrAlpha(data, curr_eps);
+
   // ---------------------------
 
   // set the dimensions and margins of the graph
   var margin = {top: 30, right: 30, bottom: 30, left: 50},
   width = 460 - margin.left - margin.right,
   height = 200 - margin.top - margin.bottom;
-
   // append the svg object to the body of the page
   var svg = d3.select("#Teaser1")
   .append("svg")
@@ -17,82 +50,84 @@ d3.csv("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_data
   .append("g")
   .attr("transform",
         "translate(" + margin.left + "," + margin.top + ")");
-
   // add the x Axis
   var x = d3.scaleLinear()
-            .domain([0, 1000])
+            .domain([0, d3.max(curr_data, function(d, i) {
+              return d.x;
+            })])
             .range([0, width]);
   svg.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(x));
-
-  // add the y2 Axis
+  // add the y Axis
   var y = d3.scaleLinear()
             .range([height, 0])
-            .domain([0, 0.01]);
+            .domain([0, 1]);
   svg.append("g")
     .attr("class", "y axis")
     .call(d3.axisLeft(y));
-  
+  // Textual Content
+  svg.append("text")
+    .attr("class", "title")
+    .attr("x", (width / 2))
+    .attr("y", 0 - (margin.top / 2))
+    .text("Alpha PI for epsilon = " + data[curr_eps].eps);
   svg.append("text")
     .attr("transform", "rotate(-90)")
-    .attr("class", "labels")
+    .attr("class", "label")
     .attr("y", 0 - margin.left)
     .attr("x", 0 - (height / 2))
     .attr("dy", "1em")
-    .text("Value1");
-
+    .text("Alpha PI");
   svg.append("text") // text label for the x axis
-    .attr("class", "labels")
+    .attr("class", "label")
     .attr("x", width / 2 )
     .attr("y", height + margin.bottom )
-    .text("Date");
-
-  // Compute kernel density estimation
-  var kde = kernelDensityEstimator(kernelEpanechnikov(7), x.ticks(1))
-  var density =  kde( data.map(function(d){  return d.price; }) )
+    .text("X");
 
   // Plot the area
   var curve = svg
     .append('g')
     .append("path")
       .attr("class", "mypath")
-      .datum(density)
-      .attr("fill", "#69b3a2")
+      .datum(curr_data)
+      .attr("fill", "none")
       .attr("opacity", ".8")
       .attr("stroke", "#000")
       .attr("stroke-width", 1)
       .attr("stroke-linejoin", "round")
       .attr("d",  d3.line()
         .curve(d3.curveBasis)
-          .x(function(d) { return x(d[0]); })
-          .y(function(d) { return y(d[1]); })
+          .x(function(d) { return x(d['x']); })
+          .y(function(d) { return y(d['alphaPI']); })
       );
 
   // A function that update the chart when slider is moved?
-  function updateChart1(binNumber) {
+  function updateChart1(curr_eps) {
     // recompute density estimation
-    binNumber = parseInt(binNumber * 1000)
-    kde = kernelDensityEstimator(kernelEpanechnikov(7), x.ticks(binNumber))
-    density =  kde( data.map(function(d){  return d.price; }) )
-    console.log("Graph1: "+binNumber)
+    console.log("Graph1 Eps Selected: "+ data[curr_eps].eps);
+    var curr_data = returnCurrAlpha(data, curr_eps);
+    // console.log(data)
+    // console.log(curr_data)
+    // console.log(curr_data['x'])
+    // console.log(curr_data['alphaPI'])
 
     // update the chart
     curve
-      .datum(density)
+      .datum(curr_data)
       .transition()
       .duration(1000)
       .attr("d",  d3.line()
         .curve(d3.curveBasis)
-          .x(function(d) { return x(d[0]); })
-          .y(function(d) { return y(d[1]); })
+          .x(function(d) { return x(d['x']); })
+          .y(function(d) { return y(d['alphaPI']); })
       );
   
   }
 
   // ------------------------------
-
+/*
   // append the svg object to the body of the page
   var svg2 = d3.select("#Teaser2")
   .append("svg")
@@ -162,24 +197,11 @@ d3.csv("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_data
 
   // ----------------------------
 
+*/
   // Listen to the slider?
   d3.select("#slider").on("change", function(d){
     selectedValue = this.value
     updateChart1(selectedValue);
-    updateChart2(selectedValue);
+    // updateChart2(selectedValue);
   })
 });
-
-// Function to compute density
-function kernelDensityEstimator(kernel, X) {
-  return function(V) {
-    return X.map(function(x) {
-      return [x, d3.mean(V, function(v) { return kernel(x - v); })];
-    });
-  };
-}
-function kernelEpanechnikov(k) {
-  return function(v) {
-    return Math.abs(v /= k) <= 1 ? 0.75 * (1 - v * v) / k : 0;
-  };
-}

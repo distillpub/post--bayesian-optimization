@@ -68,7 +68,13 @@ path {
   display: block;
 }
 
-.labels {
+.label {
   text-anchor: middle;
   font: 10px monospace;
+}
+
+.title {
+  text-anchor: middle;
+  font: 16px monospace;
+  text-decoration: underline;
 }
