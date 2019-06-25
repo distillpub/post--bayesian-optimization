@@ -33,11 +33,14 @@ path {
   fill: rgb(133, 185, 228);
 }
 
+/* .labels {
+
+} */
 .axis path, 
 .axis line {
   stroke-width: 1;
   fill: none;
-  stroke: grey;
+  stroke: black;
   shape-rendering: crispEdges;
 }
 
@@ -63,4 +66,9 @@ path {
   margin: auto;
   /* width: 50%; */
   display: block;
+}
+
+.labels {
+  text-anchor: middle;
+  font: 10px monospace;
 }

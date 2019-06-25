@@ -23,6 +23,7 @@ d3.csv("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_data
             .domain([0, 1000])
             .range([0, width]);
   svg.append("g")
+      .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(x));
 
@@ -31,7 +32,22 @@ d3.csv("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_data
             .range([height, 0])
             .domain([0, 0.01]);
   svg.append("g")
-      .call(d3.axisLeft(y));
+    .attr("class", "y axis")
+    .call(d3.axisLeft(y));
+  
+  svg.append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("class", "labels")
+    .attr("y", 0 - margin.left)
+    .attr("x", 0 - (height / 2))
+    .attr("dy", "1em")
+    .text("Value1");
+
+  svg.append("text") // text label for the x axis
+    .attr("class", "labels")
+    .attr("x", width / 2 )
+    .attr("y", height + margin.bottom )
+    .text("Date");
 
   // Compute kernel density estimation
   var kde = kernelDensityEstimator(kernelEpanechnikov(7), x.ticks(1))
@@ -77,12 +93,6 @@ d3.csv("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_data
 
   // ------------------------------
 
-
-  // set the dimensions and margins of the graph
-  // var margin = {top: 30, right: 30, bottom: 30, left: 50},
-  // width = 460 - margin.left - margin.right,
-  // height = 200 - margin.top - margin.bottom;
-
   // append the svg object to the body of the page
   var svg2 = d3.select("#Teaser2")
   .append("svg")
@@ -97,6 +107,7 @@ d3.csv("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_data
             .domain([0, 1000])
             .range([0, width]);
   svg2.append("g")
+      .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(x2));
 
@@ -105,6 +116,7 @@ d3.csv("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_data
             .range([height, 0])
             .domain([0, 0.01]);
   svg2.append("g")
+      .attr("class", "y axis")
       .call(d3.axisLeft(y2));
 
   // Compute kernel density estimation
@@ -112,7 +124,7 @@ d3.csv("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_data
   var density =  kde( data.map(function(d){  return d.price; }) )
 
   // Plot the area
-  var curve = svg2
+  var curve2 = svg2
     .append('g')
     .append("path")
       .attr("class", "mypath")
@@ -137,7 +149,7 @@ d3.csv("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_data
     console.log("Graph2: "+binNumber)
 
     // update the chart
-    curve
+    curve2
       .datum(density)
       .transition()
       .duration(1000)
