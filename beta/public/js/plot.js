@@ -14,7 +14,7 @@ function kernelEpanechnikov(k) {
 }
 
 function returnCurrAlpha(data, curr_eps) {
-  console.log("insisfe retrn funciron.");
+  // console.log("insisfe retrn funciron.");
   var curr_data = new Array();
   var ll = data[curr_eps].store['x'].length;
   var i;
@@ -69,6 +69,7 @@ d3.json("data/pi_cdf.json", function(data) {
     .call(d3.axisLeft(y));
   // Textual Content
   svg.append("text")
+    .attr("id", "plot1title")
     .attr("class", "title")
     .attr("x", (width / 2))
     .attr("y", 0 - (margin.top / 2))
@@ -85,7 +86,6 @@ d3.json("data/pi_cdf.json", function(data) {
     .attr("x", width / 2 )
     .attr("y", height + margin.bottom )
     .text("X");
-
   // Plot the area
   var curve = svg
     .append('g')
@@ -113,7 +113,11 @@ d3.json("data/pi_cdf.json", function(data) {
     // console.log(curr_data['x'])
     // console.log(curr_data['alphaPI'])
 
-    // update the chart
+    // update title
+    var xx = document.getElementById("plot1title");
+    console.log(xx);
+    xx.innerHTML = "Alpha PI for epsilon = " + data[curr_eps].eps;
+    // update the chart  
     curve
       .datum(curr_data)
       .transition()
