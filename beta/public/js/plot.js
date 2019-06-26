@@ -22,6 +22,7 @@ function returnCurrAlpha(data, curr_eps) {
     curr_data.push({
       x: data[curr_eps].store['x'][i],
       alphaPI: data[curr_eps].store['alphaPI'][i]
+      gt: data[curr_eps].store['gt'][i]
     });
   }
   return curr_data;
@@ -93,7 +94,7 @@ d3.json("data/pi_cdf.json", function(data) {
       .attr("class", "mypath")
       .datum(curr_data)
       .attr("fill", "none")
-      .attr("opacity", ".8")
+      // .attr("opacity", ".8")
       .attr("stroke", "#000")
       .attr("stroke-width", 1)
       .attr("stroke-linejoin", "round")
@@ -115,7 +116,6 @@ d3.json("data/pi_cdf.json", function(data) {
 
     // update title
     var xx = document.getElementById("plot1title");
-    console.log(xx);
     xx.innerHTML = "Alpha PI for epsilon = " + data[curr_eps].eps;
     // update the chart  
     curve
