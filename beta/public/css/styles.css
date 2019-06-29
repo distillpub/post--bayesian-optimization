@@ -31,7 +31,26 @@ path {
   stroke: steelblue;
   stroke-width: 2;
   fill: rgb(133, 185, 228);
+  fill-opacity: .50;
 }
+
+.unfilled {
+  stroke: steelblue;
+  stroke-width: 2;
+  fill: none;
+}
+.unfilledgt {
+  stroke: black;
+  stroke-width: 2;
+  fill: none;
+}
+.filledgt {
+  stroke: grey;
+  stroke-width: 2;
+  fill: grey;
+  fill-opacity: .50;
+}
+
 
 /* .labels {
 

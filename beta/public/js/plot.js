@@ -21,8 +21,10 @@ function returnCurrAlpha(data, curr_eps) {
   for (i=0; i<ll; i++) {
     curr_data.push({
       x: data[curr_eps].store['x'][i],
-      alphaPI: data[curr_eps].store['alphaPI'][i]
-      gt: data[curr_eps].store['gt'][i]
+      alphaPI: data[curr_eps].store['alphaPI'][i],
+      gt: data[curr_eps].store['gt'][i],
+      mu: data[curr_eps].store['mu'][i],
+      sig: data[curr_eps].store['sig'][i]
     });
   }
   return curr_data;
@@ -74,7 +76,7 @@ d3.json("data/pi_cdf.json", function(data) {
     .attr("class", "title")
     .attr("x", (width / 2))
     .attr("y", 0 - (margin.top / 2))
-    .text("Alpha PI for epsilon = " + data[curr_eps].eps);
+    .text("$\\alpha_{PI} for \\epsilon = " + data[curr_eps].eps + "$");
   svg.append("text")
     .attr("transform", "rotate(-90)")
     .attr("class", "label")
@@ -91,13 +93,8 @@ d3.json("data/pi_cdf.json", function(data) {
   var curve = svg
     .append('g')
     .append("path")
-      .attr("class", "mypath")
+      .attr("class", "path")
       .datum(curr_data)
-      .attr("fill", "none")
-      // .attr("opacity", ".8")
-      .attr("stroke", "#000")
-      .attr("stroke-width", 1)
-      .attr("stroke-linejoin", "round")
       .attr("d",  d3.line()
         .curve(d3.curveBasis)
           .x(function(d) { return x(d['x']); })
@@ -116,7 +113,7 @@ d3.json("data/pi_cdf.json", function(data) {
 
     // update title
     var xx = document.getElementById("plot1title");
-    xx.innerHTML = "Alpha PI for epsilon = " + data[curr_eps].eps;
+    xx.innerHTML = "$\\alpha_{PI} for \\epsilon = " + data[curr_eps].eps + "$";
     // update the chart  
     curve
       .datum(curr_data)
@@ -131,7 +128,9 @@ d3.json("data/pi_cdf.json", function(data) {
   }
 
   // ------------------------------
-/*
+
+
+  // Same margins
   // append the svg object to the body of the page
   var svg2 = d3.select("#Teaser2")
   .append("svg")
@@ -140,72 +139,138 @@ d3.json("data/pi_cdf.json", function(data) {
   .append("g")
   .attr("transform",
         "translate(" + margin.left + "," + margin.top + ")");
-
-  // add the x2 Axis
+  // add the x Axis
   var x2 = d3.scaleLinear()
-            .domain([0, 1000])
-            .range([0, width]);
+            .range([0, width])
+            .domain([0, d3.max(curr_data, function(d, i) {
+              return d.x;
+            })]);
   svg2.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(x2));
-
-  // add the y2 Axis
+  // add the y Axis
   var y2 = d3.scaleLinear()
             .range([height, 0])
-            .domain([0, 0.01]);
+            .domain([0, d3.max(curr_data, function(d, i) {
+              return d.gt;
+            })]);
   svg2.append("g")
-      .attr("class", "y axis")
-      .call(d3.axisLeft(y2));
-
-  // Compute kernel density estimation
-  var kde = kernelDensityEstimator(kernelEpanechnikov(7), x2.ticks(1))
-  var density =  kde( data.map(function(d){  return d.price; }) )
-
-  // Plot the area
+    .attr("class", "y axis")
+    .call(d3.axisLeft(y));
+  // Textual Content
+  svg2.append("text")
+    .attr("id", "plot2title")
+    .attr("class", "title")
+    .attr("x", (width / 2))
+    .attr("y", 0 - (margin.top / 2))
+    .text("Compare");
+  svg2.append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("class", "label")
+    .attr("y", 0 - margin.left)
+    .attr("x", 0 - (height / 2))
+    .attr("dy", "1em")
+    .text("$f(x) // 2 axis$");
+  svg2.append("text") // text label for the x axis
+    .attr("class", "label")
+    .attr("x", width / 2 )
+    .attr("y", height + margin.bottom )
+    .text("X");
+  // Plot the gt/////
   var curve2 = svg2
     .append('g')
     .append("path")
-      .attr("class", "mypath")
-      .datum(density)
-      .attr("fill", "#6911a2")
-      .attr("opacity", ".8")
-      .attr("stroke", "#000")
-      .attr("stroke-width", 1)
-      .attr("stroke-linejoin", "round")
+      .attr("class", "unfilled")
+      .datum(curr_data)
       .attr("d",  d3.line()
         .curve(d3.curveBasis)
-          .x(function(d) { return x2(d[0]); })
-          .y(function(d) { return y2(d[1]); })
+          .x(function(d) { return x2(d['x']); })
+          .y(function(d) { return y2(d['gt']); })
       );
+
+  // Plot the gp
+  var curve3 = svg2
+    .append('g')
+    .append("path")
+      .attr("class", "unfilledgt")
+      .datum(curr_data)
+      .attr("d",  d3.line()
+        .curve(d3.curveBasis)
+          .x(function(d) { return x2(d['x']); })
+          .y(function(d) { return y2(d['mu']); })
+      );
+  var curve4 = svg2
+    .append('g')
+    .append("path")
+      .attr("class", "filledgt")
+      .datum(curr_data)
+      .attr("d",  d3.area()
+          .x(function(d) { return x2(d['x']); })
+          .y1(function(d) { return y2(d['mu'] + d['sig']); })
+          .y0(function(d) { return y2(d['mu'] - d['sig']); })
+      );
+
 
   // A function that update the chart when slider is moved?
-  function updateChart2(binNumber) {
+  function updateChart2(curr_eps) {
     // recompute density estimation
-    binNumber = parseInt(binNumber * 1000)
-    kde = kernelDensityEstimator(kernelEpanechnikov(7), x2.ticks(binNumber))
-    density =  kde( data.map(function(d){  return d.price; }) )
-    console.log("Graph2: "+binNumber)
+    console.log("Graph2 Eps Selected: "+ data[curr_eps].eps);
+    var curr_data = returnCurrAlpha(data, curr_eps);
+    // console.log(data)
+    // console.log(curr_data)
+    // console.log(curr_data['x'])
+    // console.log(curr_data['alphaPI'])
 
-    // update the chart
-    curve2
-      .datum(density)
-      .transition()
-      .duration(1000)
-      .attr("d",  d3.line()
-        .curve(d3.curveBasis)
-          .x(function(d) { return x2(d[0]); })
-          .y(function(d) { return y2(d[1]); })
-      );
+    // update title
+    // var xx2 = document.getElementById("plot2title");
+    // xx2.innerHTML = "$f(x) // 2 axis$";
+    // update the chart  
+    // curve3
+    //   .datum(curr_data)
+    //   .transition()
+    //   .duration(1000)
+    //   .attr("d",  d3.line()
+    //     .curve(d3.curveBasis)
+    //       .x(function(d) { return x2(d['x']); })
+    //       .y(function(d) { return y2(d['mu']); })
+    //   );
   }
+  
 
   // ----------------------------
 
-*/
   // Listen to the slider?
+  // setTimeout(() => {
+    
+  //   MathJax.Hub.Config({
+  //     tex2jax: {
+  //       inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+  //       processEscapes: true
+  //     }
+  //   });
+    
+  //   MathJax.Hub.Register.StartupHook("End", function() {
+  //     setTimeout(() => {
+  //           svg.selectAll('.tick').each(function(){
+  //           var self = d3.select(this),
+  //               g = self.select('text>span>svg');
+  //           g.remove();
+  //           self.append(function(){
+  //             return g.node();
+  //           });
+  //         });
+  //       }, 1);
+  //     });
+    
+  //   MathJax.Hub.Queue(["Typeset", MathJax.Hub, svg.node()]);
+    
+  // }, 1);
+
   d3.select("#slider").on("change", function(d){
     selectedValue = this.value
     updateChart1(selectedValue);
-    // updateChart2(selectedValue);
+    updateChart2(selectedValue);
   })
 });
+    
