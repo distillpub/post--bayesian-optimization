@@ -9,7 +9,7 @@
   <link rel="stylesheet" type="text/css" href="css/styles.css">
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script defer src="js/plot.js"></script>
-  <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_SVG"></script> -->
+  <script type="text/javascript" src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 <!-- <link rel="stylesheet" type="text/css" href="css/style.css"> -->
 
 </head>
@@ -345,7 +345,7 @@
     <p>
       We can obtain a closed form solution as below:
     </p>
-    <d-math>x_{t+1} = argmax_x \Phi(\frac{\mu_t(x) - f(x^+) - \epsilon}{\sigma_t(x)})</d-math>
+    <d-math block>x_{t+1} = argmax_x \Phi(\frac{\mu_t(x) - f(x^+) - \epsilon}{\sigma_t(x)})</d-math>
     <p>
       where <d-math>\Phi(\cdot)</d-math> indicates the CDF.
     </p>
@@ -441,7 +441,7 @@
       0 & \text{if}\ \sigma_t(x) = 0
       \end{cases}
     </d-math>
-    <d-math>Z= \frac{\mu_t(x) - f(x^+) - \epsilon}{\sigma_t(x)}</d-math>
+    <d-math block>Z= \frac{\mu_t(x) - f(x^+) - \epsilon}{\sigma_t(x)}</d-math>
     <p>
       where <d-math>\Phi(\cdot)</d-math> indicates CDF and <d-math>\phi(\cdot)</d-math> indicates pdf.
     </p>

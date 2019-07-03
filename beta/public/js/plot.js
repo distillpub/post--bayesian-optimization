@@ -14,7 +14,6 @@ function kernelEpanechnikov(k) {
 }
 
 function returnCurrAlpha(data, curr_eps) {
-  // console.log("insisfe retrn funciron.");
   var curr_data = new Array();
   var ll = data[curr_eps].store['x'].length;
   var i;
@@ -24,10 +23,43 @@ function returnCurrAlpha(data, curr_eps) {
       alphaPI: data[curr_eps].store['alphaPI'][i],
       gt: data[curr_eps].store['gt'][i],
       mu: data[curr_eps].store['mu'][i],
-      sig: data[curr_eps].store['sig'][i]
+      sig: data[curr_eps].store['sig'][i],
+      mu_plus: data[curr_eps].store['mu_plus']
     });
   }
   return curr_data;
+}
+
+function returnPoints(data, curr_eps) {
+  var pts = data[curr_eps].store.points;
+  var mu_plus = data[curr_eps].store['mu_plus'];
+  var num_pts = pts.length;
+  var combination = new Array();
+  for (var i = 0; i < num_pts; i++) {
+    var ll = pts[i]['x_linspace'].length;
+    var gaus_plots = new Array;
+    for (var j = 0; j < ll; j++) {
+      gaus_plots.push({
+        x_linspace: pts[i]['x_linspace'][j],
+        y_linspace: pts[i]['y_linspace'][j],
+      });
+    }
+    var end = pts[i]['x_linspace'].length;
+    var start = pts[i]['mu_plus_ix'];
+    var pi_areas = new Array;
+    for (var j = start; j < end; j++) {
+      pi_areas.push({
+        x_linspace: pts[i]['x_linspace'][j],
+        y_linspace: pts[i]['y_linspace'][j],
+        mu_line_part: mu_plus,
+      });
+    }
+    combination.push( {
+      gaus_plots: gaus_plots,
+      pi_areas: pi_areas,
+    });
+  }
+  return combination;
 }
 
 
@@ -93,7 +125,7 @@ d3.json("data/pi_cdf.json", function(data) {
   var curve = svg
     .append('g')
     .append("path")
-      .attr("class", "path")
+      .attr("class", "pi")
       .datum(curr_data)
       .attr("d",  d3.line()
         .curve(d3.curveBasis)
@@ -106,11 +138,6 @@ d3.json("data/pi_cdf.json", function(data) {
     // recompute density estimation
     console.log("Graph1 Eps Selected: "+ data[curr_eps].eps);
     var curr_data = returnCurrAlpha(data, curr_eps);
-    // console.log(data)
-    // console.log(curr_data)
-    // console.log(curr_data['x'])
-    // console.log(curr_data['alphaPI'])
-
     // update title
     var xx = document.getElementById("plot1title");
     xx.innerHTML = "$\\alpha_{PI} for \\epsilon = " + data[curr_eps].eps + "$";
@@ -211,61 +238,99 @@ d3.json("data/pi_cdf.json", function(data) {
           .y0(function(d) { return y2(d['mu'] - d['sig']); })
       );
 
+  // Plotting the mu_plus or f(x^+) line
+  var curve5 = svg2
+    .append('g')
+    .append("path")
+      .attr("id", "mu_plus")
+      .datum(curr_data)
+      .attr("d",  d3.line()
+        .curve(d3.curveBasis)
+          .x(function(d) { return x2(d['x']); })
+          .y(function(d) { return y2(d['mu_plus']); })
+      );
+
+  // plotting the points
+  var combination = returnPoints(data, curr_eps);
+  var len = combination.length;
+  // setting color
+  var color = d3.scaleOrdinal()
+    .domain([...Array(len).keys()])
+    .range(d3.schemeDark2);
+  // actually ploytting
+  var arrp = new Array;
+  var arrg = new Array;
+  for (var i = 0; i < len; i++) {
+    var pi_areas = combination[i].pi_areas;
+    var gaus_plots = combination[i].gaus_plots;
+    // plotting the areas
+    arrp.push (
+      svg2
+        .append('g')
+        .append("path")
+          .attr("class", "pi_areas")
+          .attr("stroke", color(i))
+          .attr("fill", color(i))
+          .datum(pi_areas)
+          .attr("d",  d3.area()
+            .x(function(d) { return x2(d.x_linspace); })
+            .y1(function(d) { return y2(d.y_linspace); })
+            .y0(function(d) { return y2(d.mu_line_part); })
+          )
+    );
+    // plotting the gaussi
+    arrg.push (
+      svg2
+        .append('g')
+        .append("path")
+          .attr("class", "gaus_plots")
+          .attr("stroke", color(i))
+          .datum(gaus_plots)
+          .attr("d",  d3.line()
+            .x(function(d) { return x2(d.x_linspace); })
+            .y(function(d) { return y2(d.y_linspace); })
+          )
+    );
+  }
+
 
   // A function that update the chart when slider is moved?
   function updateChart2(curr_eps) {
     // recompute density estimation
-    console.log("Graph2 Eps Selected: "+ data[curr_eps].eps);
     var curr_data = returnCurrAlpha(data, curr_eps);
-    // console.log(data)
-    // console.log(curr_data)
-    // console.log(curr_data['x'])
-    // console.log(curr_data['alphaPI'])
+    curve5
+      .datum(curr_data)
+      .transition()
+      .duration(1000)
+      .attr("d",  d3.line()
+        .curve(d3.curveBasis)
+          .x(function(d) { return x2(d['x']); })
+          .y(function(d) { return y2(d['mu_plus']); })
+      );
 
-    // update title
-    // var xx2 = document.getElementById("plot2title");
-    // xx2.innerHTML = "$f(x) // 2 axis$";
-    // update the chart  
-    // curve3
-    //   .datum(curr_data)
-    //   .transition()
-    //   .duration(1000)
-    //   .attr("d",  d3.line()
-    //     .curve(d3.curveBasis)
-    //       .x(function(d) { return x2(d['x']); })
-    //       .y(function(d) { return y2(d['mu']); })
-    //   );
+      // plotting the points
+      var combination = returnPoints(data, curr_eps);
+      var len = combination.length;
+      // setting color
+      var color = d3.scaleOrdinal()
+        .domain([...Array(len).keys()])
+        .range(d3.schemeDark2);
+      // actually ploytting
+      var arr = new Array;
+      for (var i = 0; i < len; i++) {
+        var pi_areas = combination[i].pi_areas;
+        // plotting the areas
+        arrp[i]
+          .datum(pi_areas)
+          .transition()
+          .duration(1000)
+              .attr("d",  d3.area()
+                .x(function(d) { return x2(d.x_linspace); })
+                .y1(function(d) { return y2(d.y_linspace); })
+                .y0(function(d) { return y2(d.mu_line_part); })
+          );
+      }
   }
-  
-
-  // ----------------------------
-
-  // Listen to the slider?
-  // setTimeout(() => {
-    
-  //   MathJax.Hub.Config({
-  //     tex2jax: {
-  //       inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-  //       processEscapes: true
-  //     }
-  //   });
-    
-  //   MathJax.Hub.Register.StartupHook("End", function() {
-  //     setTimeout(() => {
-  //           svg.selectAll('.tick').each(function(){
-  //           var self = d3.select(this),
-  //               g = self.select('text>span>svg');
-  //           g.remove();
-  //           self.append(function(){
-  //             return g.node();
-  //           });
-  //         });
-  //       }, 1);
-  //     });
-    
-  //   MathJax.Hub.Queue(["Typeset", MathJax.Hub, svg.node()]);
-    
-  // }, 1);
 
   d3.select("#slider").on("change", function(d){
     selectedValue = this.value

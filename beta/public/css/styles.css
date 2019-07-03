@@ -4,6 +4,23 @@
   align-items: center;
 }
 
+#mu_plus {
+  stroke-width: 2;
+  fill: none;
+  stroke: orange;
+  stroke-dasharray: 3, 3;
+  shape-rendering: crispEdges;
+}
+
+.pi_areas {
+  stroke-width: 0;
+  fill-opacity: .40;
+}
+.gaus_plots {
+  stroke-width: 2;
+  fill: none;
+}
+
 /*https://distill.pub/2019/gan-open-problems/*/
 .open-problem {
     display: flex;
@@ -27,7 +44,7 @@ span {
   font: 10px monospace;
 }
   
-path {
+.pi {
   stroke: steelblue;
   stroke-width: 2;
   fill: rgb(133, 185, 228);
@@ -46,7 +63,7 @@ path {
 }
 .filledgt {
   stroke: grey;
-  stroke-width: 2;
+  stroke-width: 1;
   fill: grey;
   fill-opacity: .50;
 }
