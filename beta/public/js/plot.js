@@ -84,8 +84,10 @@ d3.json("data/pi_cdf.json", function(data) {
       .call(d3.axisBottom(x));
   // add the y Axis
   var y = d3.scaleLinear()
-            .range([height, 0])
-            .domain([0, 1]);
+            .domain([1e-100, d3.max(curr_data, function(d, i) {
+              return d.alphaPI;
+            })])
+            .range([height, 0]);
   svg.append("g")
     .attr("class", "y axis")
     .call(d3.axisLeft(y));
@@ -138,7 +140,19 @@ d3.json("data/pi_cdf.json", function(data) {
     // update title
     var xx = document.getElementById("plot1title");
     xx.text = "$$\\alpha_{PI} for \\epsilon = " + data[curr_eps].eps + "$$";
+    y.domain([1e-100, d3.max(curr_data, 
+      function(d, i) {
+        return d.alphaPI;
+      })]
+    );
     // update the chart  
+    // update y scale
+    var svvg = d3.select("#Teaser1").transition();
+    console.log(svvg);
+    // Make the changes
+    svvg.select(".y.axis") // change the y axis
+        .duration(750)
+        .call(y);
     curve
       .datum(curr_data)
       .transition()
@@ -148,6 +162,7 @@ d3.json("data/pi_cdf.json", function(data) {
           .x(function(d) { return x(d['x']); })
           .y(function(d) { return y(d['alphaPI']); })
       );
+
     curve_1
       .datum(curr_data)
       .transition()

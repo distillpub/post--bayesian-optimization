@@ -5,9 +5,9 @@
 }
 
 #mu_plus {
-  stroke-width: 2;
+  stroke-width: 1;
   fill: none;
-  stroke: orange;
+  stroke: rgb(21, 12, 400);
   stroke-dasharray: 3, 3;
   shape-rendering: crispEdges;
 }
@@ -41,7 +41,7 @@ span {
   display: flex;
   justify-content: center;
   height: 400px;
-  font: 10px monospace;
+  font: 10px;
 }
   
 .pi {
@@ -110,11 +110,11 @@ span {
 
 .label {
   text-anchor: middle;
-  font: 10px monospace;
+  font: 10px;
 }
 
 .title {
   text-anchor: middle;
-  font: 16px monospace;
+  font: 16px;
   text-decoration: underline;
 }
