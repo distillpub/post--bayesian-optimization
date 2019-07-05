@@ -1,4 +1,5 @@
 // https://www.d3-graph-gallery.com/graph/density_slider.html
+const duration = 100;
 
 function returnCurrAlpha(data, curr_eps) {
   var curr_data = new Array();
@@ -52,7 +53,7 @@ function returnPoints(data, curr_eps) {
 
 // get the data
 d3.json("data/pi_cdf.json", function(data) {
-  console.log('Logging json read!')
+  console.log('Json read!')
   console.log(data);
 
   var curr_eps = "0";
@@ -84,7 +85,7 @@ d3.json("data/pi_cdf.json", function(data) {
       .call(d3.axisBottom(x));
   // add the y Axis
   var y = d3.scaleLinear()
-            .domain([1e-100, d3.max(curr_data, function(d, i) {
+            .domain([0, d3.max(curr_data, function(d, i) {
               return d.alphaPI;
             })])
             .range([height, 0]);
@@ -135,7 +136,7 @@ d3.json("data/pi_cdf.json", function(data) {
   // A function that update the chart when slider is moved?
   function updateChart1(curr_eps) {
     // recompute density estimation
-    console.log("Graph1 Eps Selected: "+ data[curr_eps].eps);
+    console.log("Eps Selected: "+ data[curr_eps].eps);
     var curr_data = returnCurrAlpha(data, curr_eps);
     // update title
     var xx = document.getElementById("plot1title");
@@ -148,15 +149,14 @@ d3.json("data/pi_cdf.json", function(data) {
     // update the chart  
     // update y scale
     var svvg = d3.select("#Teaser1").transition();
-    console.log(svvg);
     // Make the changes
     svvg.select(".y.axis") // change the y axis
-        .duration(750)
+        .duration(duration)
         .call(y);
     curve
       .datum(curr_data)
       .transition()
-      .duration(1000)
+      .duration(duration)
       .attr("d",  d3.line()
         .curve(d3.curveBasis)
           .x(function(d) { return x(d['x']); })
@@ -166,7 +166,7 @@ d3.json("data/pi_cdf.json", function(data) {
     curve_1
       .datum(curr_data)
       .transition()
-      .duration(1000)
+      .duration(duration)
       .attr("d",  d3.area()
         .x(function(d) { return x(d['x']); })
         .y1(function(d) { return y(d['alphaPI']); })
@@ -198,13 +198,13 @@ d3.json("data/pi_cdf.json", function(data) {
       .call(d3.axisBottom(x2));
   // add the y Axis
   var y2 = d3.scaleLinear()
-            .range([height, 0])
             .domain([0, d3.max(curr_data, function(d, i) {
               return d.gt;
-            })]);
+            })])
+            .range([height, 0]);
   svg2.append("g")
     .attr("class", "y axis")
-    .call(d3.axisLeft(y));
+    .call(d3.axisLeft(y2));
   // Textual Content
   svg2.append("text")
     .attr("id", "plot2title")
@@ -235,7 +235,6 @@ d3.json("data/pi_cdf.json", function(data) {
           .x(function(d) { return x2(d['x']); })
           .y(function(d) { return y2(d['gt']); })
       );
-
   // Plot the gp
   var curve3 = svg2
     .append('g')
@@ -257,7 +256,6 @@ d3.json("data/pi_cdf.json", function(data) {
           .y1(function(d) { return y2(d['mu'] + d['sig']); })
           .y0(function(d) { return y2(d['mu'] - d['sig']); })
       );
-
   // Plotting the mu_plus or f(x^+) line
   var curve5 = svg2
     .append('g')
@@ -321,7 +319,7 @@ d3.json("data/pi_cdf.json", function(data) {
     curve5
       .datum(curr_data)
       .transition()
-      .duration(1000)
+      .duration(duration)
       .attr("d",  d3.line()
         .curve(d3.curveBasis)
           .x(function(d) { return x2(d['x']); })
@@ -343,7 +341,7 @@ d3.json("data/pi_cdf.json", function(data) {
         arrp[i]
           .datum(pi_areas)
           .transition()
-          .duration(1000)
+          .duration(duration)
               .attr("d",  d3.area()
                 .x(function(d) { return x2(d.x_linspace); })
                 .y1(function(d) { return y2(d.y_linspace); })
@@ -351,11 +349,31 @@ d3.json("data/pi_cdf.json", function(data) {
           );
       }
   }
-
-  d3.select("#slider").on("change", function(d){
-    selectedValue = this.value
-    updateChart1(selectedValue);
-    updateChart2(selectedValue);
-  })
+  const counts = data.map(a => a.store.mu_plus);
+  const gEnter = svg2
+    .append('g')
+      .attr('class', 'container');
+  gEnter
+    .append('rect')
+      .attr('class', 'mouse-interceptor')
+      .attr('fill', 'none')
+      .attr('pointer-events', 'all')
+    // .merge(g.select('.mouse-interceptor'))
+      .attr('width', width)
+      .attr('height', height)
+      .on('mousemove', function() {
+        const pos = d3.mouse(this)[1];
+        const goal = y2.invert(pos)
+        var closest = counts.reduce(function(prev, curr) {
+          return (Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev);
+        });
+        // console.log('closest');
+        // console.log(closest);
+        const selectedValue = counts.indexOf(closest)
+        // console.log('selectedValue');
+        // console.log(selectedValue);
+        updateChart1(selectedValue);
+        updateChart2(selectedValue);
+      });
 });
     
