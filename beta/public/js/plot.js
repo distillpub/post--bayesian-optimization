@@ -1,17 +1,4 @@
 // https://www.d3-graph-gallery.com/graph/density_slider.html
-// Function to compute density
-function kernelDensityEstimator(kernel, X) {
-  return function(V) {
-    return X.map(function(x) {
-      return [x, d3.mean(V, function(v) { return kernel(x - v); })];
-    });
-  };
-}
-function kernelEpanechnikov(k) {
-  return function(v) {
-    return Math.abs(v /= k) <= 1 ? 0.75 * (1 - v * v) / k : 0;
-  };
-}
 
 function returnCurrAlpha(data, curr_eps) {
   var curr_data = new Array();
@@ -108,7 +95,7 @@ d3.json("data/pi_cdf.json", function(data) {
     .attr("class", "title")
     .attr("x", (width / 2))
     .attr("y", 0 - (margin.top / 2))
-    .text("$\\alpha_{PI} for \\epsilon = " + data[curr_eps].eps + "$");
+    .text("$$\\alpha_{PI} for \\epsilon = " + data[curr_eps].eps + "$$");
   svg.append("text")
     .attr("transform", "rotate(-90)")
     .attr("class", "label")
@@ -132,6 +119,16 @@ d3.json("data/pi_cdf.json", function(data) {
           .x(function(d) { return x(d['x']); })
           .y(function(d) { return y(d['alphaPI']); })
       );
+  var curve_1 = svg
+    .append('g')
+    .append("path")
+      .attr("class", "pi_fill")
+      .datum(curr_data)
+      .attr("d",  d3.area()
+        .x(function(d) { return x(d['x']); })
+        .y1(function(d) { return y(d['alphaPI']); })
+        .y0(function(d) { return y(0.0); })
+      );
 
   // A function that update the chart when slider is moved?
   function updateChart1(curr_eps) {
@@ -140,7 +137,7 @@ d3.json("data/pi_cdf.json", function(data) {
     var curr_data = returnCurrAlpha(data, curr_eps);
     // update title
     var xx = document.getElementById("plot1title");
-    xx.innerHTML = "$\\alpha_{PI} for \\epsilon = " + data[curr_eps].eps + "$";
+    xx.text = "$$\\alpha_{PI} for \\epsilon = " + data[curr_eps].eps + "$$";
     // update the chart  
     curve
       .datum(curr_data)
@@ -151,7 +148,15 @@ d3.json("data/pi_cdf.json", function(data) {
           .x(function(d) { return x(d['x']); })
           .y(function(d) { return y(d['alphaPI']); })
       );
-  
+    curve_1
+      .datum(curr_data)
+      .transition()
+      .duration(1000)
+      .attr("d",  d3.area()
+        .x(function(d) { return x(d['x']); })
+        .y1(function(d) { return y(d['alphaPI']); })
+        .y0(function(d) { return y(0.0); })
+      );  
   }
 
   // ------------------------------

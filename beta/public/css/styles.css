@@ -47,6 +47,10 @@ span {
 .pi {
   stroke: steelblue;
   stroke-width: 2;
+  fill: none;
+}
+
+.pi_fill {
   fill: rgb(133, 185, 228);
   fill-opacity: .50;
 }
