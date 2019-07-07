@@ -56,7 +56,7 @@ d3.json("data/pi_cdf.json", function(data) {
   console.log('Json read!')
   console.log(data);
 
-  var curr_eps = "0";
+  var curr_eps = "2";
   var curr_data = returnCurrAlpha(data, curr_eps);
 
   // ---------------------------
@@ -80,7 +80,7 @@ d3.json("data/pi_cdf.json", function(data) {
             })])
             .range([0, width]);
   svg.append("g")
-      .attr("class", "x axis")
+      .attr("class", "xaxis")
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(x));
   // add the y Axis
@@ -89,9 +89,14 @@ d3.json("data/pi_cdf.json", function(data) {
               return d.alphaPI;
             })])
             .range([height, 0]);
-  svg.append("g")
-    .attr("class", "y axis")
-    .call(d3.axisLeft(y));
+
+  // var yAxis = d3.svg.axis().scale(y)
+  //   .orient("left").ticks(5);
+
+  var yaxis = svg.append("g")
+    .attr("class", "yaxis")
+    .call(d3.axisLeft(y)
+      .tickFormat(d3.format("1.1s")));
   // Textual Content
   svg.append("text")
     .attr("id", "plot1title")
@@ -111,17 +116,17 @@ d3.json("data/pi_cdf.json", function(data) {
     .attr("x", width / 2 )
     .attr("y", height + margin.bottom )
     .text("X");
-  // Plot the area
+  // Plot the line
+  var valueline = d3.line()
+        .curve(d3.curveBasis)
+          .x(function(d) { return x(d['x']); })
+          .y(function(d) { return y(d['alphaPI']); });
   var curve = svg
     .append('g')
     .append("path")
       .attr("class", "pi")
       .datum(curr_data)
-      .attr("d",  d3.line()
-        .curve(d3.curveBasis)
-          .x(function(d) { return x(d['x']); })
-          .y(function(d) { return y(d['alphaPI']); })
-      );
+      .attr("d", valueline(curr_data));
   var curve_1 = svg
     .append('g')
     .append("path")
@@ -141,18 +146,19 @@ d3.json("data/pi_cdf.json", function(data) {
     // update title
     var xx = document.getElementById("plot1title");
     xx.text = "$$\\alpha_{PI} for \\epsilon = " + data[curr_eps].eps + "$$";
-    y.domain([1e-100, d3.max(curr_data, 
-      function(d, i) {
-        return d.alphaPI;
-      })]
-    );
-    // update the chart  
-    // update y scale
-    var svvg = d3.select("#Teaser1").transition();
-    // Make the changes
-    svvg.select(".y.axis") // change the y axis
-        .duration(duration)
-        .call(y);
+    // console.log(curr_data)
+    y.domain([0, d3.max(curr_data, function(d, i) {
+            return d.alphaPI;
+          })]);
+    // console.log(yaxis);
+    // alert ("hm");
+    yaxis
+      // .datum(curr_data)
+      .transition()
+      .duration(duration)
+      .call(d3.axisLeft(y)
+        .tickFormat(d3.format("1.1s")));
+
     curve
       .datum(curr_data)
       .transition()
@@ -367,11 +373,7 @@ d3.json("data/pi_cdf.json", function(data) {
         var closest = counts.reduce(function(prev, curr) {
           return (Math.abs(curr - goal) < Math.abs(prev - goal) ? curr : prev);
         });
-        // console.log('closest');
-        // console.log(closest);
         const selectedValue = counts.indexOf(closest)
-        // console.log('selectedValue');
-        // console.log(selectedValue);
         updateChart1(selectedValue);
         updateChart2(selectedValue);
       });
