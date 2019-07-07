@@ -111,11 +111,6 @@ d3.json("data/pi_cdf.json", function(data) {
     .attr("x", 0 - (height / 2))
     .attr("dy", "1em")
     .text("Alpha PI");
-  svg.append("text") // text label for the x axis
-    .attr("class", "label")
-    .attr("x", width / 2 )
-    .attr("y", height + margin.bottom )
-    .text("X");
   // Plot the line
   var valueline = d3.line()
         .curve(d3.curveBasis)
@@ -145,7 +140,12 @@ d3.json("data/pi_cdf.json", function(data) {
     var curr_data = returnCurrAlpha(data, curr_eps);
     // update title
     var xx = document.getElementById("plot1title");
-    xx.text = "$$\\alpha_{PI} for \\epsilon = " + data[curr_eps].eps + "$$";
+    // var html = katex.renderToString("c = \\pm\\sqrt{a^2 + b^2}", {
+    // throwOnError: true
+    // });
+    xx.innerHTML = "$$\\alpha_{PI} for \\epsilon = " + data[curr_eps].eps + "$$";
+    // console.log(html);
+    // xx.innerHTML = html;
     // console.log(curr_data)
     y.domain([0, d3.max(curr_data, function(d, i) {
             return d.alphaPI;

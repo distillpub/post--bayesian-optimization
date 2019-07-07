@@ -101,16 +101,9 @@ span {
   overflow-x: auto;
 }
 
-#slider {
-  width: 50%;
-  margin: auto;
-  /* width: 50%; */
-  display: block;
-}
-
 .label {
   text-anchor: middle;
-  font: 9px;
+  font: 8px;
 }
 
 .title {
