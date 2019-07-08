@@ -103,12 +103,12 @@ span {
 
 .label {
   text-anchor: middle;
-  font: 8px;
+  font-size: 12px;
 }
 
 .title {
   text-anchor: middle;
-  font: 16px;
+  font-size: 16px;
   text-decoration: underline;
 }
 
@@ -117,4 +117,8 @@ span {
   stroke: gold;
   fill: gold;
   fill-opacity: .60;
+}
+
+.legendOrdinal {
+  opacity:0.8;
 }

@@ -73,6 +73,26 @@ d3.json("data/pi_cdf.json", function(data) {
   .append("g")
   .attr("transform",
         "translate(" + margin.left + "," + margin.top + ")");
+
+  var ordinal = d3.scaleOrdinal()
+  .domain(["Opt"])
+  .range([ "gold"]);
+svg.append("g")
+  .attr("class", "legendOrdinal")
+  .attr("transform", "translate(300,-20)");
+var legendOrdinal = d3.legendColor()
+  //d3 symbol creates a path-string, for example
+  //"M0,-8.059274488676564L9.306048591020996,
+  //8.059274488676564 -9.306048591020996,8.059274488676564Z"
+  .shape("path", d3.symbol().type(d3.symbolCircle).size(100)())
+  .shapePadding(10)
+  //use cellFilter to hide the "e" cell
+  .cellFilter(function(d){ return d.label !== "e" })
+  .scale(ordinal);
+
+svg.select(".legendOrdinal")
+  .call(legendOrdinal);
+
   // add the x Axis
   var x = d3.scaleLinear()
             .domain([0, d3.max(curr_data, function(d, i) {
@@ -337,6 +357,57 @@ d3.json("data/pi_cdf.json", function(data) {
           )
     );
   }
+  var temp = [...Array(len).keys()];
+  for(var i=0;i<temp.length;i++){
+    temp[i]="pt." + temp[i];
+  }
+  var selector = 3;
+  temp.push("GT");
+  temp.push("Pred.");
+  temp.push("μ++ϵ");
+  var len2 = temp.length;
+  var colors = d3.schemeDark2.slice(0, len);
+  colors.push("steelblue");
+  colors.push("black");
+  colors.push("darkblue");
+  var ordinal = d3.scaleOrdinal()
+    .domain(temp.slice(0, selector))
+    .range(colors.slice(0, selector));
+  console.log(d3.schemeDark2.slice(0, len).push("red"))
+  svg2.append("g")
+    .attr("class", "legendOrdinal")
+    .attr("transform", "translate(20,80)");
+  var legendOrdinal = d3.legendColor()
+    .labelWrap(30)
+    //d3 symbol creates a path-string, for example
+    //"M0,-8.059274488676564L9.306048591020996,
+    //8.059274488676564 -9.306048591020996,8.059274488676564Z"
+    .shape("path", d3.symbol().type(d3.symbolCircle).size(50)())
+    .shapePadding(10)
+    //use cellFilter to hide the "e" cell
+    .cellFilter(function(d){ return d.label !== "e" })
+    .scale(ordinal);
+  svg2.select(".legendOrdinal")
+    .call(legendOrdinal);
+    var ordinal = d3.scaleOrdinal()
+    .domain(temp.slice(selector, len2))
+    .range(colors.slice(selector, len2));
+  console.log(d3.schemeDark2.slice(0, len).push("red"))
+  svg2.append("g")
+    .attr("class", "legendOrdinal2")
+    .attr("transform", "translate(100,80)");
+  var legendOrdinal2 = d3.legendColor()
+    .labelWrap(30)
+    //d3 symbol creates a path-string, for example
+    //"M0,-8.059274488676564L9.306048591020996,
+    //8.059274488676564 -9.306048591020996,8.059274488676564Z"
+    .shape("path", d3.symbol().type(d3.symbolCircle).size(50)())
+    .shapePadding(10)
+    //use cellFilter to hide the "e" cell
+    .cellFilter(function(d){ return d.label !== "e" })
+    .scale(ordinal);
+  svg2.select(".legendOrdinal2")
+    .call(legendOrdinal2);
 
 
   // A function that update the chart when slider is moved?
