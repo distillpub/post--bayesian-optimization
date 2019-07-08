@@ -111,3 +111,10 @@ span {
   font: 16px;
   text-decoration: underline;
 }
+
+.maxPt {
+  r: 5;
+  stroke: gold;
+  fill: gold;
+  fill-opacity: .60;
+}

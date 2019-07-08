@@ -103,14 +103,14 @@ d3.json("data/pi_cdf.json", function(data) {
     .attr("class", "title")
     .attr("x", (width / 2))
     .attr("y", 0 - (margin.top / 2))
-    .text("$$\\alpha_{PI} for \\epsilon = " + data[curr_eps].eps + "$$");
+    .text("ϵ = " + data[curr_eps].eps.toFixed(2));
   svg.append("text")
     .attr("transform", "rotate(-90)")
     .attr("class", "label")
     .attr("y", 0 - margin.left)
     .attr("x", 0 - (height / 2))
     .attr("dy", "1em")
-    .text("Alpha PI");
+    .text("α(pi)");
   // Plot the line
   var valueline = d3.line()
         .curve(d3.curveBasis)
@@ -132,28 +132,34 @@ d3.json("data/pi_cdf.json", function(data) {
         .y1(function(d) { return y(d['alphaPI']); })
         .y0(function(d) { return y(0.0); })
       );
+  const max_alpha = d3.max(curr_data, function(d, i) {
+              return d.alphaPI;
+            });
+  const alph_arr = curr_data.map(a => a.alphaPI);
+  const max_alpha_ix = alph_arr.indexOf(max_alpha);
+  var max_pt = svg
+    .append("circle")
+    .datum({
+      val: max_alpha,
+      loc: curr_data[max_alpha_ix].x
+    })
+      .attr("class", "maxPt")
+      .attr("cx", function(d) { return x(d.loc); })
+      .attr("cy", function(d) { return y(d.val); });
+
 
   // A function that update the chart when slider is moved?
   function updateChart1(curr_eps) {
     // recompute density estimation
-    console.log("Eps Selected: "+ data[curr_eps].eps);
+    console.log("Eps Selected: "+ data[curr_eps].eps.toFixed(2));
     var curr_data = returnCurrAlpha(data, curr_eps);
     // update title
     var xx = document.getElementById("plot1title");
-    // var html = katex.renderToString("c = \\pm\\sqrt{a^2 + b^2}", {
-    // throwOnError: true
-    // });
-    xx.innerHTML = "$$\\alpha_{PI} for \\epsilon = " + data[curr_eps].eps + "$$";
-    // console.log(html);
-    // xx.innerHTML = html;
-    // console.log(curr_data)
+    xx.innerHTML = "ϵ = " + data[curr_eps].eps.toFixed(2);
     y.domain([0, d3.max(curr_data, function(d, i) {
             return d.alphaPI;
           })]);
-    // console.log(yaxis);
-    // alert ("hm");
     yaxis
-      // .datum(curr_data)
       .transition()
       .duration(duration)
       .call(d3.axisLeft(y)
@@ -177,7 +183,22 @@ d3.json("data/pi_cdf.json", function(data) {
         .x(function(d) { return x(d['x']); })
         .y1(function(d) { return y(d['alphaPI']); })
         .y0(function(d) { return y(0.0); })
-      );  
+      );
+
+      const max_alpha = d3.max(curr_data, function(d, i) {
+                  return d.alphaPI;
+                });
+      const alph_arr = curr_data.map(a => a.alphaPI);
+      const max_alpha_ix = alph_arr.indexOf(max_alpha);
+      max_pt
+      .datum({
+      val: max_alpha,
+      loc: curr_data[max_alpha_ix].x
+      })
+      .transition()
+      .duration(duration)
+      .attr("cx", function(d) { return x(d.loc); })
+      .attr("cy", function(d) { return y(d.val); });
   }
 
   // ------------------------------
@@ -217,14 +238,14 @@ d3.json("data/pi_cdf.json", function(data) {
     .attr("class", "title")
     .attr("x", (width / 2))
     .attr("y", 0 - (margin.top / 2))
-    .text("Compare");
+    .text("CDF (Shaded regions) for selected points");
   svg2.append("text")
     .attr("transform", "rotate(-90)")
     .attr("class", "label")
     .attr("y", 0 - margin.left)
     .attr("x", 0 - (height / 2))
     .attr("dy", "1em")
-    .text("$f(x) // 2 axis$");
+    .text("Gold Content f(x)");
   svg2.append("text") // text label for the x axis
     .attr("class", "label")
     .attr("x", width / 2 )
