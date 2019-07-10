@@ -63,8 +63,8 @@ d3.json("data/pi_cdf.json", function(data) {
 
   // set the dimensions and margins of the graph
   var margin = {top: 30, right: 30, bottom: 30, left: 50},
-  width = 460 - margin.left - margin.right,
-  height = 200 - margin.top - margin.bottom;
+  width = 800 - margin.left - margin.right,
+  height = 400 - margin.top - margin.bottom;
   // append the svg object to the body of the page
   var svg = d3.select("#Teaser1")
   .append("svg")
@@ -79,7 +79,7 @@ d3.json("data/pi_cdf.json", function(data) {
   .range([ "gold"]);
 svg.append("g")
   .attr("class", "legendOrdinal")
-  .attr("transform", "translate(300,-20)");
+  .attr("transform", "translate(700,-20)");
 var legendOrdinal = d3.legendColor()
   //d3 symbol creates a path-string, for example
   //"M0,-8.059274488676564L9.306048591020996,
@@ -102,7 +102,8 @@ svg.select(".legendOrdinal")
   svg.append("g")
       .attr("class", "xaxis")
       .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x));
+      .call(d3.axisBottom(x)
+        .tickValues([]));
   // add the y Axis
   var y = d3.scaleLinear()
             .domain([0, d3.max(curr_data, function(d, i) {
@@ -115,8 +116,8 @@ svg.select(".legendOrdinal")
 
   var yaxis = svg.append("g")
     .attr("class", "yaxis")
-    .call(d3.axisLeft(y)
-      .tickFormat(d3.format("1.1s")));
+    .call(d3.axisRight(y)
+      .tickFormat(d3.format(".1e")));
   // Textual Content
   svg.append("text")
     .attr("id", "plot1title")
@@ -182,8 +183,8 @@ svg.select(".legendOrdinal")
     yaxis
       .transition()
       .duration(duration)
-      .call(d3.axisLeft(y)
-        .tickFormat(d3.format("1.1s")));
+      .call(d3.axisRight(y)
+        .tickFormat(d3.format(".1e")));
 
     curve
       .datum(curr_data)
@@ -240,7 +241,7 @@ svg.select(".legendOrdinal")
               return d.x;
             })]);
   svg2.append("g")
-      .attr("class", "x axis")
+      .attr("class", "xaxis")
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(x2));
   // add the y Axis
@@ -250,7 +251,7 @@ svg.select(".legendOrdinal")
             })])
             .range([height, 0]);
   svg2.append("g")
-    .attr("class", "y axis")
+    .attr("class", "yaxis")
     .call(d3.axisLeft(y2));
   // Textual Content
   svg2.append("text")
@@ -359,12 +360,12 @@ svg.select(".legendOrdinal")
   }
   var temp = [...Array(len).keys()];
   for(var i=0;i<temp.length;i++){
-    temp[i]="pt." + temp[i];
+    temp[i]=".  Selected Point" + temp[i];
   }
   var selector = 3;
   temp.push("GT");
-  temp.push("Pred.");
-  temp.push("μ++ϵ");
+  temp.push("GP   Prediction");
+  temp.push(". f(x+) + ϵ");
   var len2 = temp.length;
   var colors = d3.schemeDark2.slice(0, len);
   colors.push("steelblue");
@@ -376,7 +377,7 @@ svg.select(".legendOrdinal")
   console.log(d3.schemeDark2.slice(0, len).push("red"))
   svg2.append("g")
     .attr("class", "legendOrdinal")
-    .attr("transform", "translate(20,80)");
+    .attr("transform", "translate(150,190)");
   var legendOrdinal = d3.legendColor()
     .labelWrap(30)
     //d3 symbol creates a path-string, for example
@@ -395,7 +396,7 @@ svg.select(".legendOrdinal")
   console.log(d3.schemeDark2.slice(0, len).push("red"))
   svg2.append("g")
     .attr("class", "legendOrdinal2")
-    .attr("transform", "translate(100,80)");
+    .attr("transform", "translate(230,190)");
   var legendOrdinal2 = d3.legendColor()
     .labelWrap(30)
     //d3 symbol creates a path-string, for example
