@@ -75,18 +75,15 @@ d3.json("data/pi_cdf.json", function(data) {
         "translate(" + margin.left + "," + margin.top + ")");
 
   var ordinal = d3.scaleOrdinal()
-  .domain(["Opt"])
+  .domain(["⠀   Optimal"])
   .range([ "gold"]);
 svg.append("g")
   .attr("class", "legendOrdinal")
   .attr("transform", "translate(700,-20)");
 var legendOrdinal = d3.legendColor()
-  //d3 symbol creates a path-string, for example
-  //"M0,-8.059274488676564L9.306048591020996,
-  //8.059274488676564 -9.306048591020996,8.059274488676564Z"
+  .labelWrap(30)
   .shape("path", d3.symbol().type(d3.symbolCircle).size(100)())
   .shapePadding(10)
-  //use cellFilter to hide the "e" cell
   .cellFilter(function(d){ return d.label !== "e" })
   .scale(ordinal);
 
@@ -360,12 +357,12 @@ svg.select(".legendOrdinal")
   }
   var temp = [...Array(len).keys()];
   for(var i=0;i<temp.length;i++){
-    temp[i]=".  Selected Point" + temp[i];
+    temp[i]="⠀  Selected Point" + temp[i];
   }
   var selector = 3;
   temp.push("GT");
-  temp.push("GP   Prediction");
-  temp.push(". f(x+) + ϵ");
+  temp.push("GP  Prediction");
+  temp.push("⠀ f(x+) + ϵ");
   var len2 = temp.length;
   var colors = d3.schemeDark2.slice(0, len);
   colors.push("steelblue");
