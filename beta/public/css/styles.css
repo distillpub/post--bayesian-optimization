@@ -5,9 +5,9 @@
 }
 
 #mu_plus {
-  stroke-width: 1;
+  stroke-width: 2;
   fill: none;
-  stroke: rgb(21, 12, 400);
+  stroke: purple;
   stroke-dasharray: 3, 3;
   shape-rendering: crispEdges;
 }
@@ -113,16 +113,22 @@ span {
 }
 
 .maxPt {
-  r: 5;
-  stroke: gold;
-  fill: gold;
-  fill-opacity: .60;
+  r: 3;
+  stroke: purple;
+  fill: purple;
 }
 
-.legendOrdinal {
-  opacity:0.8;
+.legendOrdinal, .legendOrdinal2 {
+  opacity:1;
 }
 
 .xaxis, .yaxis {
-  font-size: 12px;
+  font-size: 14px;
+}
+
+.selectedPts {
+  r: 4;
+  stroke: red;
+  fill: red;
+  fill-opacity: .80;
 }

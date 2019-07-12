@@ -62,11 +62,11 @@ d3.json("data/pi_cdf.json", function(data) {
   // ---------------------------
 
   // set the dimensions and margins of the graph
-  var margin = {top: 30, right: 30, bottom: 30, left: 50},
+var margin = {top: 30, right: 30, bottom: 30, left: 50},
   width = 800 - margin.left - margin.right,
-  height = 400 - margin.top - margin.bottom;
+  height = 200 - margin.top - margin.bottom;
   // append the svg object to the body of the page
-  var svg = d3.select("#Teaser1")
+var svg = d3.select("#Teaser1")
   .append("svg")
   .attr("width", width + margin.left + margin.right)
   .attr("height", height + margin.top + margin.bottom)
@@ -74,97 +74,95 @@ d3.json("data/pi_cdf.json", function(data) {
   .attr("transform",
         "translate(" + margin.left + "," + margin.top + ")");
 
-  var ordinal = d3.scaleOrdinal()
+var ordinal = d3.scaleOrdinal()
   .domain(["⠀   Optimal"])
-  .range([ "gold"]);
-svg.append("g")
+  .range([ "purple"]);
+  svg.append("g")
   .attr("class", "legendOrdinal")
   .attr("transform", "translate(700,-20)");
-var legendOrdinal = d3.legendColor()
+  var legendOrdinal = d3.legendColor()
   .labelWrap(30)
   .shape("path", d3.symbol().type(d3.symbolCircle).size(100)())
   .shapePadding(10)
   .cellFilter(function(d){ return d.label !== "e" })
   .scale(ordinal);
-
-svg.select(".legendOrdinal")
+  svg.select(".legendOrdinal")
   .call(legendOrdinal);
 
-  // add the x Axis
-  var x = d3.scaleLinear()
-            .domain([0, d3.max(curr_data, function(d, i) {
-              return d.x;
-            })])
-            .range([0, width]);
-  svg.append("g")
-      .attr("class", "xaxis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x)
-        .tickValues([]));
-  // add the y Axis
-  var y = d3.scaleLinear()
-            .domain([0, d3.max(curr_data, function(d, i) {
-              return d.alphaPI;
-            })])
-            .range([height, 0]);
+// add the x Axis
+var x = d3.scaleLinear()
+  .domain([0, d3.max(curr_data, function(d, i) {
+    return d.x;
+  })])
+  .range([0, width]);
+svg.append("g")
+  .attr("class", "xaxis")
+  .attr("transform", "translate(0," + height + ")")
+  .call(d3.axisBottom(x)
+    .tickValues([]));
+// add the y Axis
+var y = d3.scaleLinear()
+          .domain([0, d3.max(curr_data, function(d, i) {
+            return d.alphaPI;
+          })])
+          .range([height, 0]);
 
-  // var yAxis = d3.svg.axis().scale(y)
-  //   .orient("left").ticks(5);
+// var yAxis = d3.svg.axis().scale(y)
+//   .orient("left").ticks(5);
 
-  var yaxis = svg.append("g")
-    .attr("class", "yaxis")
-    .call(d3.axisRight(y)
-      .tickFormat(d3.format(".1e")));
-  // Textual Content
-  svg.append("text")
-    .attr("id", "plot1title")
-    .attr("class", "title")
-    .attr("x", (width / 2))
-    .attr("y", 0 - (margin.top / 2))
-    .text("ϵ = " + data[curr_eps].eps.toFixed(2));
-  svg.append("text")
-    .attr("transform", "rotate(-90)")
-    .attr("class", "label")
-    .attr("y", 0 - margin.left)
-    .attr("x", 0 - (height / 2))
-    .attr("dy", "1em")
-    .text("α(pi)");
-  // Plot the line
-  var valueline = d3.line()
-        .curve(d3.curveBasis)
-          .x(function(d) { return x(d['x']); })
-          .y(function(d) { return y(d['alphaPI']); });
-  var curve = svg
-    .append('g')
-    .append("path")
-      .attr("class", "pi")
-      .datum(curr_data)
-      .attr("d", valueline(curr_data));
-  var curve_1 = svg
-    .append('g')
-    .append("path")
-      .attr("class", "pi_fill")
-      .datum(curr_data)
-      .attr("d",  d3.area()
+var yaxis = svg.append("g")
+  .attr("class", "yaxis")
+  .call(d3.axisRight(y)
+    .tickFormat(d3.format(".1e")));
+// Textual Content
+svg.append("text")
+  .attr("id", "plot1title")
+  .attr("class", "title")
+  .attr("x", (width / 2))
+  .attr("y", 0 - (margin.top / 2))
+  .text("ϵ = " + data[curr_eps].eps.toFixed(2));
+svg.append("text")
+  .attr("transform", "rotate(-90)")
+  .attr("class", "label")
+  .attr("y", 0 - margin.left)
+  .attr("x", 0 - (height / 2))
+  .attr("dy", "1em")
+  .text("α(pi)");
+// Plot the line
+var valueline = d3.line()
+      .curve(d3.curveBasis)
         .x(function(d) { return x(d['x']); })
-        .y1(function(d) { return y(d['alphaPI']); })
-        .y0(function(d) { return y(0.0); })
-      );
-  const max_alpha = d3.max(curr_data, function(d, i) {
-              return d.alphaPI;
-            });
-  const alph_arr = curr_data.map(a => a.alphaPI);
-  const max_alpha_ix = alph_arr.indexOf(max_alpha);
-  var max_pt = svg
-    .append("circle")
-    .datum({
-      val: max_alpha,
-      loc: curr_data[max_alpha_ix].x
-    })
-      .attr("class", "maxPt")
-      .attr("cx", function(d) { return x(d.loc); })
-      .attr("cy", function(d) { return y(d.val); });
-
+        .y(function(d) { return y(d['alphaPI']); });
+var curve = svg
+  .append('g')
+  .append("path")
+    .attr("class", "pi")
+    .datum(curr_data)
+    .attr("d", valueline(curr_data));
+var curve_1 = svg
+  .append('g')
+  .append("path")
+    .attr("class", "pi_fill")
+    .datum(curr_data)
+    .attr("d",  d3.area()
+      .x(function(d) { return x(d['x']); })
+      .y1(function(d) { return y(d['alphaPI']); })
+      .y0(function(d) { return y(0.0); })
+    );
+const max_alpha = d3.max(curr_data, function(d, i) {
+  return d.alphaPI;
+});
+const alph_arr = curr_data.map(a => a.alphaPI);
+const max_alpha_ix = alph_arr.indexOf(max_alpha);
+var max_pt = svg
+  .append("circle")
+  .datum({
+    val: max_alpha,
+    loc: curr_data[max_alpha_ix].x
+  })
+    .attr("class", "maxPt")
+    .attr("cx", function(d) { return x(d.loc); })
+    .attr("cy", function(d) { return y(d.val); });
 
   // A function that update the chart when slider is moved?
   function updateChart1(curr_eps) {
@@ -223,6 +221,10 @@ svg.select(".legendOrdinal")
 
 
   // Same margins
+  // set the dimensions and margins of the graph
+  var margin = {top: 30, right: 30, bottom: 30, left: 50},
+  width = 800 - margin.left - margin.right,
+  height = 400 - margin.top - margin.bottom;
   // append the svg object to the body of the page
   var svg2 = d3.select("#Teaser2")
   .append("svg")
@@ -231,6 +233,7 @@ svg.select(".legendOrdinal")
   .append("g")
   .attr("transform",
         "translate(" + margin.left + "," + margin.top + ")");
+
   // add the x Axis
   var x2 = d3.scaleLinear()
             .range([0, width])
@@ -256,7 +259,7 @@ svg.select(".legendOrdinal")
     .attr("class", "title")
     .attr("x", (width / 2))
     .attr("y", 0 - (margin.top / 2))
-    .text("CDF (Shaded regions) for selected points");
+    .text("CDF (Shaded regions) for candidate points");
   svg2.append("text")
     .attr("transform", "rotate(-90)")
     .attr("class", "label")
@@ -357,17 +360,19 @@ svg.select(".legendOrdinal")
   }
   var temp = [...Array(len).keys()];
   for(var i=0;i<temp.length;i++){
-    temp[i]="⠀  Selected Point" + temp[i];
+    temp[i]="⠀  Candidate Point" + temp[i];
   }
   var selector = 3;
   temp.push("GT");
   temp.push("GP  Prediction");
-  temp.push("⠀ f(x+) + ϵ");
+  temp.push("ϵ + f(x+)");
+  temp.push("⠀ Selected Points");
   var len2 = temp.length;
   var colors = d3.schemeDark2.slice(0, len);
   colors.push("steelblue");
   colors.push("black");
-  colors.push("darkblue");
+  colors.push("purple");
+  colors.push("red");
   var ordinal = d3.scaleOrdinal()
     .domain(temp.slice(0, selector))
     .range(colors.slice(0, selector));
@@ -396,9 +401,6 @@ svg.select(".legendOrdinal")
     .attr("transform", "translate(230,190)");
   var legendOrdinal2 = d3.legendColor()
     .labelWrap(30)
-    //d3 symbol creates a path-string, for example
-    //"M0,-8.059274488676564L9.306048591020996,
-    //8.059274488676564 -9.306048591020996,8.059274488676564Z"
     .shape("path", d3.symbol().type(d3.symbolCircle).size(50)())
     .shapePadding(10)
     //use cellFilter to hide the "e" cell
@@ -407,6 +409,21 @@ svg.select(".legendOrdinal")
   svg2.select(".legendOrdinal2")
     .call(legendOrdinal2);
 
+// highlighting selected points
+const train_x = data[curr_eps].store.train_X;
+const train_y = data[curr_eps].store.train_y;
+for (var i = train_x.length - 1; i >= 0; i--) {
+  var sel_pt = svg2
+  .append("circle")
+  .datum({
+        loc: train_x[i],
+        val: train_y[i]
+      })
+    .attr("class", "selectedPts")
+    .attr("cx", function(d) { return x2(d.loc); })
+    .attr("cy", function(d) { return y2(d.val); });
+  console.log(sel_pt);
+}
 
   // A function that update the chart when slider is moved?
   function updateChart2(curr_eps) {
