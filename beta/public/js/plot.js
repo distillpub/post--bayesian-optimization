@@ -106,10 +106,6 @@ var y = d3.scaleLinear()
             return d.alphaPI;
           })])
           .range([height, 0]);
-
-// var yAxis = d3.svg.axis().scale(y)
-//   .orient("left").ticks(5);
-
 var yaxis = svg.append("g")
   .attr("class", "yaxis")
   .call(d3.axisRight(y)
@@ -316,6 +312,57 @@ var max_pt = svg
           .y(function(d) { return y2(d['mu_plus']); })
       );
 
+var anno1 = svg2
+  .append("text")
+  .attr("class", "annotationz")
+  .attr("y", 15)
+  .attr("x", 150);
+anno1
+  .append("tspan")
+  .attr("id", "asasd")
+  .text("The Probability that a new point x");
+anno1
+  .append("tspan")
+  .attr("dy", "1.5em")
+  .attr("x", 150)
+  .text("leads to a better objective is given by");
+anno1
+  .append("tspan")
+  .attr("dy", "1.5em")  
+  .attr("x", 150)
+  .attr("font-weight", "bold")
+  .text("Probability of Improvement⠀");
+anno1
+  .append("tspan")
+  .text("Acquisition function.");
+
+var anno1 = svg2
+  .append("text")
+  .attr("class", "annotationz")
+  .attr("y", 250)
+  .attr("x", 300);
+anno1
+  .append("tspan")
+  .attr("id", "asasd")
+  .text("Move the mouse over the⠀");
+anno1
+  .append("tspan")
+  .attr("id", "asasd")
+  .attr("fill", "purple")
+  .text("purple line (f(x+) + ϵ)");
+  
+anno1
+  .append("tspan")
+  .attr("dy", "1.5em")
+  .attr("x", 300)
+  .text("to adjust the amount of⠀");
+anno1
+  .append("tspan")
+  .attr("font-weight", "bold")
+  .text("exploration (ϵ)⠀");
+anno1
+  .append("tspan")
+  .text("perfomed.");
   // plotting the points
   var combination = returnPoints(data, curr_eps);
   var len = combination.length;
@@ -376,7 +423,6 @@ var max_pt = svg
   var ordinal = d3.scaleOrdinal()
     .domain(temp.slice(0, selector))
     .range(colors.slice(0, selector));
-  console.log(d3.schemeDark2.slice(0, len).push("red"))
   svg2.append("g")
     .attr("class", "legendOrdinal")
     .attr("transform", "translate(150,190)");
@@ -395,7 +441,6 @@ var max_pt = svg
     var ordinal = d3.scaleOrdinal()
     .domain(temp.slice(selector, len2))
     .range(colors.slice(selector, len2));
-  console.log(d3.schemeDark2.slice(0, len).push("red"))
   svg2.append("g")
     .attr("class", "legendOrdinal2")
     .attr("transform", "translate(230,190)");
@@ -422,7 +467,6 @@ for (var i = train_x.length - 1; i >= 0; i--) {
     .attr("class", "selectedPts")
     .attr("cx", function(d) { return x2(d.loc); })
     .attr("cy", function(d) { return y2(d.val); });
-  console.log(sel_pt);
 }
 
   // A function that update the chart when slider is moved?
