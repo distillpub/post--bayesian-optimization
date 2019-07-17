@@ -14,7 +14,7 @@
 
 .annotationz {
   fill: rgba(0,0,0,0.6);
-  font-size: 13px;
+  font-size: 14px;
   font-family: -apple-system, BlinkMacSystemFont, 
   "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
   "Fira Sans", "Droid Sans", "Helvetica Neue",
@@ -133,6 +133,7 @@ span {
 
 .legendOrdinal, .legendOrdinal2 {
   opacity:1;
+  font-size: 14px;
 }
 
 .xaxis, .yaxis {

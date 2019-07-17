@@ -266,7 +266,7 @@ var max_pt = svg
   svg2.append("text") // text label for the x axis
     .attr("class", "label")
     .attr("x", width / 2 )
-    .attr("y", height + margin.bottom )
+    .attr("y", height + margin.bottom + 1)
     .text("X");
   // Plot the gt/////
   var curve2 = svg2
@@ -315,8 +315,8 @@ var max_pt = svg
 var anno1 = svg2
   .append("text")
   .attr("class", "annotationz")
-  .attr("y", 15)
-  .attr("x", 150);
+  .attr("y", 30)
+  .attr("x", 160);
 anno1
   .append("tspan")
   .attr("id", "asasd")
@@ -324,12 +324,12 @@ anno1
 anno1
   .append("tspan")
   .attr("dy", "1.5em")
-  .attr("x", 150)
+  .attr("x", 160)
   .text("leads to a better objective is given by");
 anno1
   .append("tspan")
   .attr("dy", "1.5em")  
-  .attr("x", 150)
+  .attr("x", 160)
   .attr("font-weight", "bold")
   .text("Probability of Improvement⠀");
 anno1
@@ -340,7 +340,7 @@ var anno1 = svg2
   .append("text")
   .attr("class", "annotationz")
   .attr("y", 250)
-  .attr("x", 300);
+  .attr("x", 275);
 anno1
   .append("tspan")
   .attr("id", "asasd")
@@ -354,7 +354,7 @@ anno1
 anno1
   .append("tspan")
   .attr("dy", "1.5em")
-  .attr("x", 300)
+  .attr("x", 275)
   .text("to adjust the amount of⠀");
 anno1
   .append("tspan")
