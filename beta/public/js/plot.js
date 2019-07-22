@@ -77,16 +77,26 @@ var svg = d3.select("#Teaser1")
 var ordinal = d3.scaleOrdinal()
   .domain(["⠀   Optimal"])
   .range([ "purple"]);
-  svg.append("g")
+var marginl = {top: 0, right: 0, bottom: 0, left: 40},
+  widthl = 300 - marginl.left - marginl.right,
+  heightl = 200 - marginl.top - marginl.bottom;
+var svg1l = d3.select("#TeaserL1")
+  .append("svg")
+  .attr("width", widthl + marginl.left + marginl.right)
+  .attr("height", heightl + marginl.top + marginl.bottom)
+  .append("g")
+  .attr("transform",
+        "translate(" + marginl.left + "," + marginl.top + ")");
+  svg1l.append("g")
   .attr("class", "legendOrdinal")
-  .attr("transform", "translate(700,-20)");
+  .attr("transform", "translate(20, 80)");
   var legendOrdinal = d3.legendColor()
   .labelWrap(30)
-  .shape("path", d3.symbol().type(d3.symbolCircle).size(100)())
+  .shape("path", d3.symbol().type(d3.symbolCircle).size(50)())
   .shapePadding(10)
   .cellFilter(function(d){ return d.label !== "e" })
   .scale(ordinal);
-  svg.select(".legendOrdinal")
+  svg1l.select(".legendOrdinal")
   .call(legendOrdinal);
 
 // add the x Axis
@@ -413,7 +423,7 @@ anno1
   temp.push("GT");
   temp.push("GP  Prediction");
   temp.push("ϵ + f(x+)");
-  temp.push("⠀ Selected Points");
+  temp.push("⠀ Sampled Points");
   var len2 = temp.length;
   var colors = d3.schemeDark2.slice(0, len);
   colors.push("steelblue");
@@ -423,9 +433,21 @@ anno1
   var ordinal = d3.scaleOrdinal()
     .domain(temp.slice(0, selector))
     .range(colors.slice(0, selector));
-  svg2.append("g")
+
+  var marginl = {top: -40, right: 30, bottom: 30, left: -30},
+  widthl = 300 - marginl.left - marginl.right,
+  heightl = 400 - marginl.top - marginl.bottom;
+
+  var svg2l = d3.select("#TeaserL2")
+    .append("svg")
+    .attr("width", widthl + marginl.left + marginl.right)
+    .attr("height", heightl + marginl.top + marginl.bottom)
+    .append("g")
+    .attr("transform",
+          "translate(" + marginl.left + "," + marginl.top + ")");
+  svg2l.append("g")
     .attr("class", "legendOrdinal")
-    .attr("transform", "translate(150,190)");
+    .attr("transform", "translate(100,190)");
   var legendOrdinal = d3.legendColor()
     .labelWrap(30)
     //d3 symbol creates a path-string, for example
@@ -436,14 +458,14 @@ anno1
     //use cellFilter to hide the "e" cell
     .cellFilter(function(d){ return d.label !== "e" })
     .scale(ordinal);
-  svg2.select(".legendOrdinal")
+  svg2l.select(".legendOrdinal")
     .call(legendOrdinal);
     var ordinal = d3.scaleOrdinal()
     .domain(temp.slice(selector, len2))
     .range(colors.slice(selector, len2));
-  svg2.append("g")
+  svg2l.append("g")
     .attr("class", "legendOrdinal2")
-    .attr("transform", "translate(230,190)");
+    .attr("transform", "translate(180,190)");
   var legendOrdinal2 = d3.legendColor()
     .labelWrap(30)
     .shape("path", d3.symbol().type(d3.symbolCircle).size(50)())
@@ -451,7 +473,7 @@ anno1
     //use cellFilter to hide the "e" cell
     .cellFilter(function(d){ return d.label !== "e" })
     .scale(ordinal);
-  svg2.select(".legendOrdinal2")
+  svg2l.select(".legendOrdinal2")
     .call(legendOrdinal2);
 
 // highlighting selected points

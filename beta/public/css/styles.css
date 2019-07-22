@@ -4,6 +4,10 @@
   align-items: center;
 }
 
+.container {
+  float: left;
+}
+
 #mu_plus {
   stroke-width: 2;
   fill: none;
@@ -48,13 +52,7 @@ span {
 }
 
 /* https://distill.pub/2019/visual-exploration-gaussian-processes/ */
-#Teaser {
-  display: flex;
-  justify-content: center;
-  height: 400px;
-  font-size: 12px;
-}
-  
+
 .pi {
   stroke: steelblue;
   stroke-width: 2;
@@ -95,8 +93,10 @@ span {
   shape-rendering: crispEdges;
 }
 
-.Teaser {
-  display: block;
+.Teaser1, .Teaser2 {
+  float: auto;
+  display: inline-flex;
+  margin: 0 auto;
 }
 
 .l-screen {
@@ -116,12 +116,20 @@ span {
   fill: rgba(0,0,0,0.8);
   text-anchor: middle;
   font-size: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, 
+  "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
+  "Fira Sans", "Droid Sans", "Helvetica Neue",
+  Arial, sans-serif;
 }
 
 .title {
   fill: rgba(0,0,0,0.8);
   text-anchor: middle;
   font-size: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 
+  "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
+  "Fira Sans", "Droid Sans", "Helvetica Neue",
+  Arial, sans-serif;
   text-decoration: underline;
 }
 
@@ -134,10 +142,18 @@ span {
 .legendOrdinal, .legendOrdinal2 {
   opacity:1;
   font-size: 14px;
+  font-family: -apple-system, BlinkMacSystemFont, 
+  "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
+  "Fira Sans", "Droid Sans", "Helvetica Neue",
+  Arial, sans-serif;
 }
 
 .xaxis, .yaxis {
   font-size: 14px;
+  font-family: -apple-system, BlinkMacSystemFont, 
+  "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
+  "Fira Sans", "Droid Sans", "Helvetica Neue",
+  Arial, sans-serif;
 }
 
 .selectedPts {
