@@ -52,14 +52,16 @@
 
   <d-title style="padding-bottom: 0">
     <p>Breaking Bayesian Optimization into small, sizable chunks.</p>
-    <d-figure id="TeaserP" class="l-screen shaded-figure" style="border-bottom: none">
-      <div class="Teaser1" id="Teaser1"></div>
-      <div class="Teaser1" id="TeaserL1"></div>
-    </d-figure>
-    <d-figure id="TeaserP" class="l-screen shaded-figure" style="border-bottom: none">
-      <div class="Teaser2" id="Teaser2"></div>
-      <div class="Teaser2" id="TeaserL2"></div>
-    </d-figure>
+    <div class="l-screen shaded-figure" style="border-bottom: none">
+      <d-figure>
+        <div class="Teaser1" id="Teaser1"></div>
+        <div class="Teaser1" id="TeaserL1"></div>
+      </d-figure>
+      <d-figure>
+        <div class="Teaser2" id="Teaser2"></div>
+        <div class="Teaser2" id="TeaserL2"></div>
+      </d-figure>
+    </div>
   </d-title>
 
   <d-byline></d-byline>
@@ -129,7 +131,7 @@
 
     <p>
       One might want to look at this excellent distillpub article<d-cite key="görtler2019a"></d-cite> on Gaussian Processes<d-cite key="Rasmussen2004"></d-cite>.
-      We will be using Gaussian Processes regression to model the gold distribution along the one-dimensional line. By using Gaussian processes, we assume that the gold distribution of nearby points is similar (smoothness).
+      We will be using Gaussian Processes regression to model the gold distribution along the one-dimensional line. By using Gaussian processes, we assume that the gold distribution of nearby points is similar (smoothness)
       Such an assumption is usually valid.
     </p>
 
@@ -161,8 +163,7 @@
     <h4 id="addingtrainingdata">Adding Training Data</h4>
 
     <p>
-      Let us now add a point to the train set or in other words, drill one of the locations and see the gold content (<d-math>y</d-math>). We can see how our confidence and our estimates change after we get this first
-      information by fitting the model to the new data. We are going to add <d-math>(x = 0.5, \ y = f(0.5))</d-math> into the train set now.
+      Let us now add a point to the train set or in other words, drill one of the locations and see the gold content (<d-math>y</d-math>). We can see how our confidence and our estimates change after we get this first       information by fitting the model to the new data. We are going to add <d-math>(x = 0.5, \ y = f(0.5))</d-math> into the train set now.
     </p>
 
     <figure>
@@ -172,7 +173,7 @@
     <p>
       We see now that the GP posterior (shown as our prediction) has changed and we are very certain about the gold content in the vicinity of <d-math>x = 0.5</d-math>, but, very uncertain far away from it. Also, we can see that
       the mean of the point
-      closer to <d-math>x = 0.5</d-math> is closer to the value that we got from drilling and seeing the gold content. So, we now come to the key idea of active learning:
+      closer to <d-math>x = 0.5</d-math> is closer to the value that we got from drilling and seeing the gold content<d-footnote>You might notice that there might be cases when we would actually predict the gold content to be negative. This issue is not central to understanding BO here, but we can still overcome this by making our GP to regress over <d-math>\log\left(f(x)\right)</d-math> instead of <d-math>f(x)</d-math>.</d-footnote>. So, we now come to the key idea of active learning:
     </p>
 
     <h3 id="activelearningprocedure">Active Learning Procedure
@@ -338,7 +339,7 @@
     <p>
       We can obtain a closed form solution as below:
     </p>
-    <d-math block>x_{t+1} = argmax_x \Phi(\frac{\mu_t(x) - f(x^+) - \epsilon}{\sigma_t(x)})</d-math>
+    <d-math block>x_{t+1} = argmax_x \Phi\left(\frac{\mu_t(x) - f(x^+) - \epsilon}{\sigma_t(x)}\right)</d-math>
     <p>
       where <d-math>\Phi(\cdot)</d-math> indicates the CDF.
     </p>
@@ -1047,12 +1048,22 @@
       </li>
       <li>
         <p>
+          We talked about optimizing a black-box function here. If we are to perform over multiple objectives, how do these acquisition functions scale? There has been fantastic work in this domain too! We try to deal with these cases by having multiobjective acquisition functions. Have a look at <a href="https://gpflowopt.readthedocs.io/en/latest/notebooks/multiobjective.html">this excellent</a> notebook for an example using <d-code language="python">gpflowopt</d-code>.
+        </p>
+      </li>
+      <li>
+        <p>
+          One of the more interesting uses of hyperparameters optimization can be attributed to searching the space of neural network architecture for finding the architectures that give us maximal predictive performance. One might also want to consider multiobjective optimizations as some of the other objectives like memory consumption, model size, or inference time also matter in practical scenarios.
+        </p>
+      </li>
+      <li>
+        <p>
           When the datasets are extremely large, human experts tend to test hyperparameters on smaller subsets of the dataset and iteratively improve the accuracy for their models. There has been work in Bayesian Optimization, taking into account these approaches<d-cite key="hyperband,largeBO"></d-cite> when datasets are of such sizes.
         </p>
       </li>
       <li>
         <p>
-          Now, suppose we are trying to optimize a function where it must always be the case that if we evaluate a function, the evaluated values should be above a certain security threshold<d-cite key="SafeExplore"></d-cite>. One toy example is the possible configurations for a flying robot to maximize its stability. If we tried a point with terrible stability, we might crash the robot, and therefore we would like to explore the configuration space more diligently.
+          There also has been work on BO, where one explores with a certain level of "safety", meaning the evaluated values should lie above a certain security threshold functional value<d-cite key="SafeExplore"></d-cite>. One toy example is the possible configurations for a flying robot to maximize its stability. If we tried a point with terrible stability, we might crash the robot, and therefore we would like to explore the configuration space more diligently.
         </p>
       </li>
       <li>

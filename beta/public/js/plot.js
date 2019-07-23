@@ -56,15 +56,15 @@ d3.json("data/pi_cdf.json", function(data) {
   console.log('Json read!')
   console.log(data);
 
-  var curr_eps = "2";
+  var curr_eps = "0";
   var curr_data = returnCurrAlpha(data, curr_eps);
 
   // ---------------------------
 
   // set the dimensions and margins of the graph
-var margin = {top: 30, right: 30, bottom: 30, left: 50},
+var margin = {top: 30, right: 30, bottom: 80, left: 50},
   width = 800 - margin.left - margin.right,
-  height = 200 - margin.top - margin.bottom;
+  height = 300 - margin.top - margin.bottom;
   // append the svg object to the body of the page
 var svg = d3.select("#Teaser1")
   .append("svg")
@@ -235,7 +235,7 @@ var max_pt = svg
   var svg2 = d3.select("#Teaser2")
   .append("svg")
   .attr("width", width + margin.left + margin.right)
-  .attr("height", height + margin.top + margin.bottom)
+  .attr("height", height + margin.top + margin.bottom + 15)
   .append("g")
   .attr("transform",
         "translate(" + margin.left + "," + margin.top + ")");
@@ -276,7 +276,7 @@ var max_pt = svg
   svg2.append("text") // text label for the x axis
     .attr("class", "label")
     .attr("x", width / 2 )
-    .attr("y", height + margin.bottom + 1)
+    .attr("y", height + margin.bottom + 13)
     .text("X");
   // Plot the gt/////
   var curve2 = svg2
