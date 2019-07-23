@@ -62,9 +62,9 @@ d3.json("data/pi_cdf.json", function(data) {
   // ---------------------------
 
   // set the dimensions and margins of the graph
-var margin = {top: 30, right: 30, bottom: 80, left: 50},
+var margin = {top: 80, right: 30, bottom: 80, left: 50},
   width = 800 - margin.left - margin.right,
-  height = 300 - margin.top - margin.bottom;
+  height = 350 - margin.top - margin.bottom;
   // append the svg object to the body of the page
 var svg = d3.select("#Teaser1")
   .append("svg")
@@ -79,7 +79,7 @@ var ordinal = d3.scaleOrdinal()
   .range([ "purple"]);
 var marginl = {top: 0, right: 0, bottom: 0, left: 40},
   widthl = 300 - marginl.left - marginl.right,
-  heightl = 200 - marginl.top - marginl.bottom;
+  heightl = 300 - marginl.top - marginl.bottom;
 var svg1l = d3.select("#TeaserL1")
   .append("svg")
   .attr("width", widthl + marginl.left + marginl.right)

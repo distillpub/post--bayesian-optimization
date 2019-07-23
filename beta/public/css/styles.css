@@ -16,8 +16,19 @@
   shape-rendering: crispEdges;
 }
 
+#plotHead {
+  fill: rgba(0,0,0,0.6);
+  opacity: .6;
+  font-size: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 
+  "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
+  "Fira Sans", "Droid Sans", "Helvetica Neue",
+  Arial, sans-serif;
+}
+
 .annotationz {
   fill: rgba(0,0,0,0.6);
+  opacity: .8;
   font-size: 14px;
   font-family: -apple-system, BlinkMacSystemFont, 
   "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
@@ -90,6 +101,7 @@ span {
   stroke-width: 1;
   fill: none;
   stroke: rgba(0,0,0,0.6);
+  opacity: .8;
   shape-rendering: crispEdges;
 }
 
@@ -125,6 +137,7 @@ span {
 .title {
   fill: rgba(0,0,0,0.8);
   text-anchor: middle;
+  opacity: .8;
   font-size: 20px;
   font-family: -apple-system, BlinkMacSystemFont, 
   "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
@@ -139,8 +152,8 @@ span {
 }
 
 .legendOrdinal, .legendOrdinal2 {
-  opacity:1;
   font-size: 14px;
+  opacity: .8;
   font-family: -apple-system, BlinkMacSystemFont, 
   "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
   "Fira Sans", "Droid Sans", "Helvetica Neue",
@@ -149,6 +162,7 @@ span {
 
 .xaxis, .yaxis {
   font-size: 14px;
+  opacity: .8;
   font-family: -apple-system, BlinkMacSystemFont, 
   "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
   "Fira Sans", "Droid Sans", "Helvetica Neue",
