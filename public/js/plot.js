@@ -123,7 +123,7 @@ var yaxis = svg.append("g")
 // Textual Content
 svg.append("text")
   .attr("id", "plot1title")
-  .attr("class", "title")
+  .attr("class", "Plttitle")
   .attr("x", (width / 2))
   .attr("y", 0 - (margin.top / 2))
   .text("ϵ = " + data[curr_eps].eps.toFixed(2));
@@ -262,7 +262,7 @@ var max_pt = svg
   // Textual Content
   svg2.append("text")
     .attr("id", "plot2title")
-    .attr("class", "title")
+    .attr("class", "Plttitle")
     .attr("x", (width / 2))
     .attr("y", 0 - (margin.top / 2))
     .text("CDF (Shaded regions) for candidate points");
