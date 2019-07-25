@@ -58,9 +58,10 @@
     counter-increment: problem;
 }
 
-span {
+/*span {
 	padding-bottom: 15px;
 }
+*/
 
 /* https://distill.pub/2019/visual-exploration-gaussian-processes/ */
 

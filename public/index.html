@@ -353,10 +353,7 @@
     <h4 id="intuitionbehindtheformula">Intuition behind PI</h4>
 
     <p>
-      Below is a graph that helps to visualize how the PI values are calculated. We have calculated <d-math>\alpha_{PI}(x)</d-math> for three points <d-math>x \in \{0.10, 0.6, 4\}</d-math>. We can see the CDF being
-      shaded in the graphs below. Further, we can see if we increase <d-math>\epsilon</d-math>, we implicitly place more importance to the uncertainty of a point. If <d-math>\epsilon</d-math> is increased, the points with a larger <d-math>\sigma
-      </d-math> will
-      benefit as their probability density is spread more. Thus points with more spread out sigma would have a higher value of cumulative density function on same <d-math>f(x^+) + \epsilon</d-math>.
+      In our hero plot, we have tried to visualize how <d-math>\alpha_{PI}(x)</d-math> values are calculated. We selected two points as our candidate points <d-math>x \in \{1.0, 5.0\}</d-math> to compare agaist each other. Further, we can see if we increase <d-math>\epsilon</d-math>, we implicitly place more importance to the uncertainty in the approximated evaluation function. If <d-math>\epsilon</d-math> is increased, the points with a larger <d-math>\sigma </d-math> will benefit as their probability density is spread more. Thus points with more spread out sigma would have a higher value of cumulative density function on when we have high <d-math>\epsilon</d-math>.
     </p>
 
     <p style="font-size: 18px;">
@@ -364,8 +361,7 @@
     </p>
 
     <p>
-      <d-math>f(x^+)</d-math> refers to the maximum functional value, as described earlier.
-      We see that the probability of improvement values are calculated by finding the functional value of the cumulative density function at <d-math>f(x^+)</d-math>.
+      <d-math>f(x^+)</d-math> refers to the maximum functional value, as described earlier. We see that the probability of improvement values are calculated by finding the functional value of the cumulative density function at <d-math>f(x^+)</d-math>.
     </p>
 
     <p>
