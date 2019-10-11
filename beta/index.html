@@ -10,6 +10,7 @@
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.js"></script>
   <script defer src="js/plot.js"></script>
+  <script defer src="js/hider.js"></script>
   <script type="text/javascript" src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 <!-- <link rel="stylesheet" type="text/css" href="css/style.css"> -->
 
@@ -71,7 +72,7 @@
 
   <d-byline></d-byline>
 
-  <d-article>
+  <d-article style="overflow-x: unset;">
     <p>
       We are increasingly getting used to deep(er) neural networks! These networks often come with a huge number of hyperparameters: like the number of layers, the dropout rate, the learning rate, among others. How do we efficiently tune these
       hyperparameters to optimize our machine learning model? In this
@@ -223,7 +224,7 @@
     </p>
 
 
-    <h3 id="acquisitionfunctions">Acquisition Functions</h3>
+    <h3>Acquisition Functions</h3>
 
     <p>
       Now, to take into account the combination of exploration and exploitation, we try to use a function which combines the two aspects. These utility functions are called acquisition functions.
@@ -340,9 +341,9 @@
         </p>
       </li>
     </ol>
-
+<!-- TODO: Define what is surrogate? -->
     <p>
-      We can obtain a closed form solution as below:
+      We can obtain a closed form solution for the case when our surrogate function is a GP.
     </p>
     <d-math block>x_{t+1} = argmax_x \Phi\left(\frac{\mu_t(x) - f(x^+) - \epsilon}{\sigma_t(x)}\right)</d-math>
     <p>
@@ -426,7 +427,7 @@
     </d-math>
 
     <p>
-      Where <d-math>f(x^+)</d-math> is the maximum value that has been encountered so far. This equation can be easily converted analytically to a closed form equation shown below.
+      Where <d-math>f(x^+)</d-math> is the maximum value that has been encountered so far. This equation for the case of GP surrogate, can be easily converted analytically to a closed form equation shown below.
     </p>
 
     <d-math block>
@@ -490,30 +491,29 @@
       exploit to get more gains near the global maxima. We would have liked an acquisition function that tried to exploit a bit more after reaching somewhere close to the global maxima.
     </p>
 
-    <h4 id="eipi-relation">PI vs. EI</h4>
+    <h4 class="collapsible">PI vs. EI</h4>
+    <div class="content">
+      <p>
+        We have seen two closely related methods, The <em>Probability of Improvement</em> and the <em>Expected Improvement</em>.
+      </p>
 
+      <p>
+        In the figure below, we have plotted the values for both policies' acquisition function's values below, for each of the possible locations. The graph shows the relation followed
+        between
+        EI and PI for when we have a single training point <d-math>(0.5, f(0.5))</d-math>.
+      </p>
 
-    <p>
-      We have seen two closely related methods, The <em>Probability of Improvement</em> and the <em>Expected Improvement</em>.
-    </p>
-
-    <p>
-      In the figure below, we have plotted the values for both policies' acquisition function's values below, for each of the possible locations. The graph shows the relation followed
-      between
-      EI and PI for when we have a single training point <d-math>(0.5, f(0.5))</d-math>.
-    </p>
-
-    <figure class="smaller-img">
-      <d-figure><img src="images/MAB_gifs/Ei_Pi_graph/0.svg" /></d-figure>
-    </figure>
-    <p>
-      We can see that the <d-math>\alpha_{EI}</d-math> has its maximum value corresponding to <d-math>\alpha_{PI}</d-math> close to 0.25. But, <d-math>\alpha_{PI}</d-math> has a maximum of around 0.375, for which <d-math>\alpha_{EI}</d-math>
-      is low. Choosing a point with low <d-math>\alpha_{PI}</d-math> and high <d-math>\alpha_{EI}</d-math> means taking more risk, but getting a high reward.
-      In other words, when the reward is the same for multiple points (<d-math>\alpha_{EI}</d-math>), we should prioritize to choose the option with lesser risk (or higher <d-math>\alpha_{PI}</d-math>). And similarly,
-      when
-      the risks are the same (same <d-math>\alpha_{PI}</d-math>), we would want to go with points with greater reward (higher <d-math>\alpha_{EI}</d-math>).
-    </p>
-
+      <figure class="smaller-img">
+        <d-figure><img src="images/MAB_gifs/Ei_Pi_graph/0.svg" /></d-figure>
+      </figure>
+      <p>
+        We can see that the <d-math>\alpha_{EI}</d-math> has its maximum value corresponding to <d-math>\alpha_{PI}</d-math> close to 0.25. But, <d-math>\alpha_{PI}</d-math> has a maximum of around 0.375, for which <d-math>\alpha_{EI}</d-math>
+        is low. Choosing a point with low <d-math>\alpha_{PI}</d-math> and high <d-math>\alpha_{EI}</d-math> means taking more risk, but getting a high reward.
+        In other words, when the reward is the same for multiple points (<d-math>\alpha_{EI}</d-math>), we should prioritize to choose the option with lesser risk (or higher <d-math>\alpha_{PI}</d-math>). And similarly,
+        when
+        the risks are the same (same <d-math>\alpha_{PI}</d-math>), we would want to go with points with greater reward (higher <d-math>\alpha_{EI}</d-math>).
+      </p>
+    </div>
     <h3 id="gaussianprocessupperconfidenceboundgp_ucb">Gaussian Process Upper Confidence Bound (GP-UCB)</h3>
 
     <p>
@@ -598,49 +598,50 @@
         <d-figure><img src="images/MAB_gifs/mab-gp-thomp.gif" /></d-figure>
       </figure>
 
-      <h3 id="random">Random</h3>
+      <h3 class="collapsible"> Other Acquisition Functions </h3>
+      <div class="content">
+        <p>We have seen various acquisition functions until now. 
+          We can form a new acquisition functions by coming up with a 
+          function of the existing acquisition functions. Though the physical interpretability 
+          of such acquisition functions would not be so straightforward.
+          One reason we might want to combine two methods is to overcome the
+          limitations of the individual methods.
+        <p>
 
-      <p>
-        We had used intelligent acquisition functions earlier, let us see what happens if our acquisition function chooses randomly.
-      </p>
+        <h3>Probability of Improvement + <d-math>\lambda \ \times</d-math> Expected Improvement (EI-PI)</h3>
 
-      <p>
-        We have here implemented a random method as a baseline. Notice, random method can find a location near the global maximum but is not able to exploit (try to find the global maxima that might be near this "best" location).
-        Instead, it
-        randomly chooses to explore the search space. Even with no intelligence, we might get good locations which might be close to the location with the most gold content.
-      </p>
+        <p>
+          One such combination can be a linear combination of PI and EI.
+          An example where we could use such an acquisition function is 
+          in the case of limited number of evaluations of <d-math>f(x)</d-math>
+        </p>
+        <p>
+          We know PI focuses on Probability of Improvement whereas EI 
+          focuses on the Expected Improvement. In such a case, we can 
+          have <d-math>\lambda</d-math> to be a function of the timestep,
+          controling the individual importance of PI vs EI.
+        </p>
 
-      <figure>
-        <d-figure><img src="images/MAB_gifs/rand.gif" /></d-figure>
-      </figure>
+        <figure>
+          <d-figure><img src="images/MAB_gifs/mab-gp-ei_pi.gif" /></d-figure>
+        </figure>
 
-      <h3 id="piei_acq">Probability of Improvement + <d-math>\lambda \ \times</d-math> Expected Improvement (EI-PI)</h3>
+        <h3>Random</h3>
 
-      <p>
-        Below we have tried to combine PI and EI using a linear combination as a combination of various acquisition function also results in an acquisition function. We can, therefore, combine any of the acquisition function and form a new one.
-      </p>
+        <p>
+          We have been using intelligent acquisition functions until now. 
+          If we were to chose our evaluation positions <d-math>x</d-math> 
+          randomly, we effectively will have changed our acquisition function
+          to a Random acquisition function. This effectively is how 
+          Random search works.
+        </p>
 
-      <P>
-        One reason we might want to combine two methods is to overcome the limitations of the individual methods. Furthermore, since we combined the two acquisition functions, we also have individual hyperparameters included in this combined
-        acquisition function. Let us list the final hyperparameters for ease:
-        <ul>
-          <li>
-            <d-math>\epsilon_{PI}</d-math> -- Controls the <d-math>\epsilon</d-math> for <em>Probability of Improvement</em>.
-          </li>
-          <li>
-            <d-math>\epsilon_{EI}</d-math> -- Controls the <d-math>\epsilon</d-math> for <em>Expected Improvement</em>.
-          </li>
-          <li>
-            <d-math>\lambda</d-math> -- Controls the linear weightage given <em>Expected Improvement</em> over <em>Probability of Improvement</em>.
-          </li>
-      </P>
+        <figure>
+          <d-figure><img src="images/MAB_gifs/rand.gif" /></d-figure>
+        </figure>
+      </div>
 
-      <figure>
-        <d-figure><img src="images/MAB_gifs/mab-gp-ei_pi.gif" /></d-figure>
-      </figure>
-
-      <h3 id="comparison">Comparison</h3>
-
+      <h3>Comparison</h3>
 
       <p>
         Below we have a graph showing a comparison of different acquisition functions<d-footnote>To know more about the difference between acquisition functions look at <a href="https://www.cs.ubc.ca/~nando/540-2013/lectures/l7.pdf">these</a> amazing
@@ -764,7 +765,7 @@
 
         <p>We turn to Bayesian optimization to find counter the expensiveness of getting the functional values, and these increased dimensions.</p>
 
-        <h3 id="example1">Example 1</h3>
+        <h3 id="example1">Example 1 -- Support Vector Machine</h3>
 
         <p>Let us us use an SVM on sklearn's moons dataset and try to find the optimal hyperparameter using Bayesian optimization. Let us have a look at the dataset first.</p>
 
@@ -832,7 +833,7 @@
           dimensions,
           it's much difficult to get to the optimal value by using random search.</p>
 
-        <h3 id="example2">Example 2</h3>
+        <h3 id="example2">Example 2 -- Random Forest</h3>
 
         <p>
           Using Bayesian Optimization in a Random Forest Classifier.<d-cite key="scikit"></d-cite>
@@ -885,8 +886,8 @@
           We see that the optimization is in two dimensions. Therefore it is expected that random would perform much worse than in the case of a single dimension.
         </p>
 
-        <h3 id="example3">Example 3</h3>
-
+        <h3 class="collapsible" id="example3">Example 3 -- Neural Networks</h3>
+        <div class="content">
         <p>
           Let us take this example to get an idea of how to apply Bayesian Optimization to training neural networks like CNNs on Mnist. Here we will be using <d-code language="python">scikit-optim</d-code>, which also provides us support for
           optimizing
@@ -958,7 +959,7 @@
         </d-code>
 
         <figure class="smaller-img">
-          <d-figure><img src="images/MAB_gifs/conv2.svg"></d-figure>
+          <d-figure><img src="images/MAB_gifs/conv.svg"></d-figure>
         </figure>
 
         <p>
@@ -989,6 +990,7 @@
         <p>
           We would have saved around 5 hours by using BO for our hypothetical scenario of using Grid Search.
         </p>
+      </div>
 
         <h1 id="conclusions">Conclusions</h1>
 
