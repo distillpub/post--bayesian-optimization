@@ -89,7 +89,7 @@
 
   <d-article style="overflow-x: unset;">
     <p>
-      We are increasingly getting used to machine learning algorithms with a large number of hyperparameters. For example, a neural networks with hyperparameters like; the number of layers, the dropout rate, the learning rate, among others. Or random forests with the number of trees, and the maximum depth. How do we efficiently tune these hyperparameters to optimize our machine learning model? In this article, we will talk about Bayesian Optimization (BO) - which is an effective suite of techniques often used to efficiently tune the hyperparameters. Besides being used in tuning hyperparameters, BO is a general suite of techniques for optimizing any black-box function.
+      We are increasingly getting used to machine learning algorithms with a large number of hyperparameters. For example, neural networks with hyperparameters like; the number of layers, the dropout rate, the learning rate, among others. Or random forests with the number of trees, and the maximum depth. How do we efficiently tune these hyperparameters to optimize our machine learning model? In this article, we will talk about Bayesian Optimization (BO) - which is an effective suite of techniques often used to efficiently tune the hyperparameters. Besides being used in tuning hyperparameters, BO is a general suite of techniques for optimizing any black-box function.
     </p>
 
     <p>
@@ -98,7 +98,7 @@
 
     <h1>Mining Gold!</h1>
     <p>
-      Let us start the discussion about mining gold. Our goal is to mine goal in a new land. For now, let us make a simplifying assumption, the gold content lies in a one-dimensional space, i.e., we are talking gold distribution only about a line. Our aim is to find the location along this line where we would get maximum returns and drill at that location. Now, at the start of the activity, we have no idea about the amount of gold at different locations. The only way we can get the information about the amount of gold is by drilling at different locations. This drilling is costly and involves expensive sensors to be used. We, therefore, want to <strong>minimize the number of drillings required</strong> while still being able to <strong>find the location of maximum gold quickly</strong>.
+      Let us start the discussion about mining gold. Our goal is to mine for goal in a new land. For now, let us make a simplifying assumption, the gold content lies in a one-dimensional space, i.e., we are talking gold distribution only about a line. Our aim is to find the location along this line where we would get maximum returns and drill at that location. Now, at the start of the activity, we have no idea about the amount of gold at different locations. The only way we can get the information about the amount of gold is by drilling at different locations. This drilling is costly and involves expensive sensors to be used. We, therefore, want to <strong>minimize the number of drillings required</strong> while still being able to <strong>find the location of maximum gold quickly</strong>.
     </p>
 
     <p>
@@ -109,7 +109,7 @@
       <li>
         <p>
           <strong>Problem 1: Best Estimate of Gold Distribution</strong><br/>
-          In this problem, we want estimate the amount of gold on the one-dimensional line. Since we are limited by the cost of drillings, we can not drill at every location. We should drill at those locations that provide us with the <strong>maximum information</strong> about the distribution of the gold. This problem is akin to 
+          In this problem, we want to estimate the amount of gold on the one-dimensional line. Since the cost of drillings limits us, we can not drill at every location. We should drill at those locations that provide us with the <strong>maximum information</strong> about the distribution of the gold. This problem is akin to 
           <strong>
             Active Learning<d-cite key="settles2009active,Tong2001"></d-cite>
           </strong>.
@@ -129,7 +129,7 @@
 
     <p>
       In this article, we will soon see how the two problems are related, 
-      but, not the same.
+      but not the same.
     </p>
 
 
@@ -137,12 +137,12 @@
     <h2>Active Learning</h2>
 
     <p>
-      In machine learning problems, often, unlabelled data is very easily available, but labeling could be an expensive task. As an example, for a speech-to-text task, the ground truth labeling or annotation task requires expert(s) to manually label words and sentences. In our gold mining problem, drilling (akin to labeling) is an expensive operation, and we would like to minimize it. But, without drilling, we can not estimate the gold estimate. Active learning would solve this problem by posing a smart strategy to choose the next drilling site. While there are various methods and techniques in the active learning literature, for the sake of brevity, we will look only at <strong>uncertainty reduction</strong>, which chooses the next query point as the one our model is the most uncertain about. One of the ways we can reduce the uncertainty is by choosing the point at which we have the maximum variance (we are most uncertain).
+      In machine learning problems, often, unlabelled data is very easily available, but labeling could be an expensive task. As an example, for a speech-to-text task, the ground truth labeling or annotation task requires expert(s) to label words and sentences manually. In our gold mining problem, drilling (akin to labeling) is an expensive operation, and we would like to minimize it. But, without drilling, we can not estimate the gold estimate. Active learning would solve this problem by posing a smart strategy to choose the next drilling site. While there are various methods and techniques in the active learning literature, for the sake of brevity, we will look only at <strong>uncertainty reduction</strong>. This method chooses the next query point as the one our model is the most uncertain about. One of the ways we can reduce the uncertainty is by choosing the point at which we have the maximum variance (we are most uncertain).
     </p>
 
     <h3>Surrogate Model</h3>
     <p>
-      Active learning along with BO, which we will soon see later, rely on a surrogate model for modelling the unknown ground truth function <d-math>f(x)</d-math>. The surrogate model should be chosen such that it is able model the ground truth function closely.
+      Active learning, along with BO, which we will soon see later, rely on a surrogate model for modeling the unknown ground truth function <d-math>f(x)</d-math>. The surrogate model should be chosen such that it is able to model the ground truth function closely.
     </p>
 
     <h3>Bayesian Update</h3>
@@ -152,18 +152,18 @@
     </p>
 
     <p>
-      It is common in literature to use Gaussian Processes as a surrogate. The priors of a GP can be set by using specific kernels and mean functions. Further, GPs not only give us predictions, but also uncertainty estimates, which we will find to be useful in active learning as well as BO.
+      It is common in the literature to use Gaussian Processes as a surrogate. The priors of a GP can be set by using specific kernels and mean functions. Further, GPs give us not only the predictions but also the uncertainty estimates, which we will find to be useful in active learning as well as BO.
     </p>
 
     <h3>Gaussian Processes</h3>
 
     <p>
       One might want to look at this excellent distillpub article<d-cite key="görtler2019a"></d-cite> on Gaussian Processes<d-cite key="Rasmussen2004"></d-cite>.
-      We will be using Gaussian Processes regression to model the gold distribution along the one-dimensional line. By using Gaussian processes, we assume that the gold distribution of nearby points is similar (smoothness). Such an assumption is usually valid.
+      We will be using Gaussian Processes regression to model the gold distribution along the one-dimensional line. By using Gaussian processes, we assume that the gold distribution of nearby points is similar (smoothness). Such an assumption is usually valid. 
     </p>
 
     <p>
-      Let us now try to see how our ground truth function <d-math>f(x)</d-math> looks like. The gold distribution in our data looks to be bi-modal with a maximum value around <d-math>x = 5</d-math>. For now, let us not worry about the X-axis or the
+      Let us now try to see how our ground truth function <d-math>f(x)</d-math> looks like. The gold distribution in our data looks to be bi-modal, with a maximum value around <d-math>x = 5</d-math>. For now, let us not worry about the X-axis or the
       Y-axis units.
     </p>
     <figure class="smaller-img">
@@ -237,11 +237,10 @@
     </p> -->
 
     <p>
-      Given the fact that we are interested to know the location where the maximum occures.
+      Given the fact that we are only interested in knowing the location where the maximum occurs.
        <!-- this problem, we are instead interested to know the location at which we find the maximum gold  -->
-      It might be a good idea to evaluate at locations where our surrogate model's prediction (mean in the case of GPs) is the highest, i.e. to 
-      <!-- TODO: Clarify, mean or prediction? -->
-      <strong>exploit</strong>. But unfortunately our mean is not always accurate, so we need to correct our mean which can be done by reducing variance or <strong>exploration</strong>. Bayesian Optimization looks at both
+      It might be a good idea to evaluate at locations where our surrogate model's prediction mean is the highest, i.e. to 
+      <strong>exploit</strong>. But unfortunately, our mean is not always accurate, so we need to correct our mean which can be done by reducing variance or <strong>exploration</strong>. BO looks at both
       <strong>exploitation</strong> and <strong>exploration</strong>, whereas in the case of Active Learning Problem, we only cared
       about <strong>exploration</strong>.
     </p>
@@ -289,7 +288,7 @@
       <p>Let us link the above constraints to our initial problem statement of gold mining.</p>
 
       <ul>
-        <li>Our domain in the gold mining problem is a single dimensional box constraint of <d-math>0 \leq x \leq 6</d-math>.</li>
+        <li>Our domain in the gold mining problem is a single-dimensional box constraint of <d-math>0 \leq x \leq 6</d-math>.</li>
 
         <li>Our ground truth can be seen as neither convex nor concave function, which resulted in local minima as well.</li>
 
@@ -304,7 +303,7 @@
     <h3>Acquisition Functions</h3>
 
     <p>
-      Now, to take into account the combination of exploration and exploitation, we try to use a function which combines the two aspects. These utility functions are called acquisition functions. These functions can be considered a function of the posterior of the our surrogate modelling the black-box function.
+      Now, to take into account the combination of exploration and exploitation, we try to use a function that combines the two aspects. These utility functions are called acquisition functions. These functions can be considered a function of the posterior of our surrogate modeling the black-box function.
     </p>
 
     <p>
@@ -332,7 +331,7 @@
     <ol>
       <li>
         <p>
-          We have two points of similar means (of function values (gold in our case)). We now want to choose one of these to obtain the labels or values. We will choose the one with higher variance. This basically says that <strong>given same
+          We have two points of similar means (of function values (gold in our case)). We now want to choose one of these to obtain the labels or values. We will choose the one with higher variance. This basically says that <strong>given the same
             exploitability, we choose the one with higher exploration value</strong>.
         </p>
       </li>
@@ -374,7 +373,7 @@
     <h4 id="intuitionbehindtheformula">Intuition behind PI</h4>
 
     <p>
-      In our hero plot, we have tried to visualize how <d-math>\alpha_{PI}(x)</d-math> values are calculated. We selected two points as our candidate points <d-math>x \in \{1.0, 5.0\}</d-math> to compare agaist each other. Further, we can see if we increase <d-math>\epsilon</d-math>, we implicitly place more importance to the uncertainty in the approximated evaluation function. If <d-math>\epsilon</d-math> is increased, the points with a larger <d-math>\sigma </d-math> will benefit as their probability density is spread more. Thus points with more spread out sigma would have a higher value of cumulative density function on when we have high <d-math>\epsilon</d-math>.
+      In our hero plot, we have tried to visualize how <d-math>\alpha_{PI}(x)</d-math> values are calculated. We selected two points as our candidate points <d-math>x \in \{1.0, 5.0\}</d-math> to compare against each other. Further, we can see if we increase <d-math>\epsilon</d-math>, we implicitly place more importance to the uncertainty in the approximated evaluation function. If <d-math>\epsilon</d-math> is increased, the points with a larger <d-math>\sigma </d-math> will benefit as their probability density is spread more. Thus points with more spread out sigma would have a higher value of cumulative density function on when we have high <d-math>\epsilon</d-math>.
     </p>
 
     <p style="font-size: 18px;">
@@ -384,7 +383,7 @@
     <div class="l-screen shaded-figure">
         <div>
           <text id="plotHead">
-            Plot below shows how modifying ϵ leads to different points (locations) being selected to evaluate (drill) next. <br> This selection is based on the maximal probability of getting better gold content over previous evaluations.
+            The plot below shows how modifying ϵ leads to different points (locations) being selected to evaluate (drill) next. <br> This selection is based on the maximal probability of getting better gold content over the previous evaluations.
           </text>
         </div>
         <d-figure>
@@ -768,11 +767,11 @@
     -->
       <h3 id="whyisthiseasier">Why is it easier to optimize the acquisition function?</h3>
 
-      <p>One valid question one might come up is that we have replaced the original optimization problem (optimizing the given black-box function) to another optimization problem (optimization of acquisition function). How is this any better
-        than the last problem? The main
-        reason
-        is
-        that evaluating the acquisition function is much cheaper, whereas in the original problem, evaluating the value at a particular was extremely costly.</p>
+      <p>
+        One valid question one might come up is that we have replaced the original optimization problem (optimizing the given black-box function) to another optimization problem (optimization of acquisition function). How is this any better than the last problem?
+        
+        The main reason lies in the fact that evaluating the acquisition function is much cheaper. We know that the acquisition function is a function of the posterior of the surrogate. If we have a closed-form solution, it makes the calculation of the acquisition function extremely cheap. In contrast, the original black-box function was extremely costly to evaluate, by definition.
+      </p>
 
 
       <h2>Hyperparameter Tuning</h2>
@@ -801,14 +800,14 @@
 
       <h3 id="example1">Example 1 -- Support Vector Machine</h3>
 
-      <p>Let us us use an SVM on sklearn's moons dataset and try to find the optimal hyperparameter using Bayesian optimization. Let us have a look at the dataset first.</p>
+      <p>Let us use an SVM on sklearn's moons dataset and try to find the optimal hyperparameter using BO. Let us have a look at the dataset first.</p>
 
       <figure class="smaller-img">
         <d-figure><img src="images/MAB_gifs/moons.svg" /></d-figure>
       </figure>
 
       <p>
-        Let us now try to learn the classification problem above using a Support Vector Machine (SVM). We are aware that a SVM takes in two important hyperparameters,
+        Let us now try to learn the classification problem above using a Support Vector Machine (SVM). We are aware that an SVM takes in two important hyperparameters,
       </p>
       <p>
         <ul>
