@@ -12,7 +12,6 @@
   <script defer src="js/plot.js"></script>
   <script defer src="js/hider.js"></script>
   <script type="text/javascript" src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-<!-- <link rel="stylesheet" type="text/css" href="css/style.css"> -->
 
 </head>
 
@@ -74,66 +73,74 @@
 
   <d-article style="overflow-x: unset;">
     <p>
-      We are increasingly getting used to deep(er) neural networks! These networks often come with a huge number of hyperparameters: like the number of layers, the dropout rate, the learning rate, among others. How do we efficiently tune these
-      hyperparameters to optimize our machine learning model? In this
-      article, we will talk about Bayesian Optimization (BO) - which is an effective suite of techniques often used to efficiently tune the hyperparameters. Besides being used in tuning hyperparameters, BO is a general suite of techniques for
-      optimizing a black-box function.
+      We are increasingly getting used to machine learning algorithms with a large number of hyperparameters. For example, a neural networks with hyperparameters like; the number of layers, the dropout rate, the learning rate, among others. Or random forests with the number of trees, and the maximum depth. How do we efficiently tune these hyperparameters to optimize our machine learning model? In this article, we will talk about Bayesian Optimization (BO) - which is an effective suite of techniques often used to efficiently tune the hyperparameters. Besides being used in tuning hyperparameters, BO is a general suite of techniques for optimizing any black-box function.
     </p>
 
     <p>
       Before we talk in depth about Bayesian Optimization and its applicability in hyperparameter tuning, we will look into maximizing (optimizing) a black box function!
     </p>
 
-    <h1 id="mininggold">Mining Gold!</h1>
+    <h1>Mining Gold!</h1>
     <p>
-      Let us start the discussion about mining gold. Our goal is to mine goal in a new land. For now, let us make a simplifying assumption, the gold content lies in a one-dimensional space, i.e., we are talking gold distribution only about a line.
-      Our aim is to find the location along this line where we would get maximum returns and drill at that location. Now, at the start of the activity, we have no idea about the amount of gold at different locations.
-      The only way we can get the information about the amount of gold is by drilling at different locations.
-      This drilling is costly and involves expensive sensors to be used.
-      We, therefore, want to <strong>minimize the number of drillings required</strong> while still being able to <strong>find the location of maximum gold quickly</strong>.
+      Let us start the discussion about mining gold. Our goal is to mine goal in a new land. For now, let us make a simplifying assumption, the gold content lies in a one-dimensional space, i.e., we are talking gold distribution only about a line. Our aim is to find the location along this line where we would get maximum returns and drill at that location. Now, at the start of the activity, we have no idea about the amount of gold at different locations. The only way we can get the information about the amount of gold is by drilling at different locations. This drilling is costly and involves expensive sensors to be used. We, therefore, want to <strong>minimize the number of drillings required</strong> while still being able to <strong>find the location of maximum gold quickly</strong>.
     </p>
 
     <p>
-      We below show two common objectives for the gold mining problem.
+      Shown below are two common objectives for the gold mining problem.
     </p>
 
     <ul>
       <li>
         <p>
-          <strong>Problem 1: Best Estimate of Gold Distribution</strong><br />
-          In this problem, we will estimate the amount of gold on the one-dimensional line. But, we can not drill at every location. We should drill at those locations that provide us the <strong>maximum information</strong> about the distribution of
-          the gold.
-          This problem is akin to <strong>Active Learning<d-cite key="settles2009active,Tong2001"></d-cite></strong>.
+          <strong>Problem 1: Best Estimate of Gold Distribution</strong><br/>
+          In this problem, we want estimate the amount of gold on the one-dimensional line. Since we are limited by the cost of drillings, we can not drill at every location. We should drill at those locations that provide us with the <strong>maximum information</strong> about the distribution of the gold. This problem is akin to 
+          <strong>
+            Active Learning<d-cite key="settles2009active,Tong2001"></d-cite>
+          </strong>.
         </p>
       </li>
 
       <li>
         <p>
-          <strong>Problem 2: Location of Maximum Gold</strong><br />
-          In this problem, we will find the location in the one-dimensional space where the gold quantity is the maximum. This problem focuses on finding the location with the most gold content. This problem is akin to <strong>Bayesian
-            Optimization<d-cite key="humanOut,nandoBOtut"></d-cite>.</strong>
+          <strong>Problem 2: Location of Maximum Gold</strong><br/>
+          In this problem, we will find the location in the one-dimensional space where the gold quantity is the maximum. This problem focuses on finding the location with the most gold content. This problem is akin to 
+          <strong>
+            Bayesian Optimization<d-cite key="humanOut,nandoBOtut"></d-cite>
+          </strong>.
         </p>
       </li>
     </ul>
 
     <p>
-      In this article, we will soon see how the two problems are related, but, not the same.
+      In this article, we will soon see how the two problems are related, 
+      but, not the same.
     </p>
 
 
 
-    <h2 id="activelearning">Active Learning</h2>
+    <h2>Active Learning</h2>
 
     <p>
-      In machine learning problems, often, unlabelled data is very easily available, but labeling could be an expensive task. As an example, for a speech-to-text task, the ground truth labeling or annotation task requires expert(s) to manually
-      label words and sentences. In our gold mining problem, drilling (akin to labeling) is an expensive operation, and we would like to minimize it. But, without drilling, we can not estimate the gold estimate.
-      Active learning would solve this problem by posing a smart strategy to choose the next drilling site. While there are various methods and techniques in the active learning literature, for the sake of brevity, we will look only at
-      <strong>uncertainty reduction</strong>, which chooses the next query point as the one our model is the most uncertain about. One of the ways we can reduce the uncertainty is by choosing the point at which we have the maximum variance (we are
-      most uncertain).
-      We will now look into Gaussian Processes, which not only give us predictions, but also uncertainty estimates, which will be useful for active learning.
+      In machine learning problems, often, unlabelled data is very easily available, but labeling could be an expensive task. As an example, for a speech-to-text task, the ground truth labeling or annotation task requires expert(s) to manually label words and sentences. In our gold mining problem, drilling (akin to labeling) is an expensive operation, and we would like to minimize it. But, without drilling, we can not estimate the gold estimate. Active learning would solve this problem by posing a smart strategy to choose the next drilling site. While there are various methods and techniques in the active learning literature, for the sake of brevity, we will look only at <strong>uncertainty reduction</strong>, which chooses the next query point as the one our model is the most uncertain about. One of the ways we can reduce the uncertainty is by choosing the point at which we have the maximum variance (we are most uncertain).
     </p>
 
-    <h3 id="gaussianprocesses">Gaussian Processes</h3>
+    <h3>Surrogate Model</h3>
+    <p>
+      Active learning along with BO, which we will soon see later, rely on a surrogate model for modelling the unknown ground truth function <d-math>f(x)</d-math>. The surrogate model should be chosen such that it is able model the ground truth function closely.
+    </p>
+
+    <h3>Bayesian Update</h3>
+    <p>
+      <!-- TODO: Complete this. -->
+      Evaluation of <d-math>f(x)</d-math> leads to a
+    </p>
+
+
+
+    We will now look into Gaussian Processes, which not only give us predictions, but also uncertainty estimates, which will be useful for active learning.
+    
+
+    <h3>Gaussian Processes</h3>
 
     <p>
       One might want to look at this excellent distillpub article<d-cite key="görtler2019a"></d-cite> on Gaussian Processes<d-cite key="Rasmussen2004"></d-cite>.
@@ -207,22 +214,78 @@
 
     <h2 id="bayesianoptimization">Bayesian Optimization</h2>
     <p>
-      <strong>Problem 2</strong> requires us to find the location where the gold content is maximum. Even though the problem setting may be similar, the objective is quite different than Problem 1. In other words, we just want the location where we
-      can drill to get the most gold.
+      <strong>Problem 2</strong> requires us to find the location where the gold content is maximum. Even though the problem setting may be similar, the objective is quite different than Problem 1. The present problem deals with finding the location where our black-box function reaches maximum. In contrast, the earlier problem focuses on getting a good estimate of the black-box function.
     </p>
-
+<!-- 
     <p>
       Older problem - Earlier in the active learning problem, our motivation for drilling at locations was to predict the distribution of the gold content over all the locations in the one-dimensional line. We, therefore, had chosen the next
       location to drill where we had maximum uncertainty about our estimate.
-    </p>
+    </p> -->
 
     <p>
-      In this problem, we are instead interested to know the location at which we find the maximum gold. To get the location of maximum gold content, we might want to drill at the location where predicted mean is the highest, i.e. to
+      Given the fact that we are interested to know the location where the maximum occures.
+       <!-- this problem, we are instead interested to know the location at which we find the maximum gold  -->
+      It might be a good idea to evaluate at locations where our surrogate model's prediction is the highest, i.e. to 
+      <!-- TODO: Clarify, mean or prediction? -->
       <strong>exploit</strong>. But unfortunately our mean is not always accurate, so we need to correct our mean which can be done by reducing variance or <strong>exploration</strong>. Bayesian Optimization looks at both
       <strong>exploitation</strong> and <strong>exploration</strong>, whereas in the case of Active Learning Problem, we only cared
       about <strong>exploration</strong>.
     </p>
 
+    <h1>Formalizing Bayesian Optimization</h1>
+
+      <span>Let us now formally introduce Bayesian Optimization. Our goal is to find the <d-math>{x}</d-math> where we reached global maximum (or minimum) of a function <d-math>f: \mathbb{R}^d \mapsto \mathbb{R}</d-math>. Constraints in
+        Bayesian Optimization look like below quoted from slides/talk
+        <d-footnote>Talk from Peter Fraizer from Uber on Bayesian Optimization:<br>
+          <ul>
+            <li> <a href="https://www.youtube.com/watch?v=c4KKvyWW_Xk">Youtube Talk</a></li>
+            <li> <a href="https://people.orie.cornell.edu/pfrazier/Presentations/2018.11.INFORMS.tutorial.pdf">Slide Deck</a></li>
+          </ul>
+        </d-footnote> on Tutorial on Bayesian Optimization from Peter Fraizer.</span>
+
+
+      <p>We’d like to optimize <d-math>f: \mathbb{R}^d \mapsto \mathbb{R}</d-math>.<br></p>
+
+      <ul>
+        <li>
+          <d-math>f</d-math>’s feasible set <d-math>A</d-math> is simple,
+          e.g., box constraints.
+        </li>
+        <li>
+          <d-math>f</d-math> is continuous but lacks special structure,
+          e.g., concavity, that would make it easy to optimize.
+        </li>
+        <li>
+          <d-math>f</d-math> is derivative-free:
+          evaluations do not give gradient information.
+        </li>
+        <li>
+          <d-math>f</d-math> is expensive to evaluate:
+          the number of times we can evaluate it
+          is severely limited.
+        </li>
+        <li>
+          <d-math>f</d-math> may be noisy. If noise is present, we’ll assume it
+          is independent and normally distributed, with
+          common but unknown variance.
+        </li>
+      </ul>
+
+
+      <p>Let us link the above constraints to our initial problem statement of gold mining.</p>
+
+      <ul>
+        <li>Our domain in the gold mining problem is a single dimensional box constraint of <d-math>0 \leq x \leq 6</d-math>.</li>
+
+        <li>Our ground truth can be seen as neither convex nor concave function, which resulted in local minima as well.</li>
+
+        <li>Our evaluation (by drilling) of the amount of gold content at a location didn't give us any gradient information.</li>
+
+        <li>The function we used in the case of gold mining problem is extremely costly to evaluate (drilling costs millions).</li>
+
+        <li>This constraint is still satisfied in our case as we had have taken noiseless measurements. Which can be considered 
+          as a Gaussian noise with zero mean and zero standard deviation.</li>
+      </ul>
 
     <h3>Acquisition Functions</h3>
 
@@ -663,62 +726,7 @@
         the
         curse of dimensionality.</p>
 
-      <hr />
-
-      <h1 id="generalization">Formalizing Bayesian Optimization</h1>
-
-      <span>Let us now formally introduce Bayesian Optimization. Our goal is to find the <d-math>{x}</d-math> where we reached global maximum (or minimum) of a function <d-math>f: \mathbb{R}^d \mapsto \mathbb{R}</d-math>. Constraints in
-        Bayesian Optimization look like below quoted from slides/talk
-        <d-footnote>Talk from Peter Fraizer from Uber on Bayesian Optimization:<br>
-          <ul>
-            <li> <a href="https://www.youtube.com/watch?v=c4KKvyWW_Xk">Youtube Talk</a></li>
-            <li> <a href="https://people.orie.cornell.edu/pfrazier/Presentations/2018.11.INFORMS.tutorial.pdf">Slide Deck</a></li>
-          </ul>
-        </d-footnote> on Tutorial on Bayesian Optimization from Peter Fraizer.</span>
-
-
-      <p>We’d like to optimize <d-math>f: \mathbb{R}^d \mapsto \mathbb{R}</d-math>.<br></p>
-
-      <ul>
-        <li>
-          <d-math>f</d-math>’s feasible set <d-math>A</d-math> is simple,
-          e.g., box constraints.
-        </li>
-        <li>
-          <d-math>f</d-math> is continuous but lacks special structure,
-          e.g., concavity, that would make it easy to optimize.
-        </li>
-        <li>
-          <d-math>f</d-math> is derivative-free:
-          evaluations do not give gradient information.
-        </li>
-        <li>
-          <d-math>f</d-math> is expensive to evaluate:
-          the number of times we can evaluate it
-          is severely limited.
-        </li>
-        <li>
-          <d-math>f</d-math> may be noisy. If noise is present, we’ll assume it
-          is independent and normally distributed, with
-          common but unknown variance.
-        </li>
-      </ul>
-
-
-      <p>Let us link the above constraints to our initial problem statement of gold mining.</p>
-
-      <ul>
-        <li>Our domain in the gold mining problem is a single dimensional box constraint of <d-math>0 \leq x \leq 6</d-math>.</li>
-
-        <li>Our ground truth can be seen as neither convex nor concave function, which resulted in local minima as well.</li>
-
-        <li>Our evaluation (by drilling) of the amount of gold content at a location didn't give us any gradient information.</li>
-
-        <li>The function we used in the case of gold mining problem is extremely costly to evaluate (drilling costs millions).</li>
-
-        <li>This constraint is still satisfied in our case as we had have taken noiseless measurements. Which can be considered 
-          as a Gaussian noise with zero mean and zero standard deviation.</li>
-      </ul>
+      
       <!--
     <h2 id="higherdimensions">Higher Dimensions</h2>
 
@@ -964,7 +972,7 @@
 
         <p>
           We now have the hyperparameters that have maximized your accuracy. In the graph above the y-axis denotes the <d-math>\left( f(x^+) \right)</d-math> and the x-axis denotes the number of times we have queried <d-math>(t)
-          </d-math> the Neural Network with some set of given hyperparameters.
+          </d-math> the neural network with some set of given hyperparameters.
         </p>
 
         <p>
@@ -1082,7 +1090,7 @@
           </li>
           <li>
             <p>
-              There has been work on even using Deep Neural Networks in BO<d-cite key="NNbasedBO"></d-cite> for a more scalable approach compared to GP. The paper talks about how GP-based Bayesian Optimization scales cubically with the number of observations, compared to their novel method that scales linearly.
+              There has been work on even using deep neural networks in BO<d-cite key="NNbasedBO"></d-cite> for a more scalable approach compared to GP. The paper talks about how GP-based Bayesian Optimization scales cubically with the number of observations, compared to their novel method that scales linearly.
             </p>
           </li>
         </ul>
