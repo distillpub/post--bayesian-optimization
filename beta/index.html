@@ -11,6 +11,7 @@
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.js"></script>
   <script defer src="js/plot.js"></script>
   <script defer src="js/hider.js"></script>
+  <script defer src="js/slides.js"></script>
   <script type="text/javascript" src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 
 </head>
@@ -53,19 +54,34 @@
   <d-title style="padding-bottom: 0">
     <p>Breaking Bayesian Optimization into small, sizeable chunks.</p>
     <div class="l-screen shaded-figure" style="border-bottom: none">
-      <div>
-        <text id="plotHead">
-          Plot below shows how modifying ϵ leads to different points (locations) being selected to evaluate (drill) next. <br> This selection is based on the maximal probability of getting better gold content over previous evaluations.
-        </text>
+      <div class="slideshow-container">
+
+        <div class="mySlides fade">
+          <div class="numbertext">1 / 3</div>
+          <img src="images/slides/1.jpg" style="width:100%">
+        </div>
+        
+        <div class="mySlides fade">
+          <div class="numbertext">2 / 3</div>
+          <img src="images/slides/2.jpg" style="width:100%">
+        </div>
+        
+        <div class="mySlides fade">
+          <div class="numbertext">3 / 3</div>
+          <img src="images/slides/3.jpg" style="width:100%">
+        </div>
+        
+        <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+        <a class="next" onclick="plusSlides(1)">&#10095;</a>
+        
+        </div>
+        <br>
+        
+        <div style="text-align:center">
+          <span class="dot" onclick="currentSlide(1)"></span> 
+          <span class="dot" onclick="currentSlide(2)"></span> 
+          <span class="dot" onclick="currentSlide(3)"></span> 
       </div>
-      <d-figure>
-        <div class="Teaser1" id="Teaser1"></div>
-        <div class="Teaser1" id="TeaserL1"></div>
-      </d-figure>
-      <d-figure>
-        <div class="Teaser2" id="Teaser2"></div>
-        <div class="Teaser2" id="TeaserL2"></div>
-      </d-figure>
     </div>
   </d-title>
 
@@ -132,20 +148,18 @@
     <h3>Bayesian Update</h3>
     <p>
       <!-- TODO: Complete this. -->
-      Evaluation of <d-math>f(x)</d-math> leads to a
+      The surrogate model is given more data on every evaluation of <d-math>f(x)</d-math>. We obtain the posterior of the surrogate using Bayes Rule with the new data. Now this posterior, becomes the prior, in the next cycle.
     </p>
 
-
-
-    We will now look into Gaussian Processes, which not only give us predictions, but also uncertainty estimates, which will be useful for active learning.
-    
+    <p>
+      It is common in literature to use Gaussian Processes as a surrogate. The priors of a GP can be set by using specific kernels and mean functions. Further, GPs not only give us predictions, but also uncertainty estimates, which we will find to be useful in active learning as well as BO.
+    </p>
 
     <h3>Gaussian Processes</h3>
 
     <p>
       One might want to look at this excellent distillpub article<d-cite key="görtler2019a"></d-cite> on Gaussian Processes<d-cite key="Rasmussen2004"></d-cite>.
-      We will be using Gaussian Processes regression to model the gold distribution along the one-dimensional line. By using Gaussian processes, we assume that the gold distribution of nearby points is similar (smoothness)
-      Such an assumption is usually valid.
+      We will be using Gaussian Processes regression to model the gold distribution along the one-dimensional line. By using Gaussian processes, we assume that the gold distribution of nearby points is similar (smoothness). Such an assumption is usually valid.
     </p>
 
     <p>
@@ -225,7 +239,7 @@
     <p>
       Given the fact that we are interested to know the location where the maximum occures.
        <!-- this problem, we are instead interested to know the location at which we find the maximum gold  -->
-      It might be a good idea to evaluate at locations where our surrogate model's prediction is the highest, i.e. to 
+      It might be a good idea to evaluate at locations where our surrogate model's prediction (mean in the case of GPs) is the highest, i.e. to 
       <!-- TODO: Clarify, mean or prediction? -->
       <strong>exploit</strong>. But unfortunately our mean is not always accurate, so we need to correct our mean which can be done by reducing variance or <strong>exploration</strong>. Bayesian Optimization looks at both
       <strong>exploitation</strong> and <strong>exploration</strong>, whereas in the case of Active Learning Problem, we only cared
@@ -290,7 +304,7 @@
     <h3>Acquisition Functions</h3>
 
     <p>
-      Now, to take into account the combination of exploration and exploitation, we try to use a function which combines the two aspects. These utility functions are called acquisition functions.
+      Now, to take into account the combination of exploration and exploitation, we try to use a function which combines the two aspects. These utility functions are called acquisition functions. These functions can be considered a function of the posterior of the our surrogate modelling the black-box function.
     </p>
 
     <p>
@@ -306,63 +320,7 @@
       as the next location/point to query.
     </p>
 
-    <h3 id="upperconf"> Upper Confidence Bound (UCB) </h3>
-
-    <p>
-      Let us now look into one such trivial acquisition function that linearly combines the exploration/exploitation tradeoff.
-      <d-math block>\alpha(x) = \mu(x) + \lambda \times \sigma(x)</d-math>
-    </p>
-
-    <figure>
-      <d-figure><img src="images/MAB_gifs/acq_fn.svg" /></d-figure>
-    </figure>
-
-    <p>
-      In the figure above, we can see an instantiation of the above-mentioned acquisition function (shown in green) for some value of <d-math>\lambda</d-math>.
-      We can observe that mean near the location (predicted) of the just added point (red point) is high. Also, as we go far from the red point, we see that our uncertainty increases to a maximum. We can see that the acquisition function is low at
-      the sampled point (part of the train set), as there is no uncertainty at the point. However, as we move away from the red point, our variance increases, and so does our acquisition function. But, beyond a certain value, the acquisition
-      function keeps on decreasing. This is because while the variance or uncertainty is high for such points, the posterior mean is low.
-
-      We see at around the location
-      <d-math>x = 1.4</d-math>
-      we get the maximum value for the acquisition (green curve). Thus we next select this location to drill.
-    </p>
-
-    <p>
-      The intuition of using the acquisition function <d-math>\alpha(x) = \mu(x) + \lambda \times \sigma(x)</d-math> is that we are interested in finding the global mean <d-math>\mu</d-math>, so taking into account the estimated mean would be a
-      good idea.
-      Additionally, we would like to explore too (using <d-math>\sigma</d-math>); else we might be stuck in a local maxima if don't explore enough.
-    </p>
-
-    <p>
-      Let us now try different values of <d-math>\lambda</d-math> and see the maximum gold count found by our acquisition function.
-    </p>
-
-    <figure>
-      <d-figure><img src="images/MAB_gifs/mab-gp-1.gif" /></d-figure>
-    </figure>
-
-    <p>
-      For <d-math>\lambda=1</d-math> as shown in the above animation, we can see that we get stuck in the local maxima. This probably means that we are not exploring enough and only exploiting near the current maxima.
-    </p>
-
-    <figure>
-      <d-figure><img src="images/MAB_gifs/mab-gp-5.gif" /></d-figure>
-    </figure>
-
-    <p>
-      For <d-math>\lambda=5</d-math> as shown in the above animation, we can see that we still get stuck in the local maxima. Let us now increase <d-math>\lambda</d-math> even more.
-    </p>
-
-    <figure>
-      <d-figure><img src="images/MAB_gifs/mab-gp-10.gif" /></d-figure>
-    </figure>
-
-    <p>
-      Perfect! We see that setting this value of <d-math>\lambda=10</d-math> resulted in finding points near the global maxima and not getting stuck in a local maximum.
-    </p>
-
-    <h3 id="probabilityofimprovementpi">Probability of Improvement (PI)</h3>
+    <h3>Probability of Improvement (PI)</h3>
 
     <p>
       Let us look into our next acquisition function for BO. As before, we want to balance or trade-off between exploration and exploitation. The idea behind the algorithm is fairly simple - choose the next point as the one which has
@@ -424,7 +382,25 @@
       Feel free to play around with our <a href="#Teaser1">hero</a> plot.
     </p>
 
-    <p>
+    <div class="l-screen shaded-figure">
+        <div>
+          <text id="plotHead">
+            Plot below shows how modifying ϵ leads to different points (locations) being selected to evaluate (drill) next. <br> This selection is based on the maximal probability of getting better gold content over previous evaluations.
+          </text>
+        </div>
+        <d-figure>
+          <div class="Teaser1" id="Teaser1"></div>
+          <div class="Teaser1" id="TeaserL1"></div>
+        </d-figure>
+        <d-figure>
+          <div class="Teaser2" id="Teaser2"></div>
+          <div class="Teaser2" id="TeaserL2"></div>
+        </d-figure>
+      </div>
+
+    
+
+    <p style="padding-top: 3em;">
       <d-math>f(x^+)</d-math> refers to the maximum functional value, as described earlier. We see that the probability of improvement values are calculated by finding the functional value of the cumulative density function at <d-math>f(x^+)</d-math>.
     </p>
 
@@ -577,52 +553,6 @@
         the risks are the same (same <d-math>\alpha_{PI}</d-math>), we would want to go with points with greater reward (higher <d-math>\alpha_{EI}</d-math>).
       </p>
     </div>
-    <h3 id="gaussianprocessupperconfidenceboundgp_ucb">Gaussian Process Upper Confidence Bound (GP-UCB)</h3>
-
-    <p>
-      Before talking about GP-UCB, let us quickly talk about <strong>regret</strong>. Imagine if the maximum gold was <d-math>a</d-math> units and our optimization instead samples a location containing <d-math>b < a</d-math> units, then our regret is
-          <d-math>a -
-          b</d-math>. If we accumulate the regret over <d-math>n</d-math> iterations, we get what is called <strong> cumulative regret. </strong> <br />
-
-      GP-UCB is an interesting acquisition function as it gives us theoretical bounds on the convergence rates, or in other words, bounds the cumulative regret. Its formulation is given by:
-    </p>
-
-    <d-math block>
-      \alpha_{GP-UCB}(x) = \mu_t(x) + \sqrt{\mathcal{v}\tau_t}\sigma_t(x)
-    </d-math>
-    <p>Where <d-math>t</d-math> is the timestep and <d-math>\tau_t</d-math> is,</p>
-    <d-math block>
-      \tau_t = 2log \left( \frac{t^{d/2 + 2}\pi^{2}}{3\delta} \right)
-    </d-math>
-
-    <p>
-      We can see how this formulation looks fairly similar to the first vanilla acquisition function that we had described. The difference here compared to <em>UCB</em> is that the <d-math>\lambda</d-math> here is a function of the timestep <d-math>t
-      </d-math>. This helps in some of the theoretical bounds which for which we would like to refer the original paper on <em>GP-UCB</em>
-      <d-cite key="gpucb"></d-cite>.
-    </p>
-
-    <figure>
-      <d-figure><img src="images/MAB_gifs/mab-gp-gp_ucb1-1.gif" /></d-figure>
-    </figure>
-
-    <p>
-      We seem to be exploiting too much, let us increase the exploratory hyperparameters!
-    </p>
-
-    <figure>
-      <d-figure><img src="images/MAB_gifs/mab-gp-gp_ucb3-1.gif" /></d-figure>
-    </figure>
-
-    <p>
-      Using this set of hyperparameters, we are able to get near global maxima and further "exploit" to find the global maximum. This was a result of increasing the value of <d-math>v</d-math> to
-      <d-math>3</d-math>. This shows that <d-math>v</d-math> gives weight to exploration.
-    </p>
-
-    <figure>
-      <d-figure><img src="images/MAB_gifs/mab-gp-gp_ucb1-3.gif" /></d-figure>
-    </figure>
-    <p>
-      Setting the values of the hyperparameters to <d-math>v = 1</d-math> and <d-math>\delta = 3</d-math> results in greater exploitation.</p>
 
     <h3 id="thompsonsampling">Thompson Sampling</h3>
 
@@ -661,49 +591,150 @@
         <d-figure><img src="images/MAB_gifs/mab-gp-thomp.gif" /></d-figure>
       </figure>
 
+      <h3>Random</h3>
+
+      <p>
+        We have been using intelligent acquisition functions until now. 
+        If we were to chose our evaluation positions <d-math>x</d-math> 
+        randomly, we effectively will have changed our acquisition function
+        to a Random acquisition function. This effectively is how 
+        Random search works.
+      </p>
+
+      <figure>
+        <d-figure><img src="images/MAB_gifs/rand.gif" /></d-figure>
+      </figure>
+
       <h3 class="collapsible"> Other Acquisition Functions </h3>
       <div class="content">
-        <p>We have seen various acquisition functions until now. 
-          We can form a new acquisition functions by coming up with a 
-          function of the existing acquisition functions. Though the physical interpretability 
-          of such acquisition functions would not be so straightforward.
-          One reason we might want to combine two methods is to overcome the
-          limitations of the individual methods.
+
+        <p>We have seen various acquisition functions until now. One trivial way to come up with acquisition functions is to have a explore/exploit combination.
         <p>
+
+        <h3 id="upperconf"> Upper Confidence Bound (UCB) </h3>
+        <p>
+          One such trivial acquisition function that combines the exploration/exploitation tradeoff, is a linear combination of the mean and uncertainty of our surrogate model.
+          <d-math block>\alpha(x) = \mu(x) + \lambda \times \sigma(x)</d-math>
+        </p>
+
+        <p>
+          The intuition behind the UCB acquisition function is weighing of the  importance between the surrogate's prediction vs the surrogate's uncertainity. The <d-math>\lambda</d-math> above is the hyperparameter that can control the preference between exploitation or exploration.
+        </p>
+      
+
+        <!--
+        <figure>
+          <d-figure><img src="images/MAB_gifs/acq_fn.svg" /></d-figure>
+        </figure>
+    
+        <p>
+          In the figure above, we can see an instantiation of the above-mentioned acquisition function (shown in green) for some value of <d-math>\lambda</d-math>.
+          We can observe that mean near the location (predicted) of the just added point (red point) is high. Also, as we go far from the red point, we see that our uncertainty increases to a maximum. We can see that the acquisition function is low at
+          the sampled point (part of the train set), as there is no uncertainty at the point. However, as we move away from the red point, our variance increases, and so does our acquisition function. But, beyond a certain value, the acquisition
+          function keeps on decreasing. This is because while the variance or uncertainty is high for such points, the posterior mean is low.
+    
+          We see at around the location
+          <d-math>x = 1.4</d-math>
+          we get the maximum value for the acquisition (green curve). Thus we next select this location to drill.
+        </p>
+    
+        <p>
+          The intuition of using the acquisition function <d-math>\alpha(x) = \mu(x) + \lambda \times \sigma(x)</d-math> is that we are interested in finding the global mean <d-math>\mu</d-math>, so taking into account the estimated mean would be a
+          good idea.
+          Additionally, we would like to explore too (using <d-math>\sigma</d-math>); else we might be stuck in a local maxima if don't explore enough.
+        </p>
+    
+        <p>
+          Let us now try different values of <d-math>\lambda</d-math> and see the maximum gold count found by our acquisition function.
+        </p>
+    
+        <figure>
+          <d-figure><img src="images/MAB_gifs/mab-gp-1.gif" /></d-figure>
+        </figure>
+    
+        <p>
+          For <d-math>\lambda=1</d-math> as shown in the above animation, we can see that we get stuck in the local maxima. This probably means that we are not exploring enough and only exploiting near the current maxima.
+        </p>
+    
+        <figure>
+          <d-figure><img src="images/MAB_gifs/mab-gp-5.gif" /></d-figure>
+        </figure>
+    
+        <p>
+          For <d-math>\lambda=5</d-math> as shown in the above animation, we can see that we still get stuck in the local maxima. Let us now increase <d-math>\lambda</d-math> even more.
+        </p>
+    
+        <figure>
+          <d-figure><img src="images/MAB_gifs/mab-gp-10.gif" /></d-figure>
+        </figure>
+    
+        <p>
+          Perfect! We see that setting this value of <d-math>\lambda=10</d-math> resulted in finding points near the global maxima and not getting stuck in a local maximum.
+        </p> -->
+
+        <p>
+          We can also form an acquisition functions by combining the existing acquisition functions. Though the physical interpretability of such combinations might not be so straightforward. One reason we might want to combine two methods is to overcome the limitations of the individual methods.
+        </p>
 
         <h3>Probability of Improvement + <d-math>\lambda \ \times</d-math> Expected Improvement (EI-PI)</h3>
 
         <p>
           One such combination can be a linear combination of PI and EI.
-          An example where we could use such an acquisition function is 
-          in the case of limited number of evaluations of <d-math>f(x)</d-math>
-        </p>
-        <p>
+
           We know PI focuses on Probability of Improvement whereas EI 
-          focuses on the Expected Improvement. In such a case, we can 
-          have <d-math>\lambda</d-math> to be a function of the timestep,
-          controling the individual importance of PI vs EI.
+          focuses on the Expected Improvement. Such a combination could help in having a tradeoff between the two based on the value of <d-math>\lambda</d-math>, which can be a function of the timestep itself.
         </p>
 
-        <figure>
-          <d-figure><img src="images/MAB_gifs/mab-gp-ei_pi.gif" /></d-figure>
-        </figure>
-
-        <h3>Random</h3>
+        <h3>Gaussian Process Upper Confidence Bound (GP-UCB)</h3>
 
         <p>
-          We have been using intelligent acquisition functions until now. 
-          If we were to chose our evaluation positions <d-math>x</d-math> 
-          randomly, we effectively will have changed our acquisition function
-          to a Random acquisition function. This effectively is how 
-          Random search works.
+          GP-UCB is an interesting acquisition function as it gives us theoretical bounds on the convergence rates. <br>
+          Its formulation is given by:
         </p>
-
-        <figure>
-          <d-figure><img src="images/MAB_gifs/rand.gif" /></d-figure>
+    
+        <d-math block>
+          \alpha_{GP-UCB}(x) = \mu_t(x) + \sqrt{\mathcal{v}\tau_t}\sigma_t(x)
+        </d-math>
+        <p>Where <d-math>t</d-math> is the timestep and <d-math>\tau_t</d-math> is,</p>
+        <d-math block>
+          \tau_t = 2log \left( \frac{t^{d/2 + 2}\pi^{2}}{3\delta} \right)
+        </d-math>
+    <!-- TODO: UCB? am I correct to call it UCB? -->
+        <p>
+          We can see how this formulation looks fairly similar to the UCB acquisition function that we previously described. The difference here compared to <em>UCB</em> is that the <d-math>\lambda</d-math> here is a function of the timestep <d-math>t
+          </d-math>. This helps in some of the theoretical bounds which for which we would like to refer the original paper on <em>GP-UCB</em>
+          <d-cite key="gpucb"></d-cite>.
+        </p>
+    
+        <!-- <figure>
+          <d-figure><img src="images/MAB_gifs/mab-gp-gp_ucb1-1.gif" /></d-figure>
         </figure>
-      </div>
+    
+        <p>
+          We seem to be exploiting too much, let us increase the exploratory hyperparameters!
+        </p>
+    
+        <figure>
+          <d-figure><img src="images/MAB_gifs/mab-gp-gp_ucb3-1.gif" /></d-figure>
+        </figure>
+    
+        <p>
+          Using this set of hyperparameters, we are able to get near global maxima and further "exploit" to find the global maximum. This was a result of increasing the value of <d-math>v</d-math> to
+          <d-math>3</d-math>. This shows that <d-math>v</d-math> gives weight to exploration.
+        </p>
+    
+        <figure>
+          <d-figure><img src="images/MAB_gifs/mab-gp-gp_ucb1-3.gif" /></d-figure>
+        </figure>
+        <p>
+          Setting the values of the hyperparameters to <d-math>v = 1</d-math> and <d-math>\delta = 3</d-math> results in greater exploitation.</p>
+        -->
+    
+        <!-- <figure>
+          <d-figure><img src="images/MAB_gifs/mab-gp-ei_pi.gif" /></d-figure>
+        </figure> -->
 
+      </div>
       <h3>Comparison</h3>
 
       <p>
@@ -746,7 +777,7 @@
         that evaluating the acquisition function is much cheaper, whereas in the original problem, evaluating the value at a particular was extremely costly.</p>
 
 
-      <h2 id="hyperparametersvsparameters">Hyperparameter Tuning</h2>
+      <h2>Hyperparameter Tuning</h2>
 
       <p>Before we talk about Bayesian optimization for hyperparameter tuning<d-cite key="Snoek2012,NIPS2011_4443,Bergstra"></d-cite>, we will quickly differentiate between hyperparameters and parameters. </p>
 
@@ -766,82 +797,81 @@
         hyperparameters
         on machine learning models. At last, hyperparameter tuning is an optimization problem (optimizing our metric of choice).</p>
 
-      <p>Usually, when training a model isn't expensive and time-consuming, we might just do a grid search. The primary issue with grid search is that it is not feasible if getting the functional value is extremely costly, as in case of a large
-        neural network that takes days to train. This might result in days of waiting to get the accuracy scores.
+      <p>Usually, when training a model isn't expensive and time-consuming, we might just do a grid search. The primary issue with grid search is that it is not feasible if getting the functional value is extremely costly, as in case of a large neural network that takes days to train. This might result in days of waiting to get the accuracy scores.
 
+      <p>We turn to Bayesian optimization to find counter the expensiveness of getting the functional values, and these increased dimensions.</p>
 
+      <h3 id="example1">Example 1 -- Support Vector Machine</h3>
 
-        <p>We turn to Bayesian optimization to find counter the expensiveness of getting the functional values, and these increased dimensions.</p>
+      <p>Let us us use an SVM on sklearn's moons dataset and try to find the optimal hyperparameter using Bayesian optimization. Let us have a look at the dataset first.</p>
 
-        <h3 id="example1">Example 1 -- Support Vector Machine</h3>
+      <figure class="smaller-img">
+        <d-figure><img src="images/MAB_gifs/moons.svg" /></d-figure>
+      </figure>
 
-        <p>Let us us use an SVM on sklearn's moons dataset and try to find the optimal hyperparameter using Bayesian optimization. Let us have a look at the dataset first.</p>
+      <p>
+        Let us now try to learn the classification problem above using a Support Vector Machine (SVM). We are aware that a SVM takes in two important hyperparameters,
+      </p>
+      <p>
+        <ul>
+          <li>
+            <d-math>\gamma</d-math> -- modifies the behavior of the SVM's kernel. Intuitively it is a measure of how far the influence of a single training example reaches<d-footnote>StackOverflow <a
+                href="https://stackoverflow.com/questions/35848210/support-vector-machine-what-are-c-gamma">answer</a> for intuition behind the hyperparameters.</d-footnote>.
+          </li>
+          <li>
+            <d-math>C</d-math> -- modifies the slackness of the classification, the higher the C is, the more sensitive is SVM towards the noise.
+          </li>
+        </ul>
+      </p>
+      <p>
+        Let us apply Bayesian Optimization to learn the best hyperparameters for this classification task<d-footnote> <strong>Note</strong>: the surface plots you see for the Ground Truth Accuracies below were calculated for each possible
+          hyperparameter for showcasing purposes only. We don't have these values in real applications.
+        </d-footnote>.
+      </p>
 
-        <figure class="smaller-img">
-          <d-figure><img src="images/MAB_gifs/moons.svg" /></d-figure>
-        </figure>
+      <figure>
+        <d-figure><img src="images/MAB_gifs/pi3d-0.05-mat.gif" /></d-figure>
+      </figure>
 
-        <p>
-          Let us now try to learn the classification problem above using a Support Vector Machine (SVM). We are aware that a SVM takes in two important hyperparameters,
-        </p>
-        <p>
-          <ul>
-            <li>
-              <d-math>\gamma</d-math> -- modifies the behavior of the SVM's kernel. Intuitively it is a measure of how far the influence of a single training example reaches<d-footnote>StackOverflow <a
-                  href="https://stackoverflow.com/questions/35848210/support-vector-machine-what-are-c-gamma">answer</a> for intuition behind the hyperparameters.</d-footnote>.
-            </li>
-            <li>
-              <d-math>C</d-math> -- modifies the slackness of the classification, the higher the C is, the more sensitive is SVM towards the noise.
-            </li>
-          </ul>
-        </p>
-        <p>
-          Let us apply Bayesian Optimization to learn the best hyperparameters for this classification task<d-footnote> <strong>Note</strong>: the surface plots you see for the Ground Truth Accuracies below were calculated for each possible
-            hyperparameter for showcasing purposes only. We don't have these values in real applications.
-          </d-footnote>.
-        </p>
+      <p>Above we see a gif showing the work of the <em>Probability of Improvement</em> acquisition function in finding the best hyperparameters.</p>
 
-        <figure>
-          <d-figure><img src="images/MAB_gifs/pi3d-0.05-mat.gif" /></d-figure>
-        </figure>
+      <figure>
+        <d-figure><img src="images/MAB_gifs/ei3d-0.0001-mat.gif" /></d-figure>
+      </figure>
 
-        <p>Above we see a gif showing the work of the <em>Probability of Improvement</em> acquisition function in finding the best hyperparameters.</p>
+      <p>Above we see a gif showing the work of the <em>Expected Improvement</em> acquisition function in finding the best hyperparameters.</p>
 
-        <figure>
-          <d-figure><img src="images/MAB_gifs/ei3d-0.0001-mat.gif" /></d-figure>
-        </figure>
+      <figure>
+        <d-figure><img src="images/MAB_gifs/gp3d-1-2-mat.gif" /></d-figure>
+      </figure>
 
-        <p>Above we see a gif showing the work of the <em>Expected Improvement</em> acquisition function in finding the best hyperparameters.</p>
+      <p>
+        Above we see a gif showing the work of the <em>Gaussian Processes Upper Confidence Bound</em> acquisition function in finding the best hyperparameters. This by far seems to perform the best with getting quite close to the global optimum value of hyperparameters (found using brute force).
+      </p>
 
-        <figure>
-          <d-figure><img src="images/MAB_gifs/gp3d-1-2-mat.gif" /></d-figure>
-        </figure>
+      <figure>
+        <d-figure><img src="images/MAB_gifs/rand3d.gif" /></d-figure>
+      </figure>
 
-        <p>
-          Above we see a gif showing the work of the <em>Gaussian Processes Upper Confidence Bound</em> acquisition function in finding the best hyperparameters. This by far seems to perform the best with getting quite close to the global optimum value of hyperparameters (found using brute force).
-        </p>
+      <p>Now our favorite random acquisition function.</p>
 
-        <figure>
-          <d-figure><img src="images/MAB_gifs/rand3d.gif" /></d-figure>
-        </figure>
+      <h3 id="comparison">Comparison</h3>
 
-        <p>Now our favorite random acquisition function.</p>
+      <p>
+        Below we will compare the acquisition functions in finding the best hyperparameters for our SVM model. We had again ran the Random acquisition function several times with different seeds.
+      </p>
 
-        <h3 id="comparison">Comparison</h3>
+      <figure>
+        <d-figure><img src="images/MAB_gifs/comp3d.svg" /></d-figure>
+      </figure>
 
-        <p>
-          Below we will compare the acquisition functions in finding the best hyperparameters for our SVM model. We had again ran the Random acquisition function several times with different seeds.
-        </p>
+      <p>We see GP-UCB performed the best in this case. Random that was performing really nice in the last single dimensional example seems to perform much badly in this case. This can be attributed to the increase in the number of
+        dimensions,
+        it's much difficult to get to the optimal value by using random search.</p>
 
-        <figure>
-          <d-figure><img src="images/MAB_gifs/comp3d.svg" /></d-figure>
-        </figure>
-
-        <p>We see GP-UCB performed the best in this case. Random that was performing really nice in the last single dimensional example seems to perform much badly in this case. This can be attributed to the increase in the number of
-          dimensions,
-          it's much difficult to get to the optimal value by using random search.</p>
-
-        <h3 id="example2">Example 2 -- Random Forest</h3>
+      <h3 class="collapsible">Other Examples</h3>
+      <div class="content">
+        <h3>Example 2 -- Random Forest</h3>
 
         <p>
           Using Bayesian Optimization in a Random Forest Classifier.<d-cite key="scikit"></d-cite>
@@ -894,8 +924,7 @@
           We see that the optimization is in two dimensions. Therefore it is expected that random would perform much worse than in the case of a single dimension.
         </p>
 
-        <h3 class="collapsible" id="example3">Example 3 -- Neural Networks</h3>
-        <div class="content">
+        <h3>Example 3 -- Neural Networks</h3>
         <p>
           Let us take this example to get an idea of how to apply Bayesian Optimization to training neural networks like CNNs on Mnist. Here we will be using <d-code language="python">scikit-optim</d-code>, which also provides us support for
           optimizing
