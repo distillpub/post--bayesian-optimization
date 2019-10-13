@@ -148,7 +148,7 @@
     <h3>Bayesian Update</h3>
     <p>
       <!-- TODO: Complete this. -->
-      The surrogate model is given more data on every evaluation of <d-math>f(x)</d-math>. We obtain the posterior of the surrogate using Bayes Rule with the new data. Now this posterior, becomes the prior, in the next cycle.
+      The updatation of the surrogate model is the "Bayes" in BO. The surrogate model is given more data on every evaluation of <d-math>f(x)</d-math>. We obtain the posterior of the surrogate using Bayes Rule with the new data. Now this posterior, becomes the prior, for the next cycle.
     </p>
 
     <p>
@@ -362,7 +362,6 @@
         </p>
       </li>
     </ol>
-<!-- TODO: Define what is surrogate? -->
     <p>
       We can obtain a closed form solution for the case when our surrogate function is a GP.
     </p>
@@ -699,14 +698,14 @@
         <d-math block>
           \tau_t = 2log \left( \frac{t^{d/2 + 2}\pi^{2}}{3\delta} \right)
         </d-math>
-    <!-- TODO: UCB? am I correct to call it UCB? -->
+      <!-- TODO: UCB? am I correct to call it UCB? -->
         <p>
           We can see how this formulation looks fairly similar to the UCB acquisition function that we previously described. The difference here compared to <em>UCB</em> is that the <d-math>\lambda</d-math> here is a function of the timestep <d-math>t
           </d-math>. This helps in some of the theoretical bounds which for which we would like to refer the original paper on <em>GP-UCB</em>
           <d-cite key="gpucb"></d-cite>.
         </p>
     
-        <!-- <figure>
+      <!-- <figure>
           <d-figure><img src="images/MAB_gifs/mab-gp-gp_ucb1-1.gif" /></d-figure>
         </figure>
     
@@ -728,11 +727,10 @@
         </figure>
         <p>
           Setting the values of the hyperparameters to <d-math>v = 1</d-math> and <d-math>\delta = 3</d-math> results in greater exploitation.</p>
-        -->
-    
-        <!-- <figure>
+        <figure>
           <d-figure><img src="images/MAB_gifs/mab-gp-ei_pi.gif" /></d-figure>
-        </figure> -->
+        </figure> 
+      -->
 
       </div>
       <h3>Comparison</h3>
