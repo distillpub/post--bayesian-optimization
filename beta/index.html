@@ -208,11 +208,11 @@
       It is common in the literature to use Gaussian Processes as a surrogate. The priors of a GP can be set by using specific kernels and mean functions. Further, GPs give us not only the predictions but also the uncertainty estimates, which we will find to be useful in active learning, as well as BO.
     </p>
 
-    <h3>Gaussian Processes</h3>
+    <h3>Gaussian Processes (GP)</h3>
 
     <p>
       One might want to look at this excellent distillpub article<d-cite key="görtler2019a"></d-cite> on Gaussian Processes<d-cite key="Rasmussen2004"></d-cite>.
-      We will be using Gaussian Processes regression to model the gold distribution along the one-dimensional line. By using Gaussian processes, we assume that the gold distribution of nearby points is similar (smoothness). Such an assumption is usually valid. 
+      We will be using GP regression to model the gold distribution along the one-dimensional line. By using GP, we assume that the gold distribution of nearby points is similar (smoothness). Such an assumption is usually valid. 
     </p>
 
     <p>
@@ -357,6 +357,32 @@
     <h3>Acquisition Functions</h3>
 
     <p>
+      We just discussed that our original optimization problem <d-math>x^* = \text{argmax}_{x \in A} f(x)</d-math> is hard given the expensive nature of evaluating <d-math>f</d-math>. The key idea of BO is to transform this original difficult optimization into a sequence of easier inexpensive optimizations of functions called an acquisition function (<d-math>\alpha(x)</d-math>). Each of these sequence of easier inexpensive optimizations involves finding the next point to sample. Thus, we can interpret the acquisition function as commensurate with how desirable evaluating <d-math>f</d-math> at <d-math>x</d-math> is expected to be for the maximisation problem<d-footnote>Please find <a href="https://www.cse.wustl.edu/~garnett/cse515t/spring_2015/files/lecture_notes/12.pdf">these</a> slides from Washington University in St. Louis to know more.</d-footnote>.
+    </p>
+    <p>
+      While we have just now discussed that our goal is to transform the original optimisation into a sequence of easier optimisation, where is the "Bayesian" in this optimisation, and how is the acquisition function related? Let us re-wind and go back to our surrogate model and build the link between all the things we have discussed thus far, by noting the steps of BO<d-footnote>Please find <a href="https://youtu.be/EnXxO3BAgYk">this</a> amazing video from Javier González at The Gaussian Process Summer School 2019.</d-footnote>
+    </p>
+    <p>
+      <ol>
+        <li>
+          Choose a surrogate model and its prior over space of objectives <d-math>f</d-math>.
+        </li>
+        <li>
+          Given the set of observations (function sampling), use Bayes rule to obtain the posterior.
+        </li>
+        <li>
+          Use an acquisition function <d-math>\alpha(x)</d-math>, which is a function of the posterior to decide where to sample next <d-math>x_t = \text{argmax} \alpha(x)</d-math>.
+        </li>
+        <li>
+          Add new sampled data to the set of observations and Goto Step #2 till convergence or budget elapses.
+        </li>
+      </ol>
+    </p>
+    <p>
+      We now have three core ideas associated with acquisition functions: i) they are a function of the surrogate posterior; ii) they combine exploration and exploitation; and iii) they are inexpensive to evaluate. Let us now look into a few examples of commonly used acquisition functions to understand the concept better.
+    </p>
+<!-- 
+    <p>
       Now, to take into account the combination of exploration and exploitation, we try to use a function that combines the two aspects. These utility functions are called acquisition functions. These functions can be considered a function of the posterior of the surrogate model we might be using.
     </p>
 
@@ -364,20 +390,18 @@
       We can write a general form of an acquisition function (<d-math>\alpha(x)</d-math>) as a function of the mean(<d-math>\mu(x)</d-math>) and the variance(<d-math>\sigma(x)</d-math>), which is in turn specifying that <d-math>\alpha(x)
       </d-math> is a function of exploration and exploitation.
       <d-math block>
-        <!-- class="l-middle.side" -->
         \alpha(x) = g(\mu(x), \sigma(x))
       </d-math>
       At each iteration <d-math>t</d-math>, we would recompute
       <d-math>\alpha(x) </d-math> and choose the location
       <d-math> x_t = _\text{argmax}\alpha_t(x)</d-math>
       as the next location/point to query.
-    </p>
+    </p> -->
 
     <h3>Probability of Improvement (PI)</h3>
 
     <p>
-      Let us start with the most common acquisition function in the BO literature. The idea behind the algorithm is fairly simple - choose the next point as the one which has
-      the highest probability of improvement over the current max <d-math>f(x^+)</d-math>, where <d-math> x^+ = argmax_{x_i \in x_{1:t}}f(x_i)</d-math> and <d-math>x_i</d-math> is the location queried at <d-math>i^{th}</d-math> time step.
+      Let us start with the most common acquisition function in the BO literature. The idea behind the algorithm is fairly simple - choose the next point as the one which has the highest probability of improvement over the current max <d-math>f(x^+)</d-math>, where <d-math> x^+ = argmax_{x_i \in x_{1:t}}f(x_i)</d-math> and <d-math>x_i</d-math> is the location queried at <d-math>i^{th}</d-math> time step. We pointed out earlier that the acquisition functions are a function of the posterior. Therefore, we can look at PI as one such function. Looking closely, we see PI is essentially the left tail probability of the posterior.
     </p>
 
     <!-- 
@@ -425,7 +449,7 @@
       where <d-math>\Phi(\cdot)</d-math> indicates the CDF.
     </p>
 
-    <h4 id="intuitionbehindtheformula">Intuition behind <d-math>\epsilon</d-math> in PI</h4>
+    <h4>Intuition behind <d-math>\epsilon</d-math> in PI</h4>
 
     <p>
       PI makes use of <d-math>\epsilon</d-math> in order to strike a balance between exploration and exploitation. Essentially by setting <d-math>\epsilon</d-math> to some value, we want to choose a point such that the probability of improvement over <d-math>f(x^+) + \epsilon</d-math> is the most.
@@ -539,7 +563,7 @@
     </ul>
 
     <p>Now, if we see the role of <d-math>\epsilon</d-math> in <em>Expected Improvement</em>, it is precisely the same as in the case of <em>Probability of Improvement</em> (we have the same expression in PI) <d-footnote>A good
-        introduction to the Expected Improvement Acquisition function is by <a href="https://thuijskens.github.io/2016/12/29/bayesian-optimisation/" target="_blank">this post</a> by Thomas Huijskens and <a
+        introduction to the Expected Improvement acquisition function is by <a href="https://thuijskens.github.io/2016/12/29/bayesian-optimisation/" target="_blank">this post</a> by Thomas Huijskens and <a
           href="https://people.orie.cornell.edu/pfrazier/Presentations/2018.11.INFORMS.tutorial.pdf" target="_blank">these slides</a> by Peter Frazier</d-footnote>.
     </p>
 
@@ -865,9 +889,8 @@
         </ul>
       </p>
       <p>
-        Let us apply Bayesian Optimization to learn the best hyperparameters for this classification task<d-footnote> <strong>Note</strong>: the surface plots you see for the Ground Truth Accuracies below were calculated for each possible
-          hyperparameter for showcasing purposes only. We don't have these values in real applications.
-        </d-footnote>.
+        Let us apply Bayesian Optimization to learn the best hyperparameters for this classification task<d-footnote> <strong>Note</strong>: the surface plots you see for the Ground Truth Accuracies below were calculated for each possible hyperparameter for showcasing purposes only. We don't have these values in real applications.
+        </d-footnote>. The optimum values for &#60<d-math>C, \ \gamma</d-math>&#62 have been found via running grid search at a high granularity.
       </p>
 
       <figure>
@@ -881,7 +904,7 @@
       </figure>
 
       <p>Above we see a gif showing the work of the <em>Expected Improvement</em> acquisition function in finding the best hyperparameters.</p>
-
+<!-- 
       <figure>
         <d-figure><img src="images/MAB_gifs/gp3d-1-2-mat.gif" /></d-figure>
       </figure>
@@ -894,7 +917,7 @@
         <d-figure><img src="images/MAB_gifs/rand3d.gif" /></d-figure>
       </figure>
 
-      <p>Now our favorite, the Random acquisition function.</p>
+      <p>Now our favorite, the Random acquisition function.</p> -->
 
       <h3 id="comparison">Comparison</h3>
 
