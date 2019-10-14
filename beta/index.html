@@ -165,7 +165,7 @@
           <strong>Problem 1: Best Estimate of Gold Distribution</strong><br/>
           In this problem, we want to estimate the amount of gold on the one-dimensional line. Since the cost of drillings limits us, we can not drill at every location. We should drill at those locations that provide us with the <strong>maximum information</strong> about the distribution of the gold. This problem is akin to 
           <strong>
-            Active Learning<d-cite key="settles2009active,Tong2001"></d-cite>
+            active learning<d-cite key="settles2009active,Tong2001"></d-cite>
           </strong>.
         </p>
       </li>
@@ -269,7 +269,7 @@
     </ol>
 
     <p>
-      Let us now automate this process and see how our posterior changes at every iteration (after each drilling). For each of our iteration below, the prior was the Gaussian Process learned on the points already in the training set.
+      Let us now simulate this process and see how our posterior changes at every iteration (after each drilling). For each of our iteration below, the prior was the Gaussian Process learned on the points already in the training set.
     </p>
     <figure>
       <d-figure><img src="images/MAB_gifs/active-gp.gif" /></d-figure>
@@ -292,12 +292,7 @@
     </p> -->
 
     <p>
-      Given the fact that we are only interested in knowing the location where the maximum occurs.
-       <!-- this problem, we are instead interested to know the location at which we find the maximum gold  -->
-      It might be a good idea to evaluate at locations where our surrogate model's prediction mean is the highest, i.e. to 
-      <strong>exploit</strong>. But unfortunately, our mean is not always accurate, so we need to correct our mean which can be done by reducing variance or <strong>exploration</strong>. BO looks at both
-      <strong>exploitation</strong> and <strong>exploration</strong>, whereas in the case of Active Learning Problem, we only cared
-      about <strong>exploration</strong>.
+      Given the fact that we are only interested in knowing the location where the maximum occurs, it might be a good idea to evaluate at locations where our surrogate model's predicted mean is the highest, i.e. to <strong>exploit</strong>. But unfortunately, our model mean is not always accurate (since we have limited observations), so we need to correct our model, which can be done by reducing variance or <strong>exploration</strong>. BO looks at both <strong>exploitation</strong> and <strong>exploration</strong>, whereas in the case of active learning, we only cared about <strong>exploration</strong>.
     </p>
 
     <h1>Formalizing Bayesian Optimization</h1>
@@ -385,20 +380,23 @@
       the highest probability of improvement over the current max <d-math>f(x^+)</d-math>, where <d-math> x^+ = argmax_{x_i \in x_{1:t}}f(x_i)</d-math> and <d-math>x_i</d-math> is the location queried at <d-math>i^{th}</d-math> time step.
     </p>
 
-    <p>Let us understand this concept in two cases:</p>
+    <!-- 
+      <p>Let us understand this concept in two cases:</p>
 
-    <ol>
-      <li>
-        <p>
-          We have two points of similar means (of function values (gold in our case)). We now want to choose one of these to obtain the labels or values. We will choose the one with higher variance. This basically says that <strong>given the same exploitability, we choose the one with higher exploration value</strong>.
-        </p>
-      </li>
-      <li>
-        <p>
-          We have two points having the same variance. We would now choose the point with the higher mean. This basically says that <strong>given the same explorability, we will choose the one with higher exploitation value</strong>.
-        </p>
-      </li>
-    </ol>
+      <ol>
+        <li>
+          <p>
+            We have two points of similar means (of function values (gold in our case)). We now want to choose one of these to obtain the labels or values. We will choose the one with higher variance. This basically says that <strong>given the same exploitability, we choose the one with higher exploration value</strong>.
+          </p>
+        </li>
+        <li>
+          <p>
+            We have two points having the same variance. We would now choose the point with the higher mean. This basically says that <strong>given the same explorability, we will choose the one with higher exploitation value</strong>.
+          </p>
+        </li>
+        </ol> 
+      -->
+    
     <p>The formulation or procedure can be given as:</p>
 
     <ol>
@@ -433,11 +431,11 @@
       PI makes use of <d-math>\epsilon</d-math> in order to strike a balance between exploration and exploitation. Essentially by setting <d-math>\epsilon</d-math> to some value, we want to choose a point such that the probability of improvement over <d-math>f(x^+) + \epsilon</d-math> is the most.
     </p>
     <p>
-      In our following plot, we have tried to visualize how changing the value of<d-math>\epsilon</d-math> affects the values of our acquisition function, resulting in different choices of points to evaluate. We selected two points as our candidate points <d-math>x \in \{1.0, 5.0\}</d-math> to compare against each other. Changing the value of <d-math>\epsilon</d-math> (hovering our mouse), we can see that we implicitly place more importance to the uncertainty in the posterior of our surrogate. Increasing <d-math>\epsilon</d-math> results in the locations with a larger <d-math>\sigma</d-math> to benefit as their probability density is spread more. Thus points with more spread out sigma would have a higher <d-math>\alpha_{PI}</d-math> when the <d-math>\epsilon</d-math> is set to a large value.
+      In our following plot, we have tried to visualize how changing the value of<d-math>\epsilon</d-math> affects the values of our acquisition function, resulting in different choices of points to evaluate. We selected two points as our candidate points <d-math>x \in \{1.0, 5.0\}</d-math> to compare against each other. Changing the value of <d-math>\epsilon</d-math> (hovering our mouse), we can see that we implicitly place more importance to the uncertainty in the posterior of our surrogate. Increasing <d-math>\epsilon</d-math> results in the locations with a larger <d-math>\sigma</d-math> to benefit as their probability density is spread more. Thus points with more <d-math>\sigma</d-math> would have a higher <d-math>\alpha_{PI}</d-math> when the <d-math>\epsilon</d-math> is set to a large value.
     </p>
 
     <p style="font-size: 18px;">
-      Feel free to play around with our <a href="#Teaser1">hero</a> plot.
+      Feel free to play around with our <a href="#Teaser1">below</a> plot.
     </p>
 
     <div class="l-screen shaded-figure">
@@ -475,7 +473,7 @@
     <p>
       Looking above, we see increasing the value to <d-math>\epsilon = 1</d-math>, enables us to explore more and get near to the maximum value. One can notice that the
       surrogate possess large uncertainity at <d-math>x \in [2, 3.5]</d-math> (can be identified by the grey translucent area).
-      But our aim in BO is to get to the maximum value, in contrast to estimation of <d-math>f(x)</d-math> in the case of Active Learning. Therefore, we see these points are not evaluated, using PI as our acquisition function with given hyperparameters!
+      But our aim in BO is to get to the maximum value, in contrast to estimation of <d-math>f(x)</d-math> in the case of active learning. Therefore, we see these points are not evaluated, using PI as our acquisition function with given hyperparameters!
     </p>
 
     <p>
@@ -948,7 +946,7 @@
         </figure>
 
         <p>
-          Above we see a gif showing the work of the <em>Gaussian Processes Upper Confidence Bound</em> acquisition function in finding the best hyperparameters.f
+          Above we see a gif showing the work of the <em>Gaussian Processes Upper Confidence Bound</em> acquisition function in finding the best hyperparameters.
         </p>
 
         <figure>
@@ -1241,7 +1239,7 @@
 
 <ul>
   <li>
-    <p>Here are representative animations showing the process of drilling at new locations and to reduce the uncertainty and get the best predictions showcasing the <strong>Active Learning</strong> problem.</p>
+    <p>Here are representative animations showing the process of drilling at new locations and to reduce the uncertainty and get the best predictions showcasing the <strong>Active learning</strong> problem.</p>
   </li>
 
   <li>
