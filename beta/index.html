@@ -377,7 +377,7 @@
           Given the set of observations (function sampling), use Bayes rule to obtain the posterior.
         </li>
         <li>
-          Use an acquisition function <d-math>\alpha(x)</d-math>, which is a function of the posterior to decide where to sample next <d-math>x_t = \text{argmax} \alpha(x)</d-math>.
+          Use an acquisition function <d-math>\alpha(x)</d-math>, which is a function of the posterior to decide where to sample next <d-math>x_t = \text{argmax}_x \alpha(x)</d-math>.
         </li>
         <li>
           Add new sampled data to the set of observations and Goto Step #2 till convergence or budget elapses.
@@ -407,7 +407,7 @@
     <h3>Probability of Improvement (PI)</h3>
 
     <p>
-      Let us start with the most common acquisition function in the BO literature. The idea behind the algorithm is fairly simple - choose the next point as the one which has the highest probability of improvement over the current max <d-math>f(x^+)</d-math>, where <d-math> x^+ = argmax_{x_i \in x_{1:t}}f(x_i)</d-math> and <d-math>x_i</d-math> is the location queried at <d-math>i^{th}</d-math> time step. We pointed out earlier that the acquisition functions are a function of the posterior. Therefore, we can look at PI as one such function. Looking closely, we see PI is essentially the left tail probability of the posterior.
+      Let us start with the most common acquisition function in the BO literature. The idea behind the algorithm is fairly simple - choose the next point as the one which has the highest probability of improvement over the current max <d-math>f(x^+)</d-math>, where <d-math> x^+ = \text{argmax}_{x_i \in x_{1:t}}f(x_i)</d-math> and <d-math>x_i</d-math> is the location queried at <d-math>i^{th}</d-math> time step. We pointed out earlier that the acquisition functions are a function of the posterior. Therefore, we can look at PI as one such function. Looking closely, we see PI is essentially the left tail probability of the posterior.
     </p>
 
     <!-- 
