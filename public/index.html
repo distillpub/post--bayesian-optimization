@@ -218,7 +218,7 @@
 
     <p>
       One might want to look at this excellent distillpub article<d-cite key="görtler2019a"></d-cite> on Gaussian Processes<d-cite key="Rasmussen2004"></d-cite>.
-      We will be using GP regression to model the gold distribution along the one-dimensional line. By using GP, we assume that the gold distribution of nearby points is similar (smoothness). Such an assumption is usually valid. 
+      We will be using Gaussian Process regression to model the gold distribution along the one-dimensional line. By using GP, we assume that the gold distribution of nearby points is similar (smoothness). Such an assumption is usually valid. 
     </p>
 
     <p>
@@ -634,7 +634,7 @@
 
     <h3 id="thompsonsampling">Thompson Sampling</h3>
 
-    <p>One more acquisition function that is quite common is Thompson Sampling. It has a low overhead of setting up therefore quite useful sometimes.</p>
+    <p>One more acquisition function that is quite common is Thompson Sampling <d-cite key="thompson"> </d-cite>. It has a low overhead of setting up therefore quite useful sometimes <font size="3" color="red">How am I saying this?</font>.</p>
 
     <p>
       The idea is to sample functions within upper and lower probabilistic bounds of a regressor. In other words, we sample functions from the surrogate's posterior. Once we have sampled a function <d-math>m_t</d-math> for the <d-math>t^{th}
