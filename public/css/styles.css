@@ -345,4 +345,6 @@ button {
   cursor: pointer;
 }
 
-/*image from: https://www.hiclipart.com/free-transparent-background-png-clipart-zjiwc*/
+.check {
+  color: red;
+}

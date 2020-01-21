@@ -450,8 +450,8 @@
         </p>
       </li>
     </ol>
-    <p>
-      Looking closely, essentially we are finding a value from the CDF of the probability distribution at each location. If our surrogate is a GP we can obtain a closed form solution, making the operation to calculate <d-math>\alpha_{PI}</d-math> cheap.
+    <p class="check">
+      Looking closely, essentially we are finding a value from the CDF of the probability distribution at each location. If our surrogate is a GP we can obtain an analytical expression, making the operation to calculate <d-math>\alpha_{PI}</d-math> cheap.
     </p>
     <d-math block>x_{t+1} = argmax_x \Phi\left(\frac{\mu_t(x) - f(x^+) - \epsilon}{\sigma_t(x)}\right)</d-math>
     <p>
@@ -547,8 +547,8 @@
       x_{t+1} = argmax_x \mathbb{E} \left( {max} \{ 0, \ h_{t+1}(x) - f(x^+) \} \ | \ \mathcal{D}_t \right)
     </d-math>
 
-    <p>
-      Where <d-math>f(x^+)</d-math> is the maximum value that has been encountered so far. This equation for the case of GP surrogate, can be converted analytically to a closed form equation shown below.
+    <p class='check'>
+      Where <d-math>f(x^+)</d-math> is the maximum value that has been encountered so far. This equation for the case of GP surrogate, can be converted an analytical equation shown below.
     </p>
 
     <d-math block>
@@ -843,7 +843,7 @@
     -->
       <h3 id="whyisthiseasier">Why is it beneficial to optimize the acquisition function?</h3>
 
-      <p>
+      <p class="check">
         One valid question one might come up is that we have replaced the original optimization problem (optimizing the given black-box function) to another optimization problem (optimization of acquisition function). How is this any better than the last problem?
         
         The main reason lies in the fact that evaluating the acquisition function is much cheaper. In contrast, the original black-box function is extremely costly to evaluate, by definition.
@@ -908,7 +908,7 @@
       <p>Above we see a gif showing the work of the <em>Probability of Improvement</em> acquisition function in finding the best hyperparameters.</p>
 
       <figure>
-        <d-figure><img src="images/MAB_gifs/ei3d-0.0001-mat.gif" /></d-figure>
+        <d-figure><img src="images/MAB_gifs/ei3d-0.01-mat.gif" /></d-figure>
       </figure>
 
       <p>Above we see a gif showing the work of the <em>Expected Improvement</em> acquisition function in finding the best hyperparameters.</p>
