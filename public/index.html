@@ -158,8 +158,8 @@
     </p>
 
     <h1>Mining Gold!</h1>
-    <p>
-      Let us start the discussion with the example of mining for gold. Our goal is to mine for gold in a new, unknown land. For now, let us make a simplifying assumption, the gold content lies in a one-dimensional space, i.e., we are talking gold distribution only about a line. Our aim is to find the location along this line where we would get the maximum return and drill at that location. Now, at the start of the activity, we have no idea about the amount of gold at different locations. The only way we can get the information about the amount of gold is by drilling at different locations. This drilling is costly and involves expensive sensors to be used. We, therefore, want to <strong>minimize the number of drillings required</strong> while still being able to <strong>find the location of maximum gold quickly</strong>.
+    <p class="review3">
+      Let us start the discussion with the example of mining for gold. Our goal is to mine for gold in a new, unknown land. For now, let us make a simplifying assumption, the gold content lies in a one-dimensional space, i.e., we are talking gold distribution only about a line. Our aim is to find the location along this line where we would get the maximum return and drill at that location. Now, at the start of the activity, we have no idea about the amount of gold at different locations. The only way we can get the information about the amount of gold is by drilling at different locations. This drilling is costly and involves expensive sensors to be used. We, therefore, want to <strong>minimize the number of drillings required</strong> while still being able to <strong>find the location of maximum gold quickly</strong>.<d-footnote>Interestingly, our example is similar to one of the first use of Gaussian Process (GP) (also called kriging)<d-cite key="goldKridge"></d-cite>, where Prof. Krige modelled gold concentrations using GPs.</d-footnote>
     </p>
 
     <p>
@@ -496,8 +496,8 @@
     <figure class="gif-slider">
       <d-figure><img src="images/MAB_pngs/PI/0/0.png" /></d-figure>
     </figure>
-    <p>
-      Looking at the graph above we can see that we are not effectively exploring at value <d-math>\epsilon = 0.01</d-math> for the Probability of Improvement acquisition function. We are stuck.
+    <p class="check">
+      Looking at the graph above<d-footnote>In case of ties for the maximum acquisition value, we randomly break them.</d-footnote> we can see that we are not effectively exploring at value <d-math>\epsilon = 0.01</d-math> for the Probability of Improvement acquisition function. We are stuck.
     </p>
 
     <figure class="gif-slider">
@@ -627,7 +627,7 @@
       <figure class="smaller-img">
         <d-figure><img src="images/MAB_gifs/Ei_Pi_graph/0.svg" /></d-figure>
       </figure>
-      <p>
+      <p class="check">
         We can see that the <d-math>\alpha_{EI}</d-math> has its maximum value corresponding to <d-math>\alpha_{PI}</d-math> close to 0.25. But, <d-math>\alpha_{PI}</d-math> has a maximum of around 0.375, for which <d-math>\alpha_{EI}</d-math>
         is low. Choosing a point with low <d-math>\alpha_{PI}</d-math> and high <d-math>\alpha_{EI}</d-math> means taking more risk (probability of improvement is low), but getting a high reward (expected improvement is high).
         In other words, multiple points have same (<d-math>\alpha_{EI}</d-math>), we should prioritize to choose the option with lesser risk (higher <d-math>\alpha_{PI}</d-math>). And similarly, when the risks are the same (same <d-math>\alpha_{PI}</d-math>) for any two points, we would want to go with the point with greater reward (higher <d-math>\alpha_{EI}</d-math>).
@@ -761,7 +761,15 @@
 
         <h3>Gaussian Process Upper Confidence Bound (GP-UCB)</h3>
 
-        <p>
+        <p class="review3">
+          Before talking about GP-UCB, let us quickly talk about <strong>regret</strong>. Imagine if the maximum gold was <d-math>a</d-math> units and our optimization instead samples a location containing <d-math>b < a</d-math> units, then our regret is
+              <d-math>a -
+              b</d-math>. If we accumulate the regret over <d-math>n</d-math> iterations, we get what is called <strong> cumulative regret. </strong> <br />
+
+          GP-UCB is an interesting acquisition function as it gives us theoretical bounds on the convergence rates, or in other words, bounds the cumulative regret. Its formulation is given by:
+        </p>
+
+        <p class="check">
           One another interesting acquisition function is the GP-UCB. It has the benefits of providing theoretical bounds on the convergence rates as well.<br>
           Its formulation is given by:
         </p>
@@ -773,11 +781,12 @@
         <d-math block>
           \tau_t = 2log \left( \frac{t^{d/2 + 2}\pi^{2}}{3\delta} \right)
         </d-math>
-      <!-- TODO: UCB? am I correct to call it UCB? -->
-        <p>
+        <p class="check">
           We can see how this formulation looks fairly similar to the UCB acquisition function that we previously described. The difference here compared to <em>UCB</em> is that the <d-math>\lambda</d-math> here is a function of the timestep <d-math>t
           </d-math>. This helps in some of the theoretical bounds for which we would like to refer the original paper on <em>GP-UCB</em>
           <d-cite key="gpucb"></d-cite>.
+
+          Shrinivasan et al. <d-cite key="gpucbBounds"></d-cite>
         </p>
     
       <!-- <figure>

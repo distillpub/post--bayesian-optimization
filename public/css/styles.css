@@ -209,7 +209,7 @@
 /* Slides...... */
 
 * {box-sizing: border-box}
-body {font-family: Verdana, sans-serif; margin:0}
+body {font-family: "Helvetica Neue", sans-serif; margin:0}
 .mySlides {display: none}
 img {vertical-align: middle;}
 
@@ -309,6 +309,7 @@ img {vertical-align: middle;}
 
 .slider {
   -webkit-appearance: none;
+  cursor:grabbing;
   width: 100%;
   height: 10px;
   border-radius: 5px;
@@ -335,6 +336,7 @@ img {vertical-align: middle;}
 }
 
 button {
+  cursor:grabbing;
   float: left;
   width: 31px;
   height: 31px;
@@ -351,4 +353,8 @@ button {
 
 .check {
   color: red;
+}
+
+.review3 {
+  color: purple;
 }
