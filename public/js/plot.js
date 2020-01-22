@@ -72,7 +72,7 @@ var svg = d3.select("#Teaser1")
   .attr("height", height + margin.top + margin.bottom)
   .append("g")
   .attr("transform",
-        "translate(" + margin.left + "," + margin.top + ")");
+        "translate(" + (margin.left + 5) + "," + margin.top + ")");
 
 var ordinal = d3.scaleOrdinal()
   .domain(["⠀   Optimal"])
@@ -118,8 +118,8 @@ var y = d3.scaleLinear()
           .range([height, 0]);
 var yaxis = svg.append("g")
   .attr("class", "yaxis")
-  .call(d3.axisRight(y)
-    .tickFormat(d3.format(".1e")));
+  .call(d3.axisLeft(y)
+    .tickFormat(d3.format("1.1f")));
 // Textual Content
 svg.append("text")
   .attr("id", "plot1title")
@@ -129,8 +129,9 @@ svg.append("text")
   .text("ϵ = " + data[curr_eps].eps.toFixed(2));
 svg.append("text")
   .attr("transform", "rotate(-90)")
+  // .attr("transform", "translate(" + (width - 10) + ", " + height + ")")
   .attr("class", "label")
-  .attr("y", 0 - margin.left)
+  .attr("y", 0 - margin.left - 9)
   .attr("x", 0 - (height / 2))
   .attr("dy", "1em")
   .text("α(pi)");
@@ -178,14 +179,14 @@ var max_pt = svg
     // update title
     var xx = document.getElementById("plot1title");
     xx.innerHTML = "ϵ = " + data[curr_eps].eps.toFixed(2);
-    y.domain([0, d3.max(curr_data, function(d, i) {
-            return d.alphaPI;
-          })]);
-    yaxis
-      .transition()
-      .duration(duration)
-      .call(d3.axisRight(y)
-        .tickFormat(d3.format(".1e")));
+    // y.domain([0, d3.max(curr_data, function(d, i) {
+    //         return d.alphaPI;
+    //       })]);
+    // yaxis
+    //   .transition()
+    //   .duration(duration)
+    //   .call(d3.axisRight(y)
+    //     .tickFormat(d3.format(".1e")));
 
     curve
       .datum(curr_data)
