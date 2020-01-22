@@ -492,16 +492,17 @@
       <d-figure><img src="images/MAB_pngs/PI/0/0.png" /></d-figure>
     </figure>
     <p class="check">
-      Looking at the graph above<d-footnote>In case of ties for the maximum acquisition value, we randomly break them.</d-footnote> we can see that we are not effectively exploring at value <d-math>\epsilon = 0.01</d-math> for the Probability of Improvement acquisition function. We are stuck.
+      Looking at the graph above<d-footnote>In case of ties for the maximum acquisition value, we randomly break them.</d-footnote> we can see that we are not effectively exploring at value <d-math>\epsilon = 0</d-math>. We are stuck!
+
+      One interesting thing to noice is that the surrogate possess large uncertainity at <d-math>x \in [2, 6]</d-math> (can be identified by the grey translucent area).
+      This is because of the exploitation that happens in BO. Our aim in BO is is to get to the maximum value (though we could only get to a local maxima in this case), in contrast to estimation of <d-math>f(x)</d-math> in the case of active learning. Therefore, we see these points are not evaluated, using PI as our acquisition function with given hyperparameters!
     </p>
 
     <figure class="gif-slider">
       <d-figure><img src="images/MAB_pngs/PI/0.3/0.png" /></d-figure>
     </figure>
     <p>
-      Looking above, we see increasing the value to <d-math>\epsilon = 1</d-math>, enables us to explore more and get near to the maximum value. One can notice that the
-      surrogate possess large uncertainity at <d-math>x \in [2, 3.5]</d-math> (can be identified by the grey translucent area).
-      But our aim in BO is to get to the maximum value, in contrast to estimation of <d-math>f(x)</d-math> in the case of active learning. Therefore, we see these points are not evaluated, using PI as our acquisition function with given hyperparameters!
+      Looking above, we see increasing the value to <d-math>\epsilon = 0.3</d-math>, enables us to explore more and get near to the maximum value. Though we seem to be exploring more than required. One can notice that the BO framework explored around three points near the global optimum by the end of the optimization.
     </p>
 
     <p>
@@ -512,7 +513,7 @@
       <d-figure><img src="images/MAB_pngs/PI/3/0.png" /></d-figure>
     </figure>
     <p>
-      We see that we made things worse! Our model now uses <d-math>\epsilon = 8</d-math>, which has effectively resulted in way too much exploration. This amount of exploration is not able to exploit when we land somewhere near a global maximum.
+      We see that we made things worse! Our model now uses <d-math>\epsilon = 3</d-math>, which has effectively resulted in way too much exploration. This amount of exploration is not able to exploit when we land somewhere near a global maximum.
     </p>
 
     <h3 id="expectedimprovementei">Expected Improvement (EI)</h3>

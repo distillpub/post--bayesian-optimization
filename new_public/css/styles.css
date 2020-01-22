@@ -143,7 +143,7 @@
   fill: rgba(0,0,0,0.8);
   text-anchor: middle;
   opacity: .8;
-  font-size: 20px;
+  font-size: 18px;
   font-family: -apple-system, BlinkMacSystemFont, 
   "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
   "Fira Sans", "Droid Sans", "Helvetica Neue",
@@ -157,7 +157,7 @@
 }
 
 .legendOrdinal, .legendOrdinal2 {
-  font-size: 18px;
+  font-size: 16px;
   opacity: .8;
   font-family: -apple-system, BlinkMacSystemFont, 
   "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
@@ -166,7 +166,7 @@
 }
 
 .xaxis, .yaxis {
-  font-size: 18px;
+  font-size: 16px;
   opacity: .8;
   font-family: -apple-system, BlinkMacSystemFont, 
   "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
