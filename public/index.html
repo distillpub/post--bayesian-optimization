@@ -12,12 +12,11 @@
   <script defer src="js/plot.js"></script>
   <script defer src="js/hider.js"></script>
   <script defer src="js/slides.js"></script>
-  <script defer src="js/gif-slider.js"></script>
   <script type="text/javascript" src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 
 </head>
 
-<body onload="appendInputButtons();">
+<body>
 
   <d-front-matter>
     <script id='distill-front-matter' type="text/json">
@@ -158,8 +157,8 @@
     </p>
 
     <h1>Mining Gold!</h1>
-    <p class="review3">
-      Let us start the discussion with the example of mining for gold. Our goal is to mine for gold in a new, unknown land. For now, let us make a simplifying assumption, the gold content lies in a one-dimensional space, i.e., we are talking gold distribution only about a line. Our aim is to find the location along this line where we would get the maximum return and drill at that location. Now, at the start of the activity, we have no idea about the amount of gold at different locations. The only way we can get the information about the amount of gold is by drilling at different locations. This drilling is costly and involves expensive sensors to be used. We, therefore, want to <strong>minimize the number of drillings required</strong> while still being able to <strong>find the location of maximum gold quickly</strong>.<d-footnote>Interestingly, our example is similar to one of the first use of Gaussian Process (GP) (also called kriging)<d-cite key="goldKridge"></d-cite>, where Prof. Krige modelled gold concentrations using GPs.</d-footnote>
+    <p>
+      Let us start the discussion with the example of mining for gold. Our goal is to mine for gold in a new, unknown land. For now, let us make a simplifying assumption, the gold content lies in a one-dimensional space, i.e., we are talking gold distribution only about a line. Our aim is to find the location along this line where we would get the maximum return and drill at that location. Now, at the start of the activity, we have no idea about the amount of gold at different locations. The only way we can get the information about the amount of gold is by drilling at different locations. This drilling is costly and involves expensive sensors to be used. We, therefore, want to <strong>minimize the number of drillings required</strong> while still being able to <strong>find the location of maximum gold quickly</strong>.
     </p>
 
     <p>
@@ -183,7 +182,7 @@
           In this problem, we want to find the location in the one-dimensional space where the gold quantity is the maximum. This problem focuses on finding the location with the most gold content. This problem is akin to 
           <strong>
             Bayesian Optimization<d-cite key="humanOut,nandoBOtut"></d-cite>
-          </strong> (BO).
+          </strong>.
         </p>
       </li>
     </ul>
@@ -198,7 +197,7 @@
     <h2>Active Learning</h2>
 
     <p>
-      In machine learning problems, often, unlabelled data is easily available, but labeling could be an expensive task. As an example, for a speech-to-text task, the ground truth labeling or annotation task requires expert(s) to label words and sentences manually. In our gold mining problem, drilling (akin to labeling) is an expensive operation, and we would like to minimize it. But, without drilling, we can not estimate the gold concentration. Active learning would solve this problem by posing a smart strategy to choose the next drilling site. While there are various methods and techniques in the active learning literature, for the sake of brevity, we will look only at <strong>uncertainty reduction</strong>. This method chooses the next query point as the one our model is the most uncertain about. One of the ways we can reduce the uncertainty is by choosing the point at which we have the maximum variance (we are most uncertain).
+      In machine learning problems, often, unlabelled data is very easily available, but labeling could be an expensive task. As an example, for a speech-to-text task, the ground truth labeling or annotation task requires expert(s) to label words and sentences manually. In our gold mining problem, drilling (akin to labeling) is an expensive operation, and we would like to minimize it. But, without drilling, we can not estimate the gold estimate. Active learning would solve this problem by posing a smart strategy to choose the next drilling site. While there are various methods and techniques in the active learning literature, for the sake of brevity, we will look only at <strong>uncertainty reduction</strong>. This method chooses the next query point as the one our model is the most uncertain about. One of the ways we can reduce the uncertainty is by choosing the point at which we have the maximum variance (we are most uncertain).
     </p>
 
     <h3>Surrogate Model</h3>
@@ -208,19 +207,18 @@
 
     <h3>Bayesian Update</h3>
     <p>
-      <!-- The updatation of the surrogate model is the "Bayes" in BO.  -->
-      Every evaluation (drilling to get the gold estimate) of <d-math>f(x)</d-math> gives the surrogate model more data to learn from. The posterior for the surrogate is obtained using the Bayes Rule with this new data at every iteration. At the end of an iteration the posterior becomes the prior, for the next cycle.
+      The updatation of the surrogate model is the "Bayes" in BO. Every evaluation (drilling to get the gold estimate) of <d-math>f(x)</d-math> gives the surrogate model more data to learn from. The posterior for the surrogate is obtained using the Bayes Rule with this new data at every iteration. At the end of an iteration the posterior becomes the prior, for the next cycle.
     </p>
 
     <p>
-      It is common in the literature to use Gaussian Process (GP) as a surrogate. The priors of a GP can be set by using specific kernels and mean functions. Further, GPs give us not only the predictions but also the uncertainty estimates, which we will find to be useful in active learning, as well as BO.
+      It is common in the literature to use Gaussian Processes as a surrogate. The priors of a GP can be set by using specific kernels and mean functions. Further, GPs give us not only the predictions but also the uncertainty estimates, which we will find to be useful in active learning, as well as BO.
     </p>
 
-    <h3>Gaussian Processes</h3>
+    <h3>Gaussian Processes (GP)</h3>
 
     <p>
       One might want to look at this excellent distillpub article<d-cite key="görtler2019a"></d-cite> on Gaussian Processes<d-cite key="Rasmussen2004"></d-cite>.
-      We will be using Gaussian Process regression to model the gold distribution along the one-dimensional line. By using GP, we assume that the gold distribution of nearby points is similar (smoothness). Such an assumption is usually valid. 
+      We will be using GP regression to model the gold distribution along the one-dimensional line. By using GP, we assume that the gold distribution of nearby points is similar (smoothness). Such an assumption is usually valid. 
     </p>
 
     <p>
@@ -279,10 +277,9 @@
     <p>
       Let us now simulate this process and see how our posterior changes at every iteration (after each drilling). For each of our iteration below, the prior was the Gaussian Process learned on the points already in the training set.
     </p>
-    <figure class="gif-slider">
-      <d-figure><img src="images/active-gp-img/0.png"/></d-figure>
+    <figure>
+      <d-figure><img src="images/MAB_gifs/active-gp.gif" /></d-figure>
     </figure>
-
 
     <p>
       One point to notice is that this idea of choosing the most uncertain location leads to querying of the points that are the farthest (visible when we choose the
@@ -450,8 +447,8 @@
         </p>
       </li>
     </ol>
-    <p class="check">
-      Looking closely, essentially we are finding a value from the CDF of the probability distribution at each location. If our surrogate is a GP we can obtain an analytical expression, making the operation to calculate <d-math>\alpha_{PI}</d-math> cheap.
+    <p>
+      Looking closely, essentially we are finding a value from the CDF of the probability distribution at each location. If our surrogate is a GP we can obtain a closed form solution, making the operation to calculate <d-math>\alpha_{PI}</d-math> cheap.
     </p>
     <d-math block>x_{t+1} = argmax_x \Phi\left(\frac{\mu_t(x) - f(x^+) - \epsilon}{\sigma_t(x)}\right)</d-math>
     <p>
@@ -464,12 +461,12 @@
       PI makes use of <d-math>\epsilon</d-math> in order to strike a balance between exploration and exploitation. Essentially by setting <d-math>\epsilon</d-math> to some value, we want to choose a point such that the probability of improvement over <d-math>f(x^+) + \epsilon</d-math> is the most.
     </p>
     <p>
-      In the following plot, we have tried to visualize how changing the value of <d-math>\epsilon</d-math> affects the values of our acquisition function, resulting in different choices of points to evaluate. We selected two points as our candidate points <d-math>x \in \{1.0, 5.0\}</d-math> to compare against each other. Changing the value of <d-math>\epsilon</d-math> (hovering the mouse vertically), we can see that we implicitly place more importance to the uncertainty in the posterior of our surrogate. Increasing <d-math>\epsilon</d-math> results in the locations with a larger <d-math>\sigma</d-math> to benefit as their probability density is spread more. Thus points with more <d-math>\sigma</d-math> would have a higher <d-math>\alpha_{PI}</d-math> when the <d-math>\epsilon</d-math> is set to a large value.
+      In our following plot, we have tried to visualize how changing the value of<d-math>\epsilon</d-math> affects the values of our acquisition function, resulting in different choices of points to evaluate. We selected two points as our candidate points <d-math>x \in \{1.0, 5.0\}</d-math> to compare against each other. Changing the value of <d-math>\epsilon</d-math> (hovering our mouse), we can see that we implicitly place more importance to the uncertainty in the posterior of our surrogate. Increasing <d-math>\epsilon</d-math> results in the locations with a larger <d-math>\sigma</d-math> to benefit as their probability density is spread more. Thus points with more <d-math>\sigma</d-math> would have a higher <d-math>\alpha_{PI}</d-math> when the <d-math>\epsilon</d-math> is set to a large value.
     </p>
 
-    <!-- <p style="font-size: 18px;">
+    <p style="font-size: 18px;">
       Feel free to play around with our <a href="#Teaser1">below</a> plot.
-    </p> -->
+    </p>
 
     <div class="l-screen shaded-figure">
         <div>
@@ -493,15 +490,15 @@
       Now we possess the intuition behind how the Probability of Improvement is calculated. Let us now change <d-math>\epsilon</d-math> and look at its effects.
     </p>
 
-    <figure class="gif-slider">
-      <d-figure><img src="images/MAB_pngs/PI/0/0.png" /></d-figure>
+    <figure>
+      <d-figure><img src="images/MAB_gifs/mab-gp-pi-eps0.01.gif" /></d-figure>
     </figure>
-    <p class="check">
-      Looking at the graph above<d-footnote>In case of ties for the maximum acquisition value, we randomly break them.</d-footnote> we can see that we are not effectively exploring at value <d-math>\epsilon = 0.01</d-math> for the Probability of Improvement acquisition function. We are stuck.
+    <p>
+      Looking at the graph above we can see that we are not effectively exploring at value <d-math>\epsilon = 0.01</d-math> for the Probability of Improvement acquisition function. We are stuck.
     </p>
 
-    <figure class="gif-slider">
-      <d-figure><img src="images/MAB_pngs/PI/0.3/0.png" /></d-figure>
+    <figure>
+      <d-figure><img src="images/MAB_gifs/mab-gp-pi-eps0.5.gif" /></d-figure>
     </figure>
     <p>
       Looking above, we see increasing the value to <d-math>\epsilon = 1</d-math>, enables us to explore more and get near to the maximum value. One can notice that the
@@ -513,8 +510,8 @@
       Let us look at what happens if we increase the hyperparameter <d-math>\epsilon</d-math> a bit more.
     </p>
 
-    <figure class="gif-slider">
-      <d-figure><img src="images/MAB_pngs/PI/3/0.png" /></d-figure>
+    <figure>
+      <d-figure><img src="images/MAB_gifs/mab-gp-pi-eps3.gif" /></d-figure>
     </figure>
     <p>
       We see that we made things worse! Our model now uses <d-math>\epsilon = 8</d-math>, which has effectively resulted in way too much exploration. This amount of exploration is not able to exploit when we land somewhere near a global maximum.
@@ -523,19 +520,20 @@
     <h3 id="expectedimprovementei">Expected Improvement (EI)</h3>
 
     <p>
-      Probability of improvement only looked at <em>how likely</em> is an improvement, but, shouldn't we be looking into <em>how much</em> we can improve? The next criterion called, Expected Improvement, (EI) does exactly that!
-      The idea is fairly simple - choose the next point as the one which has the highest expected improvement over the current max <d-math>f(x^+)</d-math>, where <d-math> x^+ = \text{argmax}_{x_i \in x_{1:t}}f(x_i)</d-math> and <d-math>x_i</d-math> is the location queried at <d-math>i^{th}</d-math> time step. 
+      Probability of improvement only looked at <em>how likely</em> is an improvement, but, shouldn't we be looking into <em>how much</em> we can improve? The next criterion called, Expected
+      Improvement, (EI) does exactly that!
     </p>
 
     <p>
-      In this acquisition function, <d-math>t + 1^{th}</d-math> query point, <d-math>x_{t+1}</d-math>, is selected according to the following equation.
+      In this acquisition function, <d-math>t + 1^{th}</d-math> query point, <d-math>x_{t+1}</d-math>, is selected according to the equation below.
     </p>
     <d-math block>
       x_{t+1} = argmin_x \mathbb{E} \left( ||h_{t+1}(x) - f(x^\star) || \ | \ \mathcal{D}_t \right)
     </d-math>
     <p>
-      Where, <d-math>f</d-math> is the actual ground truth function, <d-math>h_{t+1}</d-math> is the posterior mean of the surrogate at <d-math>t+1^{th}</d-math> timestep, <d-math>\mathcal{D}_t</d-math> is the training data <d-math>\{(x_i,
-        f(x_i))\} \ \forall x \in x_{1:t}</d-math> and <d-math>x^\star</d-math> is the actual position where <d-math>f</d-math> takes the maximum value.
+      Where, <d-math>f</d-math> is the actual ground truth function, <d-math>h_{t+1}</d-math> is our GP posterior of the ground truth for <d-math>t+1^{th}</d-math> timestep, <d-math>\mathcal{D}_t</d-math> is the training data <d-math>\{(x_i,
+        f(x_i))\} \ \forall x \in x_{1:t}</d-math> and <d-math>x^\star</d-math> is the actual position where the ground truth
+      function takes the maximum value.
     </p>
 
     <p>
@@ -547,8 +545,8 @@
       x_{t+1} = argmax_x \mathbb{E} \left( {max} \{ 0, \ h_{t+1}(x) - f(x^+) \} \ | \ \mathcal{D}_t \right)
     </d-math>
 
-    <p class='check'>
-      Where <d-math>f(x^+)</d-math> is the maximum value that has been encountered so far. This equation for the case of GP surrogate, can be converted an analytical equation shown below.
+    <p>
+      Where <d-math>f(x^+)</d-math> is the maximum value that has been encountered so far. This equation for the case of GP surrogate, can be easily converted analytically to a closed form equation shown below.
     </p>
 
     <d-math block>
@@ -579,8 +577,8 @@
       Like the Probability of Improvement's acquisition function, we can moderate the amount of explorability the Expected Improvement's acquisition function by setting the <d-math>\epsilon</d-math> hyperparameter.
     </p>
 
-    <figure class="gif-slider">
-      <d-figure><img src="images/MAB_pngs/EI/0/0.png" /></d-figure>
+    <figure>
+      <d-figure><img src="images/MAB_gifs/mab-gp-ei-eps0.01.gif" /></d-figure>
     </figure>
 
     <p>
@@ -591,8 +589,8 @@
       Let us try increasing the <d-math>\epsilon</d-math> variable to focus a little more on explorability.
     </p>
 
-    <figure class="gif-slider">
-      <d-figure><img src="images/MAB_pngs/EI/0.3/0.png" /></d-figure>
+    <figure>
+      <d-figure><img src="images/MAB_gifs/mab-gp-ei-eps1.5.gif" /></d-figure>
     </figure>
     <p>
       As we expected, increasing the value to <d-math>\epsilon = 1.5</d-math> makes the acquisition function explore more and exploit when the time comes. We see that it moves slowly once it reaches near the global maxima,
@@ -604,8 +602,8 @@
       Let us see if increasing <d-math>\epsilon</d-math> helps us more!
     </p>
 
-    <figure class="gif-slider">
-      <d-figure><img src="images/MAB_pngs/EI/3/0.png" /></d-figure>
+    <figure>
+      <d-figure><img src="images/MAB_gifs/mab-gp-ei-eps3.gif" /></d-figure>
     </figure>
     <p>
       Is this better than before? Turns out a yes and a no. We see that here we do too much exploration given the value of <d-math>\epsilon = 3</d-math>. Which results in early reaching something close to global maxima, but unfortunately we don't
@@ -627,7 +625,7 @@
       <figure class="smaller-img">
         <d-figure><img src="images/MAB_gifs/Ei_Pi_graph/0.svg" /></d-figure>
       </figure>
-      <p class="check">
+      <p>
         We can see that the <d-math>\alpha_{EI}</d-math> has its maximum value corresponding to <d-math>\alpha_{PI}</d-math> close to 0.25. But, <d-math>\alpha_{PI}</d-math> has a maximum of around 0.375, for which <d-math>\alpha_{EI}</d-math>
         is low. Choosing a point with low <d-math>\alpha_{PI}</d-math> and high <d-math>\alpha_{EI}</d-math> means taking more risk (probability of improvement is low), but getting a high reward (expected improvement is high).
         In other words, multiple points have same (<d-math>\alpha_{EI}</d-math>), we should prioritize to choose the option with lesser risk (higher <d-math>\alpha_{PI}</d-math>). And similarly, when the risks are the same (same <d-math>\alpha_{PI}</d-math>) for any two points, we would want to go with the point with greater reward (higher <d-math>\alpha_{EI}</d-math>).
@@ -636,7 +634,7 @@
 
     <h3 id="thompsonsampling">Thompson Sampling</h3>
 
-    <p>One more acquisition function that is quite common is Thompson Sampling <d-cite key="thompson"> </d-cite>. It has a low overhead of setting up therefore is quite useful in many cases. In the case of Thomson sampling, one only needs to sample from the model and is not required to find values for the tail probability, or the expected improvement. This property is perticularly useful when our base regressor doesn't provide an analytical equation which can be easily calculated.</p>
+    <p>One more acquisition function that is quite common is Thompson Sampling. It has a low overhead of setting up therefore quite useful sometimes.</p>
 
     <p>
       The idea is to sample functions within upper and lower probabilistic bounds of a regressor. In other words, we sample functions from the surrogate's posterior. Once we have sampled a function <d-math>m_t</d-math> for the <d-math>t^{th}
@@ -761,15 +759,7 @@
 
         <h3>Gaussian Process Upper Confidence Bound (GP-UCB)</h3>
 
-        <p class="review3">
-          Before talking about GP-UCB, let us quickly talk about <strong>regret</strong>. Imagine if the maximum gold was <d-math>a</d-math> units and our optimization instead samples a location containing <d-math>b < a</d-math> units, then our regret is
-              <d-math>a -
-              b</d-math>. If we accumulate the regret over <d-math>n</d-math> iterations, we get what is called <strong> cumulative regret. </strong> <br />
-
-          GP-UCB is an interesting acquisition function as it gives us theoretical bounds on the convergence rates, or in other words, bounds the cumulative regret. Its formulation is given by:
-        </p>
-
-        <p class="check">
+        <p>
           One another interesting acquisition function is the GP-UCB. It has the benefits of providing theoretical bounds on the convergence rates as well.<br>
           Its formulation is given by:
         </p>
@@ -781,12 +771,11 @@
         <d-math block>
           \tau_t = 2log \left( \frac{t^{d/2 + 2}\pi^{2}}{3\delta} \right)
         </d-math>
-        <p class="check">
+      <!-- TODO: UCB? am I correct to call it UCB? -->
+        <p>
           We can see how this formulation looks fairly similar to the UCB acquisition function that we previously described. The difference here compared to <em>UCB</em> is that the <d-math>\lambda</d-math> here is a function of the timestep <d-math>t
           </d-math>. This helps in some of the theoretical bounds for which we would like to refer the original paper on <em>GP-UCB</em>
           <d-cite key="gpucb"></d-cite>.
-
-          Shrinivasan et al. <d-cite key="gpucbBounds"></d-cite>
         </p>
     
       <!-- <figure>
@@ -850,12 +839,12 @@
       the
       single dimensional case can be easily ported to multi-variable functions.</p>
     -->
-      <h3 id="whyisthiseasier">Why is it beneficial to optimize the acquisition function?</h3>
+      <h3 id="whyisthiseasier">Why is it easier to optimize the acquisition function?</h3>
 
-      <p class="check">
+      <p>
         One valid question one might come up is that we have replaced the original optimization problem (optimizing the given black-box function) to another optimization problem (optimization of acquisition function). How is this any better than the last problem?
         
-        The main reason lies in the fact that evaluating the acquisition function is much cheaper. In contrast, the original black-box function is extremely costly to evaluate, by definition.
+        The main reason lies in the fact that evaluating the acquisition function is much cheaper. We know that the acquisition function is a function of the posterior of the surrogate. If we have a closed-form solution, it makes the calculation of the acquisition function extremely cheap. In contrast, the original black-box function was extremely costly to evaluate, by definition.
       </p>
 
 
@@ -917,7 +906,7 @@
       <p>Above we see a gif showing the work of the <em>Probability of Improvement</em> acquisition function in finding the best hyperparameters.</p>
 
       <figure>
-        <d-figure><img src="images/MAB_gifs/ei3d-0.01-mat.gif" /></d-figure>
+        <d-figure><img src="images/MAB_gifs/ei3d-0.0001-mat.gif" /></d-figure>
       </figure>
 
       <p>Above we see a gif showing the work of the <em>Expected Improvement</em> acquisition function in finding the best hyperparameters.</p>
@@ -1053,7 +1042,7 @@
         </d-code>
 
         <p>
-          Moving on, we have a minimizer function imported from <d-code language="python">scikit-optim</d-code> called <d-code language="python">gp-minimize</d-code>. One can change the acquisition function from a number of available options.
+          Moving on, we have a minimizer function imported from <d-code language="python">scikit-optim</d-code> called <d-code language="python">gp-minimize</d-code>. One can easily change the acquisition function from a number of available options.
           Below we have a code snippet showing the calling of the optimization function with the <em>Expected Improvement</em> acquisition function.
         </p>
         <p>
@@ -1084,7 +1073,7 @@
         </p>
 
         <p>
-          We can apply the BO for more dimensions (more hyperparameters), even if the dimensions which are categorical (as 'relu' vs 'sigmoid' above) can be incorporated into BO as it is done in scikit-optim.
+          We can easily apply the BO for more dimensions (more hyperparameters), even if the dimensions which are categorical (as 'relu' vs 'sigmoid' above) can easily be incorporated into BO.
         </p>
 
         <p>

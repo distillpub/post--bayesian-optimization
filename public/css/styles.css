@@ -59,7 +59,7 @@
 }
 
 /*span {
-  padding-bottom: 15px;
+	padding-bottom: 15px;
 }
 */
 
@@ -112,10 +112,6 @@
   margin: 0 auto;
 }
 
-#Teaser2 {
-  cursor:row-resize;
-}
-
 .l-screen {
   grid-column: screen;
   text-align: center;
@@ -132,7 +128,7 @@
 .label {
   fill: rgba(0,0,0,0.8);
   text-anchor: middle;
-  font-size: 20px;
+  font-size: 16px;
   font-family: -apple-system, BlinkMacSystemFont, 
   "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
   "Fira Sans", "Droid Sans", "Helvetica Neue",
@@ -157,7 +153,7 @@
 }
 
 .legendOrdinal, .legendOrdinal2 {
-  font-size: 18px;
+  font-size: 14px;
   opacity: .8;
   font-family: -apple-system, BlinkMacSystemFont, 
   "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
@@ -166,7 +162,7 @@
 }
 
 .xaxis, .yaxis {
-  font-size: 18px;
+  font-size: 14px;
   opacity: .8;
   font-family: -apple-system, BlinkMacSystemFont, 
   "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
@@ -192,7 +188,6 @@
 }
 
 .active, .collapsible:hover {
-  transition: max-height 0.2s ease-out;
   background-color: #acc2c2;
 }
 
@@ -201,15 +196,13 @@
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.2s ease-out;
-  /*background-color: #e1f2f2;*/
-  /*border-style: ridge;*/
-  border-color: #e1f2f2;
+  background-color: #e1f2f2;
 }
 
 /* Slides...... */
 
 * {box-sizing: border-box}
-body {font-family: "Helvetica Neue", sans-serif; margin:0}
+body {font-family: Verdana, sans-serif; margin:0}
 .mySlides {display: none}
 img {vertical-align: middle;}
 
@@ -299,62 +292,4 @@ img {vertical-align: middle;}
 /* On smaller screens, decrease text size */
 @media only screen and (max-width: 300px) {
   .prev, .next,.text {font-size: 11px}
-}
-
-/*Taken from https://www.w3schools.com/howto/howto_js_rangeslider.asp*/
-.slidecontainer {
-  width: 86%;
-  float: left;
-}
-
-.slider {
-  -webkit-appearance: none;
-  cursor:grabbing;
-  width: 100%;
-  height: 10px;
-  border-radius: 5px;
-  background: #d3d3d3;
-  outline: none;
-  opacity: 0.7;
-  -webkit-transition: .2s;
-  transition: opacity .2s;
-}
-
-.slider:hover {
-  opacity: 1;
-}
-
-.slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  border-radius: 8px;
-  width: 23px;
-  height: 23px;
-  border: 0;
-  background: black;
-  cursor: pointer;
-}
-
-button {
-  cursor:grabbing;
-  float: left;
-  width: 31px;
-  height: 31px;
-  border-radius: 7px;
-}
-
-.slider::-moz-range-thumb {
-  width: 23px;
-  height: 24px;
-  border: 0;
-  background: black;
-  cursor: pointer;
-}
-
-.check {
-  color: red;
-}
-
-.review3 {
-  color: purple;
 }
