@@ -489,7 +489,7 @@
     </p>
 
     <figure class="gif-slider">
-      <d-figure><img src="images/MAB_pngs/PI/0/0.png" /></d-figure>
+      <d-figure><img src="images/MAB_pngs/PI/0.01/0.png" /></d-figure>
     </figure>
     <p class="check">
       Looking at the graph above<d-footnote>In case of ties for the maximum acquisition value, we randomly break them.</d-footnote> we can see that we are not effectively exploring at value <d-math>\epsilon = 0</d-math>. We are stuck!
@@ -576,7 +576,7 @@
     </p>
 
     <figure class="gif-slider">
-      <d-figure><img src="images/MAB_pngs/EI/0/0.png" /></d-figure>
+      <d-figure><img src="images/MAB_pngs/EI/0.01/0.png" /></d-figure>
     </figure>
 
     <p>
@@ -656,8 +656,8 @@
         Combining the above two observations, the acquisition function would accordingly do explorations and exploitation.
       </p>
 
-      <figure>
-        <d-figure><img src="images/MAB_gifs/mab-gp-thomp.gif" /></d-figure>
+      <figure class="gif-slider">
+        <d-figure><img src="images/MAB_pngs/Thompson/0.01/0.png" /></d-figure>
       </figure>
 
       <h3>Random</h3>
@@ -670,8 +670,8 @@
         random search works.
       </p>
 
-      <figure>
-        <d-figure><img src="images/MAB_gifs/rand.gif" /></d-figure>
+      <figure class="gif-slider">
+        <d-figure><img src="images/MAB_pngs/Rand/0.png" /></d-figure>
       </figure>
 
       <h3 class="collapsible"> Other Acquisition Functions </h3>
@@ -816,7 +816,7 @@
         <d-figure><img src="images/MAB_gifs/comp.svg" /></d-figure>
       </figure>
 
-      <p>We see the <em>Random</em> method can find the maximum much before any of the other techniques (albeit the variance is high); this can be seen when we are faced with smaller spaces. But we will soon see that when we have larger search
+      <p class="check">We see the <em>Random</em> method can find the maximum much before any of the other techniques (albeit the variance is high); this can be seen when we are faced with smaller spaces. But we will soon see that when we have larger search
         spaces, a random
         method
         isn't
@@ -895,14 +895,14 @@
         </d-footnote>. The optimum values for &#60<d-math>C, \ \gamma</d-math>&#62 have been found via running grid search at a high granularity.
       </p>
 
-      <figure>
-        <d-figure><img src="images/MAB_gifs/pi3d-0.05-mat.gif" /></d-figure>
+      <figure class="gif-slider">
+        <d-figure><img src="images/MAB_pngs/PI3d/0.05/0.png" /></d-figure>
       </figure>
 
       <p>Above we see a gif showing the work of the <em>Probability of Improvement</em> acquisition function in finding the best hyperparameters.</p>
 
-      <figure>
-        <d-figure><img src="images/MAB_gifs/ei3d-0.01-mat.gif" /></d-figure>
+      <figure class="gif-slider">
+        <d-figure><img src="images/MAB_pngs/EI3d/0.01/0.png" /></d-figure>
       </figure>
 
       <p>Above we see a gif showing the work of the <em>Expected Improvement</em> acquisition function in finding the best hyperparameters.</p>
@@ -952,30 +952,30 @@
           We will be again using Gaussian Processes with Matern kernel to estimate and predict the accuracy function over the two hyperparameters.
         </p>
 
-        <figure>
-          <d-figure><img src="images/MAB_gifs/RFpi3d-0.05-mat.gif"></d-figure>
+        <figure class="gif-slider">
+          <d-figure><img src="images/MAB_pngs/RFPI3d/0.05/0.png"></d-figure>
         </figure>
 
         <p>
           Above we see a gif showing the work of the <em>Probability of Improvement</em> acquisition function in finding the best hyperparameters.
         </p>
 
-        <figure>
-          <d-figure><img src="images/MAB_gifs/RFei3d-0.0001-mat.gif"></d-figure>
+        <figure class="gif-slider">
+          <d-figure><img src="images/MAB_pngs/RFEI3d/0.05/0.png"></d-figure>
         </figure>
 
         <p>Above we see a gif showing the work of the <em>Expected Improvement</em> acquisition function in finding the best hyperparameters.</p>
 
-        <figure>
-          <d-figure><img src="images/MAB_gifs/RFgp3d-1-2-mat.gif"></d-figure>
+        <figure class="gif-slider">
+          <d-figure><img src="images/MAB_gifs/RFgp3d-1-2-mat.png"></d-figure>
         </figure>
 
         <p>
           Above we see a gif showing the work of the <em>Gaussian Processes Upper Confidence Bound</em> acquisition function in finding the best hyperparameters.
         </p>
 
-        <figure>
-          <d-figure><img src="images/MAB_gifs/RFrand3d.gif"></d-figure>
+        <figure class="gif-slider">
+          <d-figure><img src="images/MAB_gifs/RFrand3d.png"></d-figure>
         </figure>
 
         <p>Let us now use Random acquisition function.</p>
