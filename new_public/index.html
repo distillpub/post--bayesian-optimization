@@ -150,7 +150,7 @@
 
   <d-article style="overflow-x: unset;">
     <p>
-      We are increasingly getting used to machine learning algorithms with a large number of hyperparameters. For example, neural networks with hyperparameters like; the number of layers, the dropout rate, the learning rate, among others. Or random forests with hyperparameters such as the number of trees, and the maximum depth. How do we efficiently tune these hyperparameters to optimize our machine learning model? In this article, we will talk about Bayesian Optimization (BO) - which is an effective suite of techniques often used to efficiently tune the hyperparameters. Besides being used in tuning hyperparameters, BO is a general suite of techniques for optimizing any black-box function.
+      We are increasingly getting used to machine learning algorithms with a large number of hyperparameters and optimization parameters. For example, neural networks with hyperparameters like; the number of layers, the dropout rate, the learning rate, among others. Or random forests with hyperparameters such as the number of trees, and the maximum depth. How do we efficiently tune these hyperparameters to optimize our machine learning model? In this article, we will talk about Bayesian Optimization (BO) - which is an effective suite of techniques often used to efficiently tune the hyperparameters. Besides being used in tuning hyperparameters, BO is a general suite of techniques for optimizing any black-box function.
     </p>
 
     <p>
@@ -235,10 +235,9 @@
     <h4 id="priormodel">Prior Model</h4>
 
     <p class="review3">
-      The choice of prior used in a surrogate heavily depends on the initial belief about the properties of the black-box function. These properties include periodicity, smoothness, et. cetra. In our case, we can safely consider gold distribution to be usually smooth between points that are close. Given our surrogate is a GP, we can use kernels to set a prior over the functions that favor this property. <d-cite key="Rasmussen2004"></d-cite>. Our prior uses Matern 5/2 kernel. We chose Matern 5/2<d-footnote>
+      The choice of prior used in a surrogate heavily depends on the initial belief about the properties of the black-box function. These properties include periodicity, smoothness, et. Cetera. In our case, we can safely consider gold distribution to be usually smooth between points that are close. Given our surrogate is a GP, we can use kernels to set a prior over the functions that favor this property<d-cite key="Rasmussen2004"></d-cite>.  Our prior uses Matern 5/2 kernel. Our choice of Matern 5/2<d-footnote>
         See <a href="http://www.gaussianprocess.org/gpml/">Rasmussen and Williams 2004</a> and <a href="https://scikit-learn.org/stable/modules/generated/sklearn.gaussian_process.kernels.Matern.html">scikit-learn</a>, for details regarding the Matern kernel.
-      </d-footnote> due to its property of being doubly differentiable, in contrast to Matern 3/2 which is singly differentiable. What this essentially implies is that the prior of our GP would favor doubly differentiable functions, which we expect the gold distribution to follow.
-      The black line in the graph below denotes the knowledge we have about the gold content without drilling even at a single location.
+      </d-footnote> can be attributed to its property of favoring doubly differentiable functions. In contrast, Matern 3/2 favors singly differentiable functions. What this essentially implies is that the prior of our GP would favor doubly differentiable functions, which we assume the gold distribution to follow.
     </p>
 
     <figure>
@@ -494,7 +493,7 @@
     <p class="check">
       Looking at the graph above<d-footnote>In case of ties for the maximum acquisition value, we randomly break them.</d-footnote> we can see that we are not effectively exploring at value <d-math>\epsilon = 0</d-math>. We are stuck!
 
-      One interesting thing to noice is that the surrogate possess large uncertainity at <d-math>x \in [2, 6]</d-math> (can be identified by the grey translucent area).
+      One interesting thing to notice is that the surrogate possess large uncertainity at <d-math>x \in [2, 6]</d-math> (can be identified by the grey translucent area).
       This is because of the exploitation that happens in BO. Our aim in BO is is to get to the maximum value (though we could only get to a local maxima in this case), in contrast to estimation of <d-math>f(x)</d-math> in the case of active learning. Therefore, we see these points are not evaluated, using PI as our acquisition function with given hyperparameters!
     </p>
 
