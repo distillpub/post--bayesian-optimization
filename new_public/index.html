@@ -286,7 +286,7 @@
 
     <h2 id="bayesianoptimization">Bayesian Optimization</h2>
     <p>
-      <strong>Problem 2</strong> requires us to find the location where the gold content is maximum. Even though the problem setting may be similar, the objective is quite different than Problem 1. The present problem deals with finding the location where our black-box function reaches maximum. In contrast, the earlier problem focuses on getting a good estimate of the black-box function.
+      <strong>Problem 2</strong> requires us to find the location where the gold content is maximum. Even though the problem setting may be similar, the objective is quite different than Problem 1. The present problem deals with finding the location where our black-box function reaches the maximum. In contrast, the earlier problem focuses on getting a good estimate of the black-box function.
     </p>
 <!-- 
     <p>
@@ -360,10 +360,10 @@
     <h3>Acquisition Functions</h3>
 
     <p>
-      We just discussed that our original optimization problem <d-math>x^* = \text{argmax}_{x \in A} f(x)</d-math> is hard given the expensive nature of evaluating <d-math>f</d-math>. The key idea of BO is to transform this original difficult optimization into a sequence of easier inexpensive optimizations of functions called an acquisition function (<d-math>\alpha(x)</d-math>). Each of these sequence of easier inexpensive optimizations involves finding the next point to sample. Thus, we can interpret the acquisition function as commensurate with how desirable evaluating <d-math>f</d-math> at <d-math>x</d-math> is expected to be for the maximisation problem<d-footnote>Please find <a href="https://www.cse.wustl.edu/~garnett/cse515t/spring_2015/files/lecture_notes/12.pdf">these</a> slides from Washington University in St. Louis to know more.</d-footnote>.
+      We just discussed that our original optimization problem <d-math>x^* = \text{argmax}_{x \in A} f(x)</d-math> is hard given the expensive nature of evaluating <d-math>f</d-math>. The key idea of BO is to transform this original difficult optimization into a sequence of easier inexpensive optimizations of functions called an acquisition function (<d-math>\alpha(x)</d-math>). Each of these sequence of inexpensive optimizations involves finding the next point to sample. Thus, we can interpret the acquisition function as commensurate with how desirable evaluating <d-math>f</d-math> at <d-math>x</d-math> is expected to be for the maximisation problem<d-footnote>Please find <a href="https://www.cse.wustl.edu/~garnett/cse515t/spring_2015/files/lecture_notes/12.pdf">these</a> slides from Washington University in St. Louis to know more.</d-footnote>.
     </p>
     <p>
-      While we have just now discussed that our goal is to transform the original optimisation into a sequence of easier optimisation, where is the "Bayesian" in this optimisation, and how is the acquisition function related? Let us re-wind and go back to our surrogate model and build the link between all the things we have discussed thus far, by noting the steps of BO<d-footnote>Please find <a href="https://youtu.be/EnXxO3BAgYk">this</a> amazing video from Javier González at The Gaussian Process Summer School 2019.</d-footnote>
+      While we have just now discussed that our goal is to transform the original optimisation into a sequence of inexpensive optimization, where is the "Bayesian" in this optimisation, and how is the acquisition function related? Let us re-wind and go back to our surrogate model and build the link between all the things we have discussed thus far, by noting the steps of BO<d-footnote>Please find <a href="https://youtu.be/EnXxO3BAgYk">this</a> amazing video from Javier González at The Gaussian Process Summer School 2019.</d-footnote>
     </p>
     <p>
       <ol>
@@ -629,7 +629,9 @@
 
     <h3 id="thompsonsampling">Thompson Sampling</h3>
 
-    <p>One more acquisition function that is quite common is Thompson Sampling <d-cite key="thompson"> </d-cite>. It has a low overhead of setting up therefore is quite useful in many cases. In the case of Thomson sampling, one only needs to sample from the model and is not required to find values for the tail probability, or the expected improvement. This property is perticularly useful when our base regressor doesn't provide an analytical equation which can be easily calculated.</p>
+    <p>
+      One more acquisition function that is quite common is Thompson Sampling <d-cite key="thompson"> </d-cite>. It has a low overhead of setting up, therefore, it is quite useful in many cases. In the case of Thompson sampling, one only needs to sample from the model and is not required to find values for the tail probability, or the expected improvement. This property is particularly useful when our base regressor doesn't provide an analytical equation that can be easily calculated.
+    </p>
 
     <p>
       The idea is to sample functions within upper and lower probabilistic bounds of a regressor. In other words, we sample functions from the surrogate's posterior. Once we have sampled a function <d-math>m_t</d-math> for the <d-math>t^{th}
@@ -681,7 +683,7 @@
 
         <h3> Upper Confidence Bound (UCB) </h3>
         <p>
-          One such trivial acquisition function that combines the exploration/exploitation tradeoff, is a linear combination of the mean and uncertainty of our surrogate model.
+          One such trivial acquisition function that combines the exploration/exploitation tradeoff, is a linear combination of the mean and uncertainty of our surrogate model. The model mean signifies exploitation (of our model's knowledge) and model uncertainty signifies exploration (due to our model's lack of observations).
           <d-math block>\alpha(x) = \mu(x) + \lambda \times \sigma(x)</d-math>
         </p>
 
@@ -746,7 +748,7 @@
 
         <h3>Probability of Improvement + <d-math>\lambda \ \times</d-math> Expected Improvement (EI-PI)</h3>
 
-        <p>
+        <p class="check">
           One such combination can be a linear combination of PI and EI.
 
           We know PI focuses on Probability of Improvement whereas EI focuses on the Expected Improvement. Such a combination could help in having a tradeoff between the two based on the value of <d-math>\lambda</d-math>, which can be a function of the timestep itself.
@@ -836,10 +838,8 @@
     -->
       <h3 id="whyisthiseasier">Why is it beneficial to optimize the acquisition function?</h3>
 
-      <p class="check">
-        One valid question one might come up is that we have replaced the original optimization problem (optimizing the given black-box function) to another optimization problem (optimization of acquisition function). How is this any better than the last problem?
-        
-        The main reason lies in the fact that evaluating the acquisition function is much cheaper. In contrast, the original black-box function is extremely costly to evaluate, by definition.
+      <p>
+        One valid question one might come up with is that we have replaced the original optimization problem (optimizing the given black-box function) to another optimization problem (optimization of acquisition function). How is this any better than the last problem? The main reason lies in the fact that evaluating the acquisition function is much cheaper. In contrast, the original black-box function is extremely costly to evaluate, by definition.
       </p>
 
 
@@ -960,13 +960,13 @@
         </p>
 
         <figure class="gif-slider">
-          <d-figure><img src="images/MAB_pngs/RFEI3d/0.05/0.png"></d-figure>
+          <d-figure><img src="images/MAB_pngs/RFEI3d/0.0001/0.png"></d-figure>
         </figure>
 
         <p>Above we see a gif showing the work of the <em>Expected Improvement</em> acquisition function in finding the best hyperparameters.</p>
 
         <figure class="gif-slider">
-          <d-figure><img src="images/MAB_gifs/RFgp3d-1-2-mat.png"></d-figure>
+          <d-figure><img src="images/MAB_pngs/RFGP_UCB3d/1-2/0.png"></d-figure>
         </figure>
 
         <p>
@@ -974,7 +974,7 @@
         </p>
 
         <figure class="gif-slider">
-          <d-figure><img src="images/MAB_gifs/RFrand3d.png"></d-figure>
+          <d-figure><img src="images/MAB_pngs/RFRand3d/1-2/0.png"></d-figure>
         </figure>
 
         <p>Let us now use Random acquisition function.</p>
@@ -983,7 +983,7 @@
           <d-figure><img src="images/MAB_gifs/RFcomp3d.svg"></d-figure>
         </figure>
 
-        <p>
+        <p class="check">
           We see that the optimization is in two dimensions. Therefore it is expected that random would perform much worse than in the case of a single dimension.
         </p>
 

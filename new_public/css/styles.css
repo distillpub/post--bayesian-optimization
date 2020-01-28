@@ -108,7 +108,7 @@
 
 .Teaser1, .Teaser2 {
   float: auto;
-  display: inline-flex;
+  display: inline;
   margin: 0 auto;
 }
 
@@ -349,6 +349,10 @@ button {
   border: 0;
   background: black;
   cursor: pointer;
+}
+
+.Clegend {
+  overflow: visible;
 }
 
 .check {
