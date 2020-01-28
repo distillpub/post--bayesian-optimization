@@ -89,7 +89,7 @@ function returnPoints(data, curr_eps) {
 // get the data
 d3.json("data/pi_cdf.json", function(data) {
   console.log('Json read!')
-  console.log(data);
+  // console.log(data);
 
   var curr_eps = "0";
   var curr_data = returnCurrAlpha(data, curr_eps);
