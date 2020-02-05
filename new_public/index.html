@@ -54,96 +54,6 @@
 
   <d-title style="padding-bottom: 0">
     <p>Breaking Bayesian Optimization into small, sizeable chunks.</p>
-    <div class="l-screen shaded-figure" style="border-bottom: none">
-      <div class="slideshow-container">
-
-        <div class="mySlides fade">
-          <div class="numbertext">1 / 13</div>
-          <img src="images/slides/Slide1.jpg" style="width:100%">
-        </div>
-        
-        <div class="mySlides fade">
-          <div class="numbertext">2 / 13</div>
-          <img src="images/slides/Slide2.jpg" style="width:100%">
-        </div>
-        
-        <div class="mySlides fade">
-          <div class="numbertext">3 / 13</div>
-          <img src="images/slides/Slide3.jpg" style="width:100%">
-        </div>
-        
-        <div class="mySlides fade">
-          <div class="numbertext">4 / 13</div>
-          <img src="images/slides/Slide4.jpg" style="width:100%">
-        </div>
-                
-        <div class="mySlides fade">
-          <div class="numbertext">5 / 13</div>
-          <img src="images/slides/Slide5.jpg" style="width:100%">
-        </div>
-              
-        <div class="mySlides fade">
-          <div class="numbertext">6 / 13</div>
-          <img src="images/slides/Slide6.jpg" style="width:100%">
-        </div>
-      
-        <div class="mySlides fade">
-          <div class="numbertext">7 / 13</div>
-          <img src="images/slides/Slide7.jpg" style="width:100%">
-        </div>
-
-        <div class="mySlides fade">
-          <div class="numbertext">8 / 13</div>
-          <img src="images/slides/Slide8.jpg" style="width:100%">
-        </div>
-
-        <div class="mySlides fade">
-          <div class="numbertext">9 / 13</div>
-          <img src="images/slides/Slide9.jpg" style="width:100%">
-        </div>
-
-        <div class="mySlides fade">
-          <div class="numbertext">10 / 13</div>
-          <img src="images/slides/Slide10.jpg" style="width:100%">
-        </div>
-
-        <div class="mySlides fade">
-          <div class="numbertext">11 / 13</div>
-          <img src="images/slides/Slide11.jpg" style="width:100%">
-        </div>
-
-        <div class="mySlides fade">
-          <div class="numbertext">12 / 13</div>
-          <img src="images/slides/Slide12.jpg" style="width:100%">
-        </div>
-
-        <div class="mySlides fade">
-          <div class="numbertext">13 / 13</div>
-          <img src="images/slides/Slide13.jpg" style="width:100%">
-        </div>
-        
-        <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
-        <a class="next" onclick="plusSlides(1)">&#10095;</a>
-        
-        </div>
-        <br>
-        
-        <div style="text-align:center">
-          <span class="dot" onclick="currentSlide(1)"></span> 
-          <span class="dot" onclick="currentSlide(2)"></span> 
-          <span class="dot" onclick="currentSlide(3)"></span> 
-          <span class="dot" onclick="currentSlide(4)"></span> 
-          <span class="dot" onclick="currentSlide(5)"></span> 
-          <span class="dot" onclick="currentSlide(6)"></span> 
-          <span class="dot" onclick="currentSlide(7)"></span> 
-          <span class="dot" onclick="currentSlide(8)"></span> 
-          <span class="dot" onclick="currentSlide(9)"></span> 
-          <span class="dot" onclick="currentSlide(10)"></span> 
-          <span class="dot" onclick="currentSlide(11)"></span> 
-          <span class="dot" onclick="currentSlide(12)"></span> 
-          <span class="dot" onclick="currentSlide(13)"></span> 
-      </div>
-    </div>
   </d-title>
 
   <d-byline></d-byline>
@@ -1095,8 +1005,99 @@
         <h1 id="conclusions">Conclusion and Summary</h1>
 
         <p>
-          In this article, we looked at Bayesian Optimization, which involves optimizing a black-box function. Our primary focus is on the cases when the function evaluations are expensive, making grid or exhaustive search impractical. We looked at the key components of BO. First, we looked at the notion of using a surrogate function (with a prior over the space of objective functions) to model our black-box function. Next, we looked at the "Bayes" in BO - the function evaluations are used as data to obtain the surrogate posterior. We look at acquisition functions, which are functions of the surrogate posterior and are optimized sequentially. This new sequential optimization is in-expensive and thus of utility of us. We also looked at a few acquisition functions and showed how these different functions balance the exploration and exploitation. Finally, we looked at some practical examples of BO for optimizing hyper-parameters for machine learning models. We believe, we have presented an interesting and effective suite of black-box optimization techniques. We now hope that we have whetted the reader's appetite!
+          In this article, we looked at Bayesian Optimization, which involves optimizing a black-box function. Our primary focus is on the cases when the function evaluations are expensive, making grid or exhaustive search impractical. We looked at the key components of BO. First, we looked at the notion of using a surrogate function (with a prior over the space of objective functions) to model our black-box function. Next, we looked at the "Bayes" in BO - the function evaluations are used as data to obtain the surrogate posterior. We look at acquisition functions, which are functions of the surrogate posterior and are optimized sequentially. This new sequential optimization is in-expensive and thus of utility of us. We also looked at a few acquisition functions and showed how these different functions balance the exploration and exploitation. Finally, we looked at some practical examples of BO for optimizing hyper-parameters for machine learning models. We believe, we have presented an interesting and effective suite of black-box optimization techniques. We now hope that we have whetted the reader's appetite! We have further included a primer below summarizing BO in a few slides for a quick recap.
         </p>
+
+    <div class="l-screen shaded-figure" style="border-bottom: none">
+      <div class="slideshow-container">
+
+        <div class="mySlides fade">
+          <div class="numbertext">1 / 13</div>
+          <img src="images/slides/Slide1.jpg" style="width:100%">
+        </div>
+        
+        <div class="mySlides fade">
+          <div class="numbertext">2 / 13</div>
+          <img src="images/slides/Slide2.jpg" style="width:100%">
+        </div>
+        
+        <div class="mySlides fade">
+          <div class="numbertext">3 / 13</div>
+          <img src="images/slides/Slide3.jpg" style="width:100%">
+        </div>
+        
+        <div class="mySlides fade">
+          <div class="numbertext">4 / 13</div>
+          <img src="images/slides/Slide4.jpg" style="width:100%">
+        </div>
+                
+        <div class="mySlides fade">
+          <div class="numbertext">5 / 13</div>
+          <img src="images/slides/Slide5.jpg" style="width:100%">
+        </div>
+              
+        <div class="mySlides fade">
+          <div class="numbertext">6 / 13</div>
+          <img src="images/slides/Slide6.jpg" style="width:100%">
+        </div>
+      
+        <div class="mySlides fade">
+          <div class="numbertext">7 / 13</div>
+          <img src="images/slides/Slide7.jpg" style="width:100%">
+        </div>
+
+        <div class="mySlides fade">
+          <div class="numbertext">8 / 13</div>
+          <img src="images/slides/Slide8.jpg" style="width:100%">
+        </div>
+
+        <div class="mySlides fade">
+          <div class="numbertext">9 / 13</div>
+          <img src="images/slides/Slide9.jpg" style="width:100%">
+        </div>
+
+        <div class="mySlides fade">
+          <div class="numbertext">10 / 13</div>
+          <img src="images/slides/Slide10.jpg" style="width:100%">
+        </div>
+
+        <div class="mySlides fade">
+          <div class="numbertext">11 / 13</div>
+          <img src="images/slides/Slide11.jpg" style="width:100%">
+        </div>
+
+        <div class="mySlides fade">
+          <div class="numbertext">12 / 13</div>
+          <img src="images/slides/Slide12.jpg" style="width:100%">
+        </div>
+
+        <div class="mySlides fade">
+          <div class="numbertext">13 / 13</div>
+          <img src="images/slides/Slide13.jpg" style="width:100%">
+        </div>
+        
+        <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+        <a class="next" onclick="plusSlides(1)">&#10095;</a>
+        
+        </div>
+        <br>
+        
+        <div style="text-align:center">
+          <span class="dot" onclick="currentSlide(1)"></span> 
+          <span class="dot" onclick="currentSlide(2)"></span> 
+          <span class="dot" onclick="currentSlide(3)"></span> 
+          <span class="dot" onclick="currentSlide(4)"></span> 
+          <span class="dot" onclick="currentSlide(5)"></span> 
+          <span class="dot" onclick="currentSlide(6)"></span> 
+          <span class="dot" onclick="currentSlide(7)"></span> 
+          <span class="dot" onclick="currentSlide(8)"></span> 
+          <span class="dot" onclick="currentSlide(9)"></span> 
+          <span class="dot" onclick="currentSlide(10)"></span> 
+          <span class="dot" onclick="currentSlide(11)"></span> 
+          <span class="dot" onclick="currentSlide(12)"></span> 
+          <span class="dot" onclick="currentSlide(13)"></span> 
+      </div>
+    </div>
 
         <h2 id="embracebayesianoptimization">Embrace Bayesian Optimization</h2>
 
