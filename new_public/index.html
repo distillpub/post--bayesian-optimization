@@ -159,7 +159,7 @@
 
     <h1>Mining Gold!</h1>
     <p class="review3">
-      Let us start the discussion with the example of mining for gold. We want to mine for gold in a new, unknown land. For now, let us make a simplifying assumption, the gold content lies in a one-dimensional space, i.e., we are talking gold distribution only about a line. Our aim is to find the location along this line where we would get the maximum gold. Now, at the start of the activity, we have no idea about the amount of gold at different locations. The only way we can get the information about the amount of gold is by drilling at different locations. This drilling is costly and involves expensive sensors to be used. We, therefore, want to <strong>minimize the number of drillings required</strong> while still being able to <strong>find the location of maximum gold quickly</strong>.<d-footnote>Interestingly, our example is similar to one of the first use of Gaussian Process (GP) (also called kriging)<d-cite key="goldKridge"></d-cite>, where Prof. Krige modelled gold concentrations using GPs.</d-footnote>
+      Let us start the discussion with the example of mining for gold. Our goal is to mine for gold in a new, unknown land. Our example below is heavily inspired by the historical fact that one of the first uses of Gaussian Processes (GPs) were used to model ore density in South Africa. Prof. Danie Krige used GPs at the time called “kriging” to model the spatial density of ore deposits. For now, let us make a simplifying assumption, the gold content lies in a one-dimensional space, i.e., we are talking about gold distribution only about a line. Our aim is to find the location along this line where we would get the maximum gold. Now, at the start of the activity, we have no idea about the amount of gold at different locations. The only way we can get the information about the amount of gold is by drilling at different locations. This drilling is costly and involves expensive sensors to be used. We, therefore, want to <strong>minimize the number of drillings required</strong> while still being able to <strong>find the location of maximum gold quickly</strong>.<d-footnote>Interestingly, our example is similar to one of the first use of Gaussian Process (GP) (also called kriging)<d-cite key="goldKridge"></d-cite>, where Prof. Krige modelled gold concentrations using GPs.</d-footnote>
     </p>
 
     <p>
@@ -207,7 +207,7 @@
     </p>
 
     <h3>Bayesian Update</h3>
-    <p class='check'>
+    <p>
       <!-- The updatation of the surrogate model is the "Bayes" in BO.  -->
       Every evaluation (drilling to get the gold estimate) of <d-math>f(x)</d-math> gives the surrogate model more data to learn from. The posterior for the surrogate is obtained using the Bayes Rule with this new data at every iteration. At the end of an iteration the posterior becomes the prior, for the next cycle.
     </p>
@@ -218,9 +218,9 @@
 
     <h3>Gaussian Processes</h3>
 
-    <p class="check">
+    <p class='check'>
       One might want to look at this excellent distillpub article<d-cite key="görtler2019a"></d-cite> on Gaussian Processes<d-cite key="Rasmussen2004"></d-cite>.
-      We will be using Gaussian Process regression to model the gold distribution along the one-dimensional line. By using GP, we assume that the gold distribution of nearby points is similar (smoothness). Such an assumption is usually valid. 
+      We use Gaussian Process regression to model the gold distribution along the one-dimensional line.
     </p>
 
     <p>
@@ -237,7 +237,8 @@
     <p>
       The choice of prior used in a surrogate heavily depends on the initial belief about the properties of the black-box function. These properties include periodicity, smoothness, et. Cetera. In our case, we can safely consider gold distribution to be usually smooth between points that are close. Given our surrogate is a GP, we can use kernels to set a prior over the functions that favor this property<d-cite key="Rasmussen2004"></d-cite>.  Our prior uses Matern 5/2 kernel. Our choice of Matern 5/2<d-footnote>
         See <a href="http://www.gaussianprocess.org/gpml/">Rasmussen and Williams 2004</a> and <a href="https://scikit-learn.org/stable/modules/generated/sklearn.gaussian_process.kernels.Matern.html">scikit-learn</a>, for details regarding the Matern kernel.
-      </d-footnote> can be attributed to its property of favoring doubly differentiable functions. In contrast, Matern 3/2 favors singly differentiable functions. What this essentially implies is that the prior of our GP would favor doubly differentiable functions, which we assume the gold distribution to follow.
+      </d-footnote> can be attributed to its property of favoring doubly differentiable functions. In contrast, Matern 3/2 favors singly differentiable functions. What this essentially implies is that the prior of our GP would favor doubly differentiable functions, which we assume the gold distribution to follow. The black line in the graph below denotes the knowledge we have about the gold content without drilling even at a single location.
+
     </p>
 
     <figure>
@@ -818,13 +819,9 @@
         <d-figure><img src="images/MAB_gifs/comp.svg" /></d-figure>
       </figure>
 
-      <p class="check">We see the <em>Random</em> method can find the maximum much before any of the other techniques (albeit the variance is high); this can be seen when we are faced with smaller spaces. But we will soon see that when we have larger search
-        spaces, a random
-        method
-        isn't
-        that efficient. This is because the probability of finding the optimum <d-math>x</d-math> in our new <d-math>f</d-math> real-valued multivariable function would drop exponentially with increasing dimensions due to what we call,
-        the
-        curse of dimensionality.</p>
+      <p class="check">
+        We see that the <em>Random</em> method struggles to find a good solution, whereas the other methods more efficient in the number of iterations to find a good solution.
+      </p>
 
       
       <!--
@@ -931,7 +928,9 @@
         <d-figure><img src="images/MAB_gifs/comp3d.svg" /></d-figure>
       </figure>
 
-      <p class="check">We see GP-UCB performed the best in this case. Random that was performing really nice in the last single dimensional example seems to slightly worse in this case. This can be attributed to the increase in the number of dimensions. Once there are too many dimensions, it's much difficult to get to the optimal value by using random search.</p>
+    <p class="check">
+        We see all our acquisition functions other than the random were able to reach the best possible solution. We see the random method seemed to perform much better initially, but it couldn't beat the BO framework at the end of the optimization. The initial bad performance of BO can be attributed to the exploration that happens.
+    </p>
 
       <h3 class="collapsible">Other Examples</h3>
       <div class="content">
@@ -985,7 +984,7 @@
         </figure>
 
         <p class="check">
-          We see that the optimization is in two dimensions. Therefore it is expected that random would perform much worse than in the case of a single dimension.
+          Looking at the ground truth, we see the black-box function we are trying to optimize isn't too smooth, and therefore we see that our optimization strategies seem to struggle compared to the last example. This shows that the effectiveness of BO highly depends on the surrogate's efficiency to model the actual black-box function.
         </p>
 
         <h3>Example 3 -- Neural Networks</h3>
