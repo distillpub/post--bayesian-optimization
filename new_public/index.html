@@ -762,7 +762,7 @@
       <d-math block>
         \hat{\beta}^{ridge} = argmin_{\beta \ \in \ \mathbb{R}^p} \sum\limits_{i=1}^{n} \left(y_i - x_i^T\beta \right)^2 + \lambda \sum\limits_{i=1}^{p} \beta^2_j
       </d-math>
-      <p>
+      <p class="check">
         In Ridge Regression, we have the usual parameter, <d-math>\beta</d-math>: the weight matrix which is learned from the data. We further have a hyperparameter we need to set to get regularization effect, the regularization coefficient <d-math>\lambda \geq 0</d-math>. <br />
         In the case of using a Gradient Descent optimization technique  to optimize the above expression, we further introduce another hyperparameter, the learning rate <d-math>\alpha</d-math>.
       </p>
