@@ -60,7 +60,7 @@
 
   <d-article style="overflow-x: unset;">
     <p>
-      We are increasingly getting used to machine learning algorithms with a large number of hyperparameters along with numerous optimization parameters. For example, neural networks with hyperparameters like; the number of layers or optimization parameters like; the learning rate, the dropout rate, among others. Or random forests with hyperparameters such as the number of trees, and the maximum depth. How do we efficiently tune these to optimize our machine learning model? In this article, we will talk about Bayesian Optimization (BO) - which is an effective suite of techniques often used to efficiently tune the hyperparameters, optimization parameters, and other model parameters. Besides being used in the preceding scenarios, BO is a general suite of techniques for optimizing any black-box function.
+      We are increasingly getting used to machine learning algorithms with a large number of hyperparameters along with numerous optimization parameters. For example, neural networks with hyperparameters like the number of layers or optimization parameters like the learning rate, the dropout rate, among others. Or random forests with hyperparameters such as the number of trees, and the maximum depth of an individual tree. How do we efficiently tune these to optimize our machine learning model? In this article, we will talk about Bayesian Optimization (BO) - which is an effective suite of techniques often used to efficiently tune the hyperparameters, optimization parameters, and other model parameters. Besides being used in the preceding scenarios, BO is a general suite of techniques for optimizing any black-box function.
     </p>
 
     <p>
@@ -69,7 +69,10 @@
 
     <h1>Mining Gold!</h1>
     <p class="review3">
-      Let us start the discussion with the example of mining for gold. Our goal is to mine for gold in a new, unknown land. Our example below is heavily inspired by the historical fact that one of the first uses of Gaussian Processes (GPs) were used to model ore density in South Africa. Prof. Danie Krige used GPs at the time called “kriging” to model the spatial density of ore deposits. For now, let us make a simplifying assumption, the gold content lies in a one-dimensional space, i.e., we are talking about gold distribution only about a line. Our aim is to find the location along this line where we would get the maximum gold. Now, at the start of the activity, we have no idea about the amount of gold at different locations. The only way we can get the information about the amount of gold is by drilling at different locations. This drilling is costly and involves expensive sensors to be used. We, therefore, want to <strong>minimize the number of drillings required</strong> while still being able to <strong>find the location of maximum gold quickly</strong>.<d-footnote>Interestingly, our example is similar to one of the first use of Gaussian Process (GP) (also called kriging)<d-cite key="goldKridge"></d-cite>, where Prof. Krige modelled gold concentrations using GPs.</d-footnote>
+      Let us start the discussion with the example of gold mining. Our goal is to mine for gold in a new, unknown land. Our example below is heavily inspired by the historical fact that one of the first uses of Gaussian Processes (GPs) was to model ore density in South Africa. Prof. Danie Krige used GPs at the time called “Kriging” to model the spatial density of ore deposits. For now, let us make a simplifying assumption, the gold content lies in a one-dimensional space, i.e., we are talking about gold distribution only about a line. Our aim is to find the location along this line where we would get the maximum gold in a few number of drilling (as drilling is expensive).
+    </p>
+    <p>
+      Now, at the start of the activity, we have no idea about the amount of gold at different locations. The only way we can get the information about the amount of gold is by drilling at different locations. This drilling is costly and involves expensive sensors to be used. We, therefore, want to <strong>minimize the number of drillings required</strong> while still being able to <strong>find the location of maximum gold quickly</strong>.<d-footnote>Interestingly, our example is similar to one of the first use of Gaussian Process (GP) (also called kriging)<d-cite key="goldKridge"></d-cite>, where Prof. Krige modelled gold concentrations using GPs.</d-footnote>
     </p>
 
     <p>
@@ -145,9 +148,9 @@
     <h4 id="priormodel">Prior Model</h4>
 
     <p>
-      The choice of prior used in a surrogate heavily depends on the initial belief about the properties of the black-box function. These properties include periodicity, smoothness, et. Cetera. In our case, we can safely consider gold distribution to be usually smooth between points that are close. Given our surrogate is a GP, we can use kernels to set a prior over the functions that favor this property<d-cite key="Rasmussen2004"></d-cite>.  Our prior uses Matern 5/2 kernel. Our choice of Matern 5/2<d-footnote>
+      The choice of prior heavily depends on the initial belief about the properties of the black-box function. These properties include periodicity, smoothness, etc. In our case, we consider gold distribution to be smooth, i.e. two points close in space will have similar gold content. Given our surrogate is a GP, we can use kernels to set a prior over the functions that fa, i.e. two points close in space will have similar gold content.vor this property<d-cite key="Rasmussen2004"></d-cite>.  Our prior uses the Matern 5/2 kernel. Our choice of Matern 5/2 kernel<d-footnote>
         See <a href="http://www.gaussianprocess.org/gpml/">Rasmussen and Williams 2004</a> and <a href="https://scikit-learn.org/stable/modules/generated/sklearn.gaussian_process.kernels.Matern.html">scikit-learn</a>, for details regarding the Matern kernel.
-      </d-footnote> can be attributed to its property of favoring doubly differentiable functions. In contrast, Matern 3/2 favors singly differentiable functions. What this essentially implies is that the prior of our GP would favor doubly differentiable functions, which we assume the gold distribution to follow. The black line in the graph below denotes the knowledge we have about the gold content without drilling even at a single location.
+      </d-footnote> can be attributed to its property of favoring doubly differentiable functions. <d-footnote>In contrast, Matern 3/2 favors singly differentiable functions. What this essentially implies is that the prior of our GP would favor doubly differentiable functions, which we assume the gold distribution to follow.</d-footnote> The black line in the graph below denotes the knowledge we have about the gold content without drilling even at a single location.
 
     </p>
 
@@ -683,8 +686,8 @@
           Where <d-math>t</d-math> is the timestep.
         </p>
 
-        <p class="check">
-          Srinivas et. al.<d-cite key="gpucbBounds"></d-cite> developed a schedule for <d-math>\beta</d-math> that they theoretically demonstrated minimizes cumulative regret.
+        <p>
+          Srinivas et. al.<d-cite key="gpucbBounds"></d-cite> developed a schedule for <d-math>\beta</d-math> that they theoretically demonstrate to minimize cumulative regret.
         </p>
 
       <!-- <figure>
@@ -729,7 +732,7 @@
         <d-figure><img src="images/MAB_gifs/comp.svg" /></d-figure>
       </figure>
 
-      <p class="check">
+      <p>
         We see that the <em>Random</em> method struggles to find a good solution, whereas the other methods more efficient in the number of iterations to find a good solution.
       </p>
 
@@ -762,9 +765,9 @@
       <d-math block>
         \hat{\beta}^{ridge} = argmin_{\beta \ \in \ \mathbb{R}^p} \sum\limits_{i=1}^{n} \left(y_i - x_i^T\beta \right)^2 + \lambda \sum\limits_{i=1}^{p} \beta^2_j
       </d-math>
-      <p class="check">
+      <p>
         In Ridge Regression, we have the usual parameter, <d-math>\beta</d-math>: the weight matrix which is learned from the data. We further have a hyperparameter we need to set to get regularization effect, the regularization coefficient <d-math>\lambda \geq 0</d-math>. <br />
-        In the case of using a Gradient Descent optimization technique  to optimize the above expression, we further introduce another hyperparameter, the learning rate <d-math>\alpha</d-math>.
+        In the case of using a Gradient Descent optimization technique  to optimize the above expression, we further introduce another optimization parameter, the learning rate <d-math>\alpha</d-math>.
       </p>
 
       <p>Now as we are clear on the difference between hyperparameters and parameters we would like to introduce one of the most common use case of Bayesian Optimization; <em>Hyperparameter Tuning</em>: finding the best performing
@@ -838,8 +841,8 @@
         <d-figure><img src="images/MAB_gifs/comp3d.svg" /></d-figure>
       </figure>
 
-    <p class="check">
-        We see all our acquisition functions other than the random were able to reach the best possible solution. We see the random method seemed to perform much better initially, but it couldn't beat the BO framework at the end of the optimization. The initial bad performance of BO can be attributed to the exploration that happens.
+    <p>
+        We see all our acquisition functions other than the random were able to reach the best possible solution. We see the random method seemed to perform much better initially, but it couldn't beat the BO framework at the end of the optimization. The initial subpar performance of BO is attributed to the initial exploration.
     </p>
 
       <h3 class="collapsible">Other Examples</h3>
