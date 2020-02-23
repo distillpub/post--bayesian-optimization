@@ -1,4 +1,39 @@
 // https://www.d3-graph-gallery.com/graph/density_slider.html
+
+// Taken from https://vizhub.com/curran/92c34f62c0f948e89e87d28907c08715?edit=files
+
+const colorLegend = (selection, props) => {
+  const {
+    colorScale,
+    circleRadius,
+    spacing,
+    textOffset
+  } = props;
+
+  const groups = selection.selectAll('g')
+    .data(colorScale.domain());
+  const groupsEnter = groups
+    .enter().append('g')
+      .attr('class', 'tick');
+  groupsEnter
+    .merge(groups)
+      .attr('transform', (d, i) =>
+        `translate(0, ${i * spacing})`);
+  groups.exit().remove();
+
+  groupsEnter.append('circle')
+    .merge(groups.select('circle'))
+      .attr('r', circleRadius)
+      .attr('fill', colorScale);
+
+  groupsEnter.append('text')
+    .merge(groups.select('text'))
+      .text(d => d)
+      .attr('dy', '0.32em')
+      .attr('x', textOffset);
+}
+
+
 const duration = 100;
 
 function returnCurrAlpha(data, curr_eps) {
@@ -54,7 +89,7 @@ function returnPoints(data, curr_eps) {
 // get the data
 d3.json("data/pi_cdf.json", function(data) {
   console.log('Json read!')
-  console.log(data);
+  // console.log(data);
 
   var curr_eps = "0";
   var curr_data = returnCurrAlpha(data, curr_eps);
@@ -72,32 +107,47 @@ var svg = d3.select("#Teaser1")
   .attr("height", height + margin.top + margin.bottom)
   .append("g")
   .attr("transform",
-        "translate(" + margin.left + "," + margin.top + ")");
+        "translate(" + (margin.left + 5) + "," + margin.top + ")");
 
-var ordinal = d3.scaleOrdinal()
-  .domain(["⠀   Optimal"])
-  .range([ "purple"]);
-var marginl = {top: 0, right: 0, bottom: 0, left: 40},
-  widthl = 300 - marginl.left - marginl.right,
-  heightl = 300 - marginl.top - marginl.bottom;
-var svg1l = d3.select("#TeaserL1")
-  .append("svg")
-  .attr("width", widthl + marginl.left + marginl.right)
-  .attr("height", heightl + marginl.top + marginl.bottom)
-  .append("g")
-  .attr("transform",
-        "translate(" + marginl.left + "," + marginl.top + ")");
-  svg1l.append("g")
-  .attr("class", "legendOrdinal")
-  .attr("transform", "translate(20, 80)");
-  var legendOrdinal = d3.legendColor()
-  .labelWrap(30)
-  .shape("path", d3.symbol().type(d3.symbolCircle).size(50)())
-  .shapePadding(10)
-  .cellFilter(function(d){ return d.label !== "e" })
-  .scale(ordinal);
-  svg1l.select(".legendOrdinal")
-  .call(legendOrdinal);
+// Legend Stuff
+  // //////////////////////////////////////////
+  var colorScale = d3.scaleOrdinal()
+    .domain(["Optimal"])
+    .range(["purple"]);
+
+  var div1l = d3.select("#TeaserL1");
+  div1l.append('svg')
+    .attr('class', 'Clegend')
+    .attr('transform', `translate(20,0)`)
+    .attr('width', '150')
+    .attr('height', height)
+    .append('g')
+    .call(colorLegend, {
+      colorScale,
+      circleRadius: 8,
+      spacing: 80,
+      textOffset: 20
+    });
+// var marginl = {top: 0, right: 0, bottom: 0, left: 40},
+//   widthl = 300 - marginl.left - marginl.right,
+//   heightl = 300 - marginl.top - marginl.bottom;
+//   .append("svg")
+//   .attr("width", widthl + marginl.left + marginl.right)
+//   .attr("height", heightl + marginl.top + marginl.bottom)
+//   .append("g")
+//   .attr("transform",
+//         "translate(" + marginl.left + "," + marginl.top + ")");
+  // svg1l.append("g")
+  // .attr("class", "legendOrdinal")
+  // .attr("transform", "translate(20, 80)");
+  // var legendOrdinal = d3.legendColor()
+  // .labelWrap(30)
+  // .shape("path", d3.symbol().type(d3.symbolCircle).size(50)())
+  // .shapePadding(10)
+  // .cellFilter(function(d){ return d.label !== "e" })
+  // .scale(ordinal);
+  // svg1l.select(".legendOrdinal")
+  // .call(legendOrdinal);
 
 // add the x Axis
 var x = d3.scaleLinear()
@@ -118,8 +168,8 @@ var y = d3.scaleLinear()
           .range([height, 0]);
 var yaxis = svg.append("g")
   .attr("class", "yaxis")
-  .call(d3.axisRight(y)
-    .tickFormat(d3.format(".1e")));
+  .call(d3.axisLeft(y)
+    .tickFormat(d3.format("1.1f")));
 // Textual Content
 svg.append("text")
   .attr("id", "plot1title")
@@ -129,11 +179,12 @@ svg.append("text")
   .text("ϵ = " + data[curr_eps].eps.toFixed(2));
 svg.append("text")
   .attr("transform", "rotate(-90)")
+  // .attr("transform", "translate(" + (width - 10) + ", " + height + ")")
   .attr("class", "label")
-  .attr("y", 0 - margin.left)
+  .attr("y", 0 - margin.left - 9)
   .attr("x", 0 - (height / 2))
   .attr("dy", "1em")
-  .text("α(pi)");
+  .text("αₚᵢ");
 // Plot the line
 var valueline = d3.line()
       .curve(d3.curveBasis)
@@ -178,14 +229,14 @@ var max_pt = svg
     // update title
     var xx = document.getElementById("plot1title");
     xx.innerHTML = "ϵ = " + data[curr_eps].eps.toFixed(2);
-    y.domain([0, d3.max(curr_data, function(d, i) {
-            return d.alphaPI;
-          })]);
-    yaxis
-      .transition()
-      .duration(duration)
-      .call(d3.axisRight(y)
-        .tickFormat(d3.format(".1e")));
+    // y.domain([0, d3.max(curr_data, function(d, i) {
+    //         return d.alphaPI;
+    //       })]);
+    // yaxis
+    //   .transition()
+    //   .duration(duration)
+    //   .call(d3.axisRight(y)
+    //     .tickFormat(d3.format(".1e")));
 
     curve
       .datum(curr_data)
@@ -359,7 +410,7 @@ anno1
   .append("tspan")
   .attr("id", "asasd")
   .attr("fill", "purple")
-  .text("purple line (f(x+) + ϵ)");
+  .text("purple line (f(x⁺) + ϵ)");
   
 anno1
   .append("tspan")
@@ -417,13 +468,12 @@ anno1
   }
   var temp = [...Array(len).keys()];
   for(var i=0;i<temp.length;i++){
-    temp[i]="⠀  Candidate Point" + temp[i];
+    temp[i]="Candidate Point: " + temp[i];
   }
-  var selector = 3;
-  temp.push("GT");
-  temp.push("GP  Prediction");
-  temp.push("ϵ + f(x+)");
-  temp.push("⠀ Sampled Points");
+  temp.push("Ground Truth");
+  temp.push("Predictive Mean");
+  temp.push("ϵ + f(x⁺)");
+  temp.push("Sampled Points");
   var len2 = temp.length;
   var colors = d3.schemeDark2.slice(0, len);
   colors.push("steelblue");
@@ -431,50 +481,72 @@ anno1
   colors.push("purple");
   colors.push("red");
   var ordinal = d3.scaleOrdinal()
-    .domain(temp.slice(0, selector))
-    .range(colors.slice(0, selector));
+    .domain(temp)
+    .range(colors);
 
-  var marginl = {top: -40, right: 30, bottom: 30, left: -30},
-  widthl = 300 - marginl.left - marginl.right,
-  heightl = 400 - marginl.top - marginl.bottom;
+  // console.log(temp)
+  // console.log(colors)
+  // console.log(ordinal)
 
-  var svg2l = d3.select("#TeaserL2")
-    .append("svg")
-    .attr("width", widthl + marginl.left + marginl.right)
-    .attr("height", heightl + marginl.top + marginl.bottom)
-    .append("g")
-    .attr("transform",
-          "translate(" + marginl.left + "," + marginl.top + ")");
-  svg2l.append("g")
-    .attr("class", "legendOrdinal")
-    .attr("transform", "translate(100,190)");
-  var legendOrdinal = d3.legendColor()
-    .labelWrap(30)
-    //d3 symbol creates a path-string, for example
-    //"M0,-8.059274488676564L9.306048591020996,
-    //8.059274488676564 -9.306048591020996,8.059274488676564Z"
-    .shape("path", d3.symbol().type(d3.symbolCircle).size(50)())
-    .shapePadding(10)
-    //use cellFilter to hide the "e" cell
-    .cellFilter(function(d){ return d.label !== "e" })
-    .scale(ordinal);
-  svg2l.select(".legendOrdinal")
-    .call(legendOrdinal);
-    var ordinal = d3.scaleOrdinal()
-    .domain(temp.slice(selector, len2))
-    .range(colors.slice(selector, len2));
-  svg2l.append("g")
-    .attr("class", "legendOrdinal2")
-    .attr("transform", "translate(180,190)");
-  var legendOrdinal2 = d3.legendColor()
-    .labelWrap(30)
-    .shape("path", d3.symbol().type(d3.symbolCircle).size(50)())
-    .shapePadding(10)
-    //use cellFilter to hide the "e" cell
-    .cellFilter(function(d){ return d.label !== "e" })
-    .scale(ordinal);
-  svg2l.select(".legendOrdinal2")
-    .call(legendOrdinal2);
+    // Legend Stuff
+  // //////////////////////////////////////////
+
+  var div2l = d3.select("#TeaserL2");
+  div2l.append('svg')
+    .attr('class', 'Clegend')
+    .attr('transform', `translate(20,0)`)
+    .attr('width', '150')
+    .attr('height', height)
+    .append('g')
+    .call(colorLegend, {
+      colorScale: ordinal,
+      circleRadius: 8,
+      spacing: 40,
+      textOffset: 20
+    });
+
+
+  // var marginl = {top: -40, right: 30, bottom: 30, left: -30},
+  // widthl = 300 - marginl.left - marginl.right,
+  // heightl = 400 - marginl.top - marginl.bottom;
+
+  // var svg2l = d3.select("#TeaserL2")
+  //   .append("svg")
+  //   .attr("width", widthl + marginl.left + marginl.right)
+  //   .attr("height", heightl + marginl.top + marginl.bottom)
+  //   .append("g")
+  //   .attr("transform",
+  //         "translate(" + marginl.left + "," + marginl.top + ")");
+  // svg2l.append("g")
+  //   .attr("class", "legendOrdinal")
+  //   .attr("transform", "translate(100,190)");
+  // var legendOrdinal = d3.legendColor()
+  //   .labelWrap(30)
+  //   //d3 symbol creates a path-string, for example
+  //   //"M0,-8.059274488676564L9.306048591020996,
+  //   //8.059274488676564 -9.306048591020996,8.059274488676564Z"
+  //   .shape("path", d3.symbol().type(d3.symbolCircle).size(50)())
+  //   .shapePadding(10)
+  //   //use cellFilter to hide the "e" cell
+  //   .cellFilter(function(d){ return d.label !== "e" })
+  //   .scale(ordinal);
+  // svg2l.select(".legendOrdinal")
+  //   .call(legendOrdinal);
+  //   var ordinal = d3.scaleOrdinal()
+  //   .domain(temp.slice(selector, len2))
+  //   .range(colors.slice(selector, len2));
+  // svg2l.append("g")
+  //   .attr("class", "legendOrdinal2")
+  //   .attr("transform", "translate(180,190)");
+  // var legendOrdinal2 = d3.legendColor()
+  //   .labelWrap(30)
+  //   .shape("path", d3.symbol().type(d3.symbolCircle).size(50)())
+  //   .shapePadding(10)
+  //   //use cellFilter to hide the "e" cell
+  //   .cellFilter(function(d){ return d.label !== "e" })
+  //   .scale(ordinal);
+  // svg2l.select(".legendOrdinal2")
+  //   .call(legendOrdinal2);
 
 // highlighting selected points
 const train_x = data[curr_eps].store.train_X;
