@@ -131,7 +131,7 @@
 
     <h3>Gaussian Processes</h3>
 
-    <p class='check'>
+    <p>
       One might want to look at this excellent distillpub article<d-cite key="görtler2019a"></d-cite> on Gaussian Processes<d-cite key="Rasmussen2004"></d-cite>.
       We use Gaussian Process regression to model the gold distribution along the one-dimensional line.
     </p>
@@ -358,7 +358,7 @@
         </p>
       </li>
     </ol>
-    <p class="check">
+    <p>
       Looking closely, essentially we are finding a value from the CDF of the probability distribution at each location. If our surrogate is a GP we can obtain an analytical expression, making the operation to calculate <d-math>\alpha_{PI}</d-math> cheap.
     </p>
     <d-math block>x_{t+1} = argmax_x \Phi\left(\frac{\mu_t(x) - f(x^+) - \epsilon}{\sigma_t(x)}\right)</d-math>
@@ -457,7 +457,7 @@
       x_{t+1} = argmax_x \mathbb{E} \left( {max} \{ 0, \ h_{t+1}(x) - f(x^+) \} \ | \ \mathcal{D}_t \right)
     </d-math>
 
-    <p class='check'>
+    <p>
       Where <d-math>f(x^+)</d-math> is the maximum value that has been encountered so far. This equation for the case of GP surrogate, can be converted an analytical expression shown below.
     </p>
 
