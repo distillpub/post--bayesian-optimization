@@ -68,7 +68,7 @@
     </p>
 
     <h1>Mining Gold!</h1>
-    <p class="review3">
+    <p>
       Let us start the discussion with the example of gold mining. Our goal is to mine for gold in a new, unknown land. Our example below is heavily inspired by the historical fact that one of the first uses of Gaussian Processes (GPs) was to model ore density in South Africa. Prof. Danie Krige used GPs at the time called “Kriging” to model the spatial density of ore deposits. For now, let us make a simplifying assumption, the gold content lies in a one-dimensional space, i.e., we are talking about gold distribution only about a line. Our aim is to find the location along this line where we would get the maximum gold in a few number of drilling (as drilling is expensive).
     </p>
     <p>
@@ -405,7 +405,7 @@
     <figure class="gif-slider">
       <d-figure><img src="images/MAB_pngs/PI/0.01/0.png" /></d-figure>
     </figure>
-    <p class="check">
+    <p>
       Looking at the graph above<d-footnote>In case of ties for the maximum acquisition value, we randomly break them.</d-footnote> we can see that we were able to get to the global minima at the end of the optimization. The value of <d-math>\epsilon = 0.01</d-math> usually results in a good optimization if the surrogate is able to model the ground truth correctly.
 
       One interesting thing to notice is that the surrogate possess large uncertainity at <d-math>x \in [2, 4]</d-math> (can be identified by the grey translucent area).
@@ -535,10 +535,9 @@
       <figure class="smaller-img">
         <d-figure><img src="images/MAB_gifs/Ei_Pi_graph/0.svg" /></d-figure>
       </figure>
-      <p class="check">
-        We can see that the <d-math>\alpha_{EI}</d-math> has its maximum value corresponding to <d-math>\alpha_{PI}</d-math> close to 0.41. But, <d-math>\alpha_{PI}</d-math> has a maximum of around 0.44, for which <d-math>\alpha_{EI}</d-math>
-        is low. Choosing a point with low <d-math>\alpha_{PI}</d-math> and high <d-math>\alpha_{EI}</d-math> means taking more risk (probability of improvement is low), but getting a high reward (expected improvement is high).
-        In other words, multiple points have same (<d-math>\alpha_{EI}</d-math>), we should prioritize to choose the option with lesser risk (higher <d-math>\alpha_{PI}</d-math>). And similarly, when the risks are the same (same <d-math>\alpha_{PI}</d-math>) for any two points, we would want to go with the point with greater reward (higher <d-math>\alpha_{EI}</d-math>).
+      <p>
+        We can see that the <d-math>\alpha_{EI}</d-math> and <d-math>\alpha_{PI}</d-math> reach a maximum of 0.3 and around 0.44, respectively. Choosing a point with low <d-math>\alpha_{PI}</d-math> and high <d-math>\alpha_{EI}</d-math> means taking more risk (probability of improvement is low), but getting a high reward (expected improvement is high).
+        In other words, multiple points have the same (<d-math>\alpha_{EI}</d-math>), we should prioritize to choose the point with lesser risk (higher <d-math>\alpha_{PI}</d-math>). And similarly, when the risks are the same (same <d-math>\alpha_{PI}</d-math>) for any two points, we would want to go with the point with greater reward (higher <d-math>\alpha_{EI}</d-math>).
       </p>
     </div>
 
@@ -896,8 +895,8 @@
           <d-figure><img src="images/MAB_gifs/RFcomp3d.svg"></d-figure>
         </figure>
 
-        <p class="check">
-          Looking at the ground truth, we see the black-box function we are trying to optimize isn't too smooth, and therefore we see that our optimization strategies seem to struggle compared to the last example. This shows that the effectiveness of BO highly depends on the surrogate's efficiency to model the actual black-box function.
+        <p>
+          Looking at the ground truth, we see the black-box function we are trying to optimize isn't too smooth, and therefore we see that our optimization strategies seem to struggle compared to the last example. This shows that the effectiveness of BO depends on the surrogate's efficiency to model the actual black-box function. It is still interesting to notice that the BO framework beats the random strategy.
         </p>
 
         <h3>Example 3 -- Neural Networks</h3>
