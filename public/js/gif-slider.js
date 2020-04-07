@@ -1,3 +1,23 @@
+function preloadImages(array) {
+    if (!preloadImages.list) {
+        preloadImages.list = [];
+    }
+    var list = preloadImages.list;
+    for (var i = 0; i < array.length; i++) {
+        var img = new Image();
+        img.onload = function() {
+            var index = list.indexOf(this);
+            if (index !== -1) {
+                // remove image from the array once it's loaded
+                // for memory consumption reasons
+                list.splice(index, 1);
+            }
+        }
+        list.push(img);
+        img.src = array[i];
+    }
+}
+
 function appendInputButtons() {
   // get all doms with class="gif-slider"
   var figs = document.getElementsByClassName("gif-slider")
@@ -51,6 +71,19 @@ function appendInputButtons() {
     div.appendChild(div3)
 
     fig.appendChild(div)
+  }
+
+  // Preloading images for faster access
+  for (var i = 0; i < figs.length; i++) {
+    var fig = figs[i]
+    var src = fig.childNodes[1].childNodes[0].src
+    for (var j = 0; j < 10; j++){
+      var ix = src.indexOf(".png")
+      // console.log(src.slice(0, ix - 1))
+      var str = src.slice(0, ix - 1) + j + ".png"
+      // console.log(str)
+      preloadImages([str])
+    }
   }
 }
 
