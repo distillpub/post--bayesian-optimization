@@ -235,6 +235,41 @@
 
       <p>We’d like to optimize <d-math>f: \mathbb{R}^d \mapsto \mathbb{R}</d-math>.<br></p>
 
+      <table>
+        <tr>
+          <th><h3>General constrains</h3></th>
+          <th><h3>Constraints in Gold Mining example</h3></th>
+        </tr>
+        <tr>
+          <td><d-math>f</d-math>’s feasible set <d-math>A</d-math> is simple,
+          e.g., box constraints.</td>
+          <td>Our domain in the gold mining problem is a single-dimensional box constraint of <d-math>0 \leq x \leq 6</d-math>.</td>
+        </tr>
+        <tr>
+          <td><d-math>f</d-math> is continuous but lacks special structure,
+          e.g., concavity, that would make it easy to optimize.</td>
+          <td>Our ground truth can be seen as neither convex nor concave function, which resulted in local minima as well.</td>
+        </tr>
+        <tr>
+          <td><d-math>f</d-math> is derivative-free:
+          evaluations do not give gradient information.</td>
+          <td>Our evaluation (by drilling) of the amount of gold content at a location didn't give us any gradient information.</td>
+        </tr>
+        <tr>
+          <td><d-math>f</d-math> is expensive to evaluate:
+          the number of times we can evaluate it
+          is severely limited.</td>
+          <td>The function we used in the case of gold mining problem is extremely costly to evaluate (drilling costs millions).</td>
+        </tr>
+        <tr>
+          <td><d-math>f</d-math> may be noisy. If noise is present, we’ll assume it is independent and normally distributed, with common but unknown variance.</td>
+          <td>This constraint is still satisfied in our case as we had have taken noiseless measurements. Which can be considered as a Gaussian noise with zero mean and zero standard deviation.</td>
+        </tr>
+      </table>
+<!-- 
+      <div class="column">
+      <h3>General constrains</h3>
+
       <ul>
         <li>
           <d-math>f</d-math>’s feasible set <d-math>A</d-math> is simple,
@@ -259,10 +294,10 @@
           common but unknown variance.
         </li>
       </ul>
+      </div>
 
-
-      <p>Let us link the above constraints to our initial problem statement of gold mining.</p>
-
+      <div class="column">
+      <h3>Constraints in Gold Mining example</h3>
       <ul>
         <li>Our domain in the gold mining problem is a single-dimensional box constraint of <d-math>0 \leq x \leq 6</d-math>.</li>
 
@@ -275,18 +310,19 @@
         <li>This constraint is still satisfied in our case as we had have taken noiseless measurements. Which can be considered 
           as a Gaussian noise with zero mean and zero standard deviation.</li>
       </ul>
+      </div>
 
-      <p>
+ -->      <p>
         We see that our original problem of mining gold fits into the criterions required to use BO. We will now introduce the additional topics that we require before we can get that maximal gold.
       </p>
 
     <h3>Acquisition Functions</h3>
 
     <p>
-      Our original optimization problem <d-math>x^* = \text{argmax}_{x \in A} f(x)</d-math> is hard because <d-math>f</d-math> is expensive to evaluate. The key idea of BO is to transform this original difficult optimization into a sequence of easier inexpensive optimizations of functions called an acquisition function (<d-math>\alpha(x)</d-math>). Each of these sequence of inexpensive optimizations involves finding the next point to sample. Thus, we can interpret the acquisition function as commensurate with how desirable evaluating <d-math>f</d-math> at <d-math>x</d-math> is expected to be for the maximisation problem<d-footnote>Please find <a href="https://www.cse.wustl.edu/~garnett/cse515t/spring_2015/files/lecture_notes/12.pdf">these</a> slides from Washington University in St. Louis to know more.</d-footnote>.
+      Our original optimization problem <d-math>x^* = \text{argmax}_{x \in A} f(x)</d-math> is hard because <d-math>f</d-math> is expensive to evaluate. The key idea of BO is to transform this original difficult optimization into a sequence of easier inexpensive optimizations of functions called an acquisition function (<d-math>\alpha(x)</d-math>). Intuitively, an acquisition function describes how useful it would be to evaluate a point (for the maximisation problem<d-footnote>Please find <a href="https://www.cse.wustl.edu/~garnett/cse515t/spring_2015/files/lecture_notes/12.pdf">these</a> slides from Washington University in St. Louis to know more.</d-footnote>). At each step, we optimize the acquisition function to determine the point it suggests is best to sample.
     </p>
-    <p>
-      While we have just now discussed that our goal is to transform the original optimisation into a sequence of inexpensive optimization, where is the "Bayesian" in this optimisation, and how is the acquisition function related? Let us re-wind and go back to our surrogate model and build the link between all the things we have discussed thus far, by noting the steps of BO<d-footnote>Please find <a href="https://youtu.be/EnXxO3BAgYk">this</a> amazing video from Javier González at The Gaussian Process Summer School 2019.</d-footnote>
+    <p class="check">
+      You may be wondering what's "Bayesian" about this sequence of optimization problems. Let us re-wind and go back to our surrogate model and build the link between all the things we have discussed thus far, by noting the steps of BO<d-footnote>Please find <a href="https://youtu.be/EnXxO3BAgYk">this</a> amazing video from Javier González at The Gaussian Process Summer School 2019.</d-footnote>
     </p>
     <p>
       <ol>
@@ -553,12 +589,11 @@
     <h3 id="thompsonsampling">Thompson Sampling</h3>
 
     <p>
-      One more acquisition function that is quite common is Thompson Sampling <d-cite key="thompson"> </d-cite>. It has a low overhead of setting up, therefore, it is quite useful in many cases. In the case of Thompson sampling, one only needs to sample from the model and is not required to find values for the tail probability, or the expected improvement. This property is particularly useful when our base regressor doesn't provide an analytical expression, as we saw above, that can be easily calculated.
+      Another common acquisition function is Thompson Sampling <d-cite key="thompson"></d-cite>. At every step, we sample a function from the surrogate's posterior and optimize the sampled function. For example, in the case of gold mining, we’d sample a plausible distribution of the gold given the evidence we have so far and evaluate wherever it peaks.
     </p>
 
     <p>
-      The idea is to sample functions within upper and lower probabilistic bounds of a regressor. In other words, we sample functions from the surrogate's posterior. Once we have sampled a function <d-math>m_t</d-math> for the <d-math>t^{th}
-      </d-math> timestep, we choose point <d-math>x_{t+1}</d-math> that maximizes the function <d-math>m_t</d-math> as the next query point to be evaluated.
+      Notice that Thompson Sampling only required us to sample our posterior, not evaluate probabilities. This is a very useful property when there isn’t an easy way to evaluate probabilities.
     </p>
 
     <p>
