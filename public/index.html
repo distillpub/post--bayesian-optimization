@@ -65,19 +65,19 @@
     </strike> -->
       Many modern machine learning algorithms have a large number of hyperparameters. To effectively use them, we need to pick good hyperparameter values.
 
-      In this article, we will talk about Bayesian Optimization (BO) which is a suite of techniques often used to efficiently tune the hyperparameters, optimization parameters, and other model parameters. Besides being used in the preceding scenarios, BO is a general suite of techniques for optimizing any black-box function.
+      In this article, we will talk about Bayesian Optimization (BO), which is a suite of techniques often used to efficiently tune the hyperparameters, optimization parameters, and other model parameters. Besides being used in the preceding scenarios, BO is a general suite of techniques for optimizing any black-box function.
     </p>
     <p>
       
     </p>
 
     <p>
-      Before we talk in-depth about using Bayesian Optimization to tune model parameters, we will look in using it to maximize (optimize) a black box function!
+      Before we talk in-depth about using Bayesian Optimization to tune model parameters, we will look at using it to maximize (optimize) a black box function!
     </p>
 
     <h1>Mining Gold!</h1>
     <p>
-      Let us start the discussion with the example of gold mining. Our goal is to mine for gold in a new, unknown land. Our example below is heavily inspired by the historical fact that one of the first uses of Gaussian Processes (GPs) was to model ore density in South Africa. Prof. Danie Krige used GPs at the time called “Kriging” to model the spatial density of ore deposits. For now, let us make a simplifying assumption, the gold content lies in a one-dimensional space, i.e., we are talking about gold distribution only about a line. Our aim is to find the location along this line where we would get the maximum gold in a few number of drilling (as drilling is expensive).
+      Let us start the discussion with the example of gold mining. Our goal is to mine for gold in a new, unknown land. Our example below is heavily inspired by the historical fact that one of the first uses of Gaussian Processes (GPs) was to model ore density in South Africa. Prof. Danie Krige used GPs at the time called “Kriging” to model the spatial density of ore deposits. For now, let us make a simplifying assumption, the gold content lies in a one-dimensional space, i.e., we are talking about gold distribution only about a line. Our aim is to find the location along this line where we would get the maximum gold in a few numbers of drilling (as drilling is expensive).
     </p>
     <p>
       Now, at the start of the activity, we have no idea about the amount of gold at different locations. The only way we can get the information about the amount of gold is by drilling at different locations. This drilling is costly. So we want to <strong>minimize the number of drillings required</strong> while still <strong>finding the location of maximum gold quickly</strong>.<d-footnote>Interestingly, our example is similar to one of the first use of Gaussian Process (GP) (also called kriging)<d-cite key="goldKridge"></d-cite>, where Prof. Krige modelled gold concentrations using GPs.</d-footnote>
@@ -130,7 +130,7 @@
     <h3>Bayesian Update</h3>
     <p>
       <!-- The updatation of the surrogate model is the "Bayes" in BO.  -->
-      Every evaluation (drilling to get the gold estimate) of <d-math>f(x)</d-math> gives the surrogate model more data to learn from. The posterior for the surrogate is obtained using the Bayes Rule with this new data at every iteration. At the end of an iteration the posterior becomes the prior, for the next cycle.
+      Every evaluation (drilling to get the gold estimate) of <d-math>f(x)</d-math> gives the surrogate model more data to learn from. The posterior for the surrogate is obtained using the Bayes Rule with this new data at every iteration. At the end of an iteration, the posterior becomes the prior for the next cycle.
     </p>
 
     <p>
@@ -156,7 +156,7 @@
     <h4 id="priormodel">Prior Model</h4>
 
     <p>
-      The choice of prior heavily depends on the initial belief about the properties of the black-box function<d-cite key="Rasmussen2004"></d-cite>. These properties include periodicity, smoothness, etc. In our case, we consider gold distribution to be smooth. We use kernels to set a prior that favors smooth functions, i.e. two points close in space will have similar gold content. <d-footnote>Our prior uses the Matern 5/2 kernel. Our choice of Matern 5/2 kernel can be attributed to its property of favoring doubly differentiable functions. In contrast, Matern 3/2 favors singly differentiable functions. 
+      The choice of prior heavily depends on the initial belief about the properties of the black-box function<d-cite key="Rasmussen2004"></d-cite>. These properties include periodicity, smoothness, etc. In our case, we consider the gold distribution to be smooth. We use kernels to set a prior that favors smooth functions, i.e., two points close in space will have a similar gold content. <d-footnote>Our prior uses the Matern 5/2 kernel. Our choice of Matern 5/2 kernel can be attributed to its property of favoring doubly differentiable functions. In contrast, Matern 3/2 favors singly differentiable functions. 
 
       See <a href="http://www.gaussianprocess.org/gpml/">Rasmussen and Williams 2004</a> and <a href="https://scikit-learn.org/stable/modules/generated/sklearn.gaussian_process.kernels.Matern.html">scikit-learn</a>, for details regarding the Matern kernel.
       </d-footnote> The black line in the graph below denotes the knowledge we have about the gold content without drilling.
@@ -170,7 +170,7 @@
     <h4 id="addingtrainingdata">Adding Training Data</h4>
 
     <p>
-      Let us now add a point to the train set or in other words, drill one of the locations and see the gold content (<d-math>y</d-math>). We can see how our confidence and our estimates change after we get this first       information by fitting the model to the new data. We are going to add <d-math>(x = 0.5, \ y = f(0.5))</d-math> into the train set now.
+      Let us now add a point to the train set or, in other words, drill one of the locations and see the gold content (<d-math>y</d-math>). We can see how our confidence and our estimates change after we get this first information by fitting the model to the new data. We are going to add <d-math>(x = 0.5, \ y = f(0.5))</d-math> into the train set now.
     </p>
 
     <figure>
@@ -178,7 +178,7 @@
     </figure>
 
     <p>
-      We see now that the GP posterior (shown as our prediction) has changed and we are very certain about the gold content in the vicinity of <d-math>x = 0.5</d-math>, but, very uncertain far away from it. Also, we can see that
+      We see now that the GP posterior (shown as our prediction) has changed, and we are very certain about the gold content in the vicinity of <d-math>x = 0.5</d-math>, but very uncertain far away from it. Also, we can see that
       the predicted gold concentration of points
       near to <d-math>x = 0.5</d-math> is closer to the actual value that we got from drilling<d-footnote>You might notice that there might be cases when we would actually predict the gold content to be negative. This issue is not central to understanding BO here, but we can still overcome this by making our GP to regress over <d-math>\log\left(f(x)\right)</d-math> instead of <d-math>f(x)</d-math>.</d-footnote>. So, we now come to the key idea of active learning:
     </p>
@@ -218,7 +218,7 @@
     </p> -->
 
     <p>
-      Given the fact that we are only interested in knowing the location where the maximum occurs, it might be a good idea to evaluate at locations where our surrogate model's predicted mean is the highest, i.e. to <strong>exploit</strong>. But unfortunately, our model mean is not always accurate (since we have limited observations), so we need to correct our model, which can be done by reducing variance or <strong>exploration</strong>. BO looks at both <strong>exploitation</strong> and <strong>exploration</strong>, whereas in the case of active learning, we only cared about <strong>exploration</strong>.
+      Given the fact that we are only interested in knowing the location where the maximum occurs, it might be a good idea to evaluate at locations where our surrogate model's predicted mean is the highest, i.e., to <strong>exploit</strong>. But unfortunately, our model mean is not always accurate (since we have limited observations), so we need to correct our model, which can be done by reducing variance or <strong>exploration</strong>. BO looks at both <strong>exploitation</strong> and <strong>exploration</strong>, whereas in the case of active learning, we only cared about <strong>exploration</strong>.
     </p>
 
     <h1>Formalizing Bayesian Optimization</h1>
@@ -237,7 +237,7 @@
 
       <table>
         <tr>
-          <th><h3>General constrains</h3></th>
+          <th><h3>General Constraints</h3></th>
           <th><h3>Constraints in Gold Mining example</h3></th>
         </tr>
         <tr>
@@ -313,7 +313,7 @@
       </div>
 
  -->      <p>
-        We see that our original problem of mining gold fits into the criterions required to use BO. We will now introduce the additional topics that we require before we can get that maximal gold.
+        We see that our original problem of mining gold fits into the criteria required to use BO. We will now introduce the additional topics that we require before we can get that maximal gold.
       </p>
 
     <h3>Acquisition Functions</h3>
@@ -589,7 +589,7 @@
     <h3 id="thompsonsampling">Thompson Sampling</h3>
 
     <p>
-      Another common acquisition function is Thompson Sampling <d-cite key="thompson"></d-cite>. At every step, we sample a function from the surrogate's posterior and optimize the sampled function. For example, in the case of gold mining, we’d sample a plausible distribution of the gold given the evidence we have so far and evaluate wherever it peaks.
+      Another common acquisition function is Thompson Sampling <d-cite key="thompson"></d-cite>. At every step, we sample a function from the surrogate's posterior and optimize the sampled function. For example, in the case of the gold mining, we’d sample a plausible distribution of the gold given the evidence we have so far and evaluate wherever it peaks.
     </p>
 
     <p>
