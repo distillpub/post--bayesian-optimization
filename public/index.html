@@ -451,10 +451,10 @@
       <d-figure><img src="images/MAB_pngs/PI/0.01/0.png" /></d-figure>
     </figure>
     <p>
-      Looking at the graph above<d-footnote>In case of ties for the maximum acquisition value, we randomly break them.</d-footnote> we can see that we were able to get to the global minima at the end of the optimization. The value of <d-math>\epsilon = 0.01</d-math> usually results in a good optimization if the surrogate is able to model the ground truth correctly.
+      Looking at the graph above<d-footnote>In case of ties for the maximum acquisition value, we randomly break them.</d-footnote> we can see that we were able to get to the global minima at the end of the optimization. The value of <d-math>\epsilon = 0.01</d-math> usually results in good optimization if the surrogate is able to model the ground truth correctly.
 
-      One interesting thing to notice is that the surrogate possess large uncertainity at <d-math>x \in [2, 4]</d-math> (can be identified by the grey translucent area).
-      This is because of the exploitation that happens in BO. Our aim in BO is is to get to the maximum value, in contrast to estimation of <d-math>f(x)</d-math> in the case of active learning. Therefore, we see a high level of uncertainity in areas where our surrogate predicts low functional value!
+      One interesting thing to notice is that the surrogate possesses large uncertainty at <d-math>x \in [2, 4]</d-math> (can be identified by the grey translucent area).
+      This is because of the exploitation that happens in BO. Our aim in BO is to get to the maximum value, in contrast to the estimation of <d-math>f(x)</d-math> in the case of active learning. Therefore, we see a high level of uncertainty in areas where our surrogate predicts low functional value!
     </p>
 
     <figure class="gif-slider">
@@ -531,7 +531,7 @@
     </p>
 
     <p>
-      Like the Probability of Improvement's acquisition function, we can moderate the amount of explorability the Expected Improvement's acquisition function by setting the <d-math>\epsilon</d-math> hyperparameter.
+      Like the Probability of Improvement's acquisition function, we can moderate the amount of explorability of the Expected Improvement's acquisition function by setting the <d-math>\epsilon</d-math> hyperparameter.
     </p>
 
     <figure class="gif-slider">
@@ -539,7 +539,7 @@
     </figure>
 
     <p>
-      We see that having <d-math>\epsilon = 0.01</d-math> is able to get to the value close to global maxima. We see by last few iterations, we have already evaluated points close to the point where global maxima occurs.
+      We see that having <d-math>\epsilon = 0.01</d-math> is able to get to the value close to global maxima. We see by the last few iterations; we have already evaluated points close to the point where global maxima occur.
     </p>
 
     <p>
@@ -561,8 +561,7 @@
       <d-figure><img src="images/MAB_pngs/EI/3/0.png" /></d-figure>
     </figure>
     <p>
-      Is this better than before? Turns out a yes and a no. We see that here we do too much exploration given the value of <d-math>\epsilon = 3</d-math>. Which results in early reaching something close to global maxima, but unfortunately we don't
-      exploit to get more gains near the global maxima. We would have liked an acquisition function that tried to exploit a bit more after reaching somewhere close to the global maxima.
+      Is this better than before? It turns out a yes and a no. We see that here we do too much exploration, given the value of <d-math>\epsilon = 3</d-math>. This results in early reaching something close to global maxima, but unfortunately, we don't exploit to get more gains near the global maxima. We would have liked an acquisition function that tried to exploit a bit more after reaching somewhere close to the global maxima.
     </p>
 
     <h4 class="collapsible">PI vs. EI</h4>
@@ -572,16 +571,14 @@
       </p>
 
       <p>
-        In the figure below, we have plotted the values for both policies' acquisition function's values below, for each of the possible locations. The graph shows the relation followed
-        between
-        EI and PI for when we have a single training point <d-math>(0.5, f(0.5))</d-math>.
+        In the figure below, we have plotted the values for both policies' acquisition functions. The graph shows the relation followed between EI and PI for when we have a single training point <d-math>(0.5, f(0.5))</d-math>.
       </p>
 
       <figure class="smaller-img">
         <d-figure><img src="images/MAB_gifs/Ei_Pi_graph/0.svg" /></d-figure>
       </figure>
       <p>
-        We can see that the <d-math>\alpha_{EI}</d-math> and <d-math>\alpha_{PI}</d-math> reach a maximum of 0.3 and around 0.44, respectively. Choosing a point with low <d-math>\alpha_{PI}</d-math> and high <d-math>\alpha_{EI}</d-math> means taking more risk (probability of improvement is low), but getting a high reward (expected improvement is high).
+        We can see that the <d-math>\alpha_{EI}</d-math> and <d-math>\alpha_{PI}</d-math> reach a maximum of 0.3 and around 0.44, respectively. Choosing a point with low <d-math>\alpha_{PI}</d-math> and high <d-math>\alpha_{EI}</d-math> means taking more risk (probability of improvement is low) but getting a high reward (expected improvement is high).
         In other words, multiple points have the same (<d-math>\alpha_{EI}</d-math>), we should prioritize to choose the point with lesser risk (higher <d-math>\alpha_{PI}</d-math>). And similarly, when the risks are the same (same <d-math>\alpha_{PI}</d-math>) for any two points, we would want to go with the point with greater reward (higher <d-math>\alpha_{EI}</d-math>).
       </p>
     </div>
@@ -601,7 +598,7 @@
       <ul>
         <li>
           <p>
-            Locations <d-math>x</d-math> with high variance (<d-math>\sigma(x)</d-math>) will show a larger variance in the functional value of the sampled function. This might help in exploration as high variation might lead to having the sampled functions more prone to having high value at locations with high variance. This will ensure an <strong>exploratory</strong> behaviour.
+            Locations <d-math>x</d-math> with high variance (<d-math>\sigma(x)</d-math>) will show a larger variance in the functional value of the sampled function. This might help in exploration as high variation might lead to having the sampled functions more prone to having a high value at locations with high variance. This will ensure an <strong>exploratory</strong> behaviour.
           </p>
         </li>
         <li>
@@ -612,7 +609,7 @@
         </li>
       </ul>
       <p>
-        Combining the above two observations, the acquisition function would accordingly do explorations and exploitation.
+        We combine the two observations and see the acquisition function would accordingly do explorations and exploitation.
       </p>
 
       <figure class="gif-slider">
@@ -641,12 +638,12 @@
 
         <h3> Upper Confidence Bound (UCB) </h3>
         <p>
-          One such trivial acquisition function that combines the exploration/exploitation tradeoff, is a linear combination of the mean and uncertainty of our surrogate model. The model mean signifies exploitation (of our model's knowledge) and model uncertainty signifies exploration (due to our model's lack of observations).
+          One such trivial acquisition function that combines the exploration/exploitation tradeoff is a linear combination of the mean and uncertainty of our surrogate model. The model mean signifies exploitation (of our model's knowledge) and model uncertainty signifies exploration (due to our model's lack of observations).
           <d-math block>\alpha(x) = \mu(x) + \lambda \times \sigma(x)</d-math>
         </p>
 
         <p>
-          The intuition behind the UCB acquisition function is weighing of the  importance between the surrogate's mean  vs the surrogate's uncertainity. The <d-math>\lambda</d-math> above is the hyperparameter that can control the preference between exploitation or exploration.
+          The intuition behind the UCB acquisition function is weighing of the  importance between the surrogate's mean  vs. the surrogate's uncertainty. The <d-math>\lambda</d-math> above is the hyperparameter that can control the preference between exploitation or exploration.
         </p>
       
 
@@ -701,7 +698,7 @@
         </p> -->
 
         <p>
-          We can further form an acquisition functions by combining the existing acquisition functions. Though the physical interpretability of such combinations might not be so straightforward. One reason we might want to combine two methods is to overcome the limitations of the individual methods.
+          We can further form acquisition functions by combining the existing acquisition functions though the physical interpretability of such combinations might not be so straightforward. One reason we might want to combine two methods is to overcome the limitations of the individual methods.
         </p>
 
         <h3>Probability of Improvement + <d-math>\lambda \ \times</d-math> Expected Improvement (EI-PI)</h3>
@@ -709,13 +706,13 @@
         <p>
           One such combination can be a linear combination of PI and EI.
 
-          We know PI focuses on Probability of Improvement whereas EI focuses on the Expected Improvement. Such a combination could help in having a tradeoff between the two based on the value of <d-math>\lambda</d-math>, which can be a function of the timestep itself.
+          We know PI focuses on the probability of emprovement, whereas EI focuses on the expected improvement. Such a combination could help in having a tradeoff between the two based on the value of <d-math>\lambda</d-math>, which can be a function of the timestep itself.
         </p>
 
         <h3>Gaussian Process Upper Confidence Bound (GP-UCB)</h3>
 
         <p>
-          Before talking about GP-UCB, let us quickly talk about <strong>regret</strong>. Imagine if the maximum gold was <d-math>a</d-math> units and our optimization instead samples a location containing <d-math>b < a</d-math> units, then our regret is
+          Before talking about GP-UCB, let us quickly talk about <strong>regret</strong>. Imagine if the maximum gold was <d-math>a</d-math> units, and our optimization instead samples a location containing <d-math>b < a</d-math> units, then our regret is
               <d-math>a -
               b</d-math>. If we accumulate the regret over <d-math>n</d-math> iterations, we get what is called <strong> cumulative regret. </strong> <br />
       
@@ -809,17 +806,15 @@
         \hat{\beta}^{ridge} = argmin_{\beta \ \in \ \mathbb{R}^p} \sum\limits_{i=1}^{n} \left(y_i - x_i^T\beta \right)^2 + \lambda \sum\limits_{i=1}^{p} \beta^2_j
       </d-math>
       <p>
-        In Ridge Regression, we have the usual parameter, <d-math>\beta</d-math>: the weight matrix which is learned from the data. We further have a hyperparameter we need to set to get regularization effect, the regularization coefficient <d-math>\lambda \geq 0</d-math>. <br />
+        In Ridge Regression, we have the usual parameter, <d-math>\beta</d-math>: the weight matrix, which is learned from the data. We further have a hyperparameter we need to set to get regularization effect, the regularization coefficient <d-math>\lambda \geq 0</d-math>. <br />
         In the case of using a Gradient Descent optimization technique  to optimize the above expression, we further introduce another optimization parameter, the learning rate <d-math>\alpha</d-math>.
       </p>
 
-      <p>Now as we are clear on the difference between hyperparameters and parameters we would like to introduce one of the most common use case of Bayesian Optimization; <em>Hyperparameter Tuning</em>: finding the best performing
-        hyperparameters
-        on machine learning models. At last, hyperparameter tuning is an optimization problem (optimizing our metric of choice).</p>
+      <p>The most common use case of Bayesian Optimization is <em>Hyperparameter Tuning</em>: finding the best performing hyperparameters on machine learning models. At last, hyperparameter tuning is an optimization problem (optimizing our metric of choice).</p>
 
-      <p>Usually, when training a model isn't expensive and time-consuming, we might just do a grid search. The primary issue with grid search is that it is not feasible if getting the functional value is extremely costly, as in case of a large neural network that takes days to train. This might result in days of waiting to get the accuracy scores.
+      <p>Usually, when training a model isn't expensive and time-consuming, we might just do a grid search. The primary issue with grid search is that it is not feasible if getting the functional value is extremely costly, as in the case of a large neural network that takes days to train. This might result in days of waiting to get the accuracy scores.
 
-      <p>We turn to BO to counter the expensiveness of getting the functional values (accuracy values), and these increased dimensions.</p>
+      <p>We turn to BO to counter the expensiveness of getting the functional values (accuracy values) and these increased dimensions.</p>
 
       <h3 id="example1">Example 1 -- Support Vector Machine</h3>
 
@@ -845,7 +840,7 @@
       </p>
       <p>
         Let us apply Bayesian Optimization to learn the best hyperparameters for this classification task<d-footnote> <strong>Note</strong>: the surface plots you see for the Ground Truth Accuracies below were calculated for each possible hyperparameter for showcasing purposes only. We don't have these values in real applications.
-        </d-footnote>. The optimum values for &#60<d-math>C, \ \gamma</d-math>&#62 have been found via running grid search at a high granularity.
+        </d-footnote>. The optimum values for &#60<d-math>C, \ \gamma</d-math>&#62 have been found via running grid search at high granularity.
       </p>
 
       <figure class="gif-slider">
@@ -877,7 +872,7 @@
       <h3 id="comparison">Comparison</h3>
 
       <p>
-        Below we will compare the acquisition functions in finding the best hyperparameters for our SVM model. We had again ran the Random acquisition function several times with different seeds.
+        Below we will compare the acquisition functions in finding the best hyperparameters for our SVM model. We had again run the Random acquisition function several times with different seeds.
       </p>
 
       <figure>
@@ -933,7 +928,7 @@
           <d-figure><img src="images/MAB_pngs/RFRand3d/1-2/0.png"></d-figure>
         </figure>
 
-        <p>Let us now use Random acquisition function.</p>
+        <p>Let us now use the Random acquisition function.</p>
 
         <figure>
           <d-figure><img src="images/MAB_gifs/RFcomp3d.svg"></d-figure>
@@ -1040,7 +1035,7 @@
           The parameters selected by the optimizer were <d-math langugage="python">[4, 0.0019, `relu`]</d-math>, i.e., batch size of 8, learning rate of 1.9e-2 and 'relu' activation function.
         </p>
         <p>
-          If we had performed a naive grid search, it would have taken us a lot more iterations <d-math>(5 \times 2 \times 7)</d-math>, and we still wouldn't have tested a learning rate near the learning rate returned by the optimizer. Suppose using grid search resulted in us to take 25 iterations. If we convert it to the time we spent over the Bayesian Optimization approach; we will get a better idea of the amount of time that can be saved when evaluation of the ground truth functions is even more costly.
+          If we had performed a naive grid search, it would have taken us a lot more iterations <d-math>(5 \times 2 \times 7)</d-math>, and we still wouldn't have tested a learning rate near the learning rate returned by the optimizer. Suppose using grid search resulted in us taking 25 iterations. If we convert it to the time we spent over the Bayesian Optimization approach, we will get a better idea of the amount of time that can be saved when evaluation of the ground truth functions is even more costly.
         </p>
 
         <p>
@@ -1051,7 +1046,7 @@
         <h1 id="conclusions">Conclusion and Summary</h1>
 
         <p>
-          In this article, we looked at Bayesian Optimization, which involves optimizing a black-box function. Our primary focus is on the cases when the function evaluations are expensive, making grid or exhaustive search impractical. We looked at the key components of BO. First, we looked at the notion of using a surrogate function (with a prior over the space of objective functions) to model our black-box function. Next, we looked at the "Bayes" in BO - the function evaluations are used as data to obtain the surrogate posterior. We look at acquisition functions, which are functions of the surrogate posterior and are optimized sequentially. This new sequential optimization is in-expensive and thus of utility of us. We also looked at a few acquisition functions and showed how these different functions balance the exploration and exploitation. Finally, we looked at some practical examples of BO for optimizing hyper-parameters for machine learning models. We believe, we have presented an interesting and effective suite of black-box optimization techniques. We now hope that we have whetted the reader's appetite! We have further included a primer below summarizing BO in a few slides for a quick recap.
+          In this article, we looked at Bayesian Optimization, which involves optimizing a black-box function. Our primary focus is on the cases when the function evaluations are expensive, making grid or exhaustive search impractical. We looked at the key components of BO. First, we looked at the notion of using a surrogate function (with a prior over the space of objective functions) to model our black-box function. Next, we looked at the "Bayes" in BO - the function evaluations are used as data to obtain the surrogate posterior. We look at acquisition functions, which are functions of the surrogate posterior and are optimized sequentially. This new sequential optimization is in-expensive and thus of utility of us. We also looked at a few acquisition functions and showed how these different functions balance exploration and exploitation. Finally, we looked at some practical examples of BO for optimizing hyper-parameters for machine learning models. We believe we have presented an interesting and effective suite of black-box optimization techniques. We now hope that we have whetted the reader's appetite! We have further included a primer below summarizing BO in a few slides for a quick recap.
         </p>
 
     <div class="l-screen shaded-figure" style="border-bottom: none">
