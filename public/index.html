@@ -63,9 +63,9 @@
     <!-- <strike>
       We are increasingly getting used to machine learning algorithms with a large number of hyperparameters along with numerous optimization parameters. For example, neural networks with hyperparameters like the number of layers or optimization parameters like the learning rate, the dropout rate, among others. Or random forests with hyperparameters such as the number of trees, and the maximum depth of an individual tree. How do we efficiently tune these to optimize our machine learning model? 
     </strike> -->
-      Many modern machine learning algorithms have a large number of hyperparameters. To effectively use them, we need to pick good hyperparameter values.
+      Many modern machine learning algorithms have a large number of hyperparameters. To effectively use these algorithms, we need to pick good hyperparameter values.
 
-      In this article, we will talk about Bayesian Optimization (BO), which is a suite of techniques often used to efficiently tune the hyperparameters, optimization parameters, and other model parameters. Besides being used in the preceding scenarios, BO is a general suite of techniques for optimizing any black-box function.
+      In this article, we will talk about Bayesian Optimization (BO) which is a suite of techniques often used to efficiently tune the hyperparameters, optimization parameters, and other model parameters. Besides being used in the preceding scenarios, BO is a general suite of techniques for optimizing any black-box function.
     </p>
     <p>
       
@@ -77,7 +77,7 @@
 
     <h1>Mining Gold!</h1>
     <p>
-      Let us start the discussion with the example of gold mining. Our goal is to mine for gold in a new, unknown land. Our example below is heavily inspired by the historical fact that one of the first uses of Gaussian Processes (GPs) was to model ore density in South Africa. Prof. Danie Krige used GPs at the time called “Kriging” to model the spatial density of ore deposits. For now, let us make a simplifying assumption, the gold content lies in a one-dimensional space, i.e., we are talking about gold distribution only about a line. Our aim is to find the location along this line where we would get the maximum gold in a few numbers of drilling (as drilling is expensive).
+      Let us start the discussion with the example of gold mining. Our goal is to mine for gold in a new, unknown land. Our example below is heavily inspired by one of the first uses of Gaussian Processes (GPs) to model ore density in South Africa by Prof. Danie Krige. For now, let us make a simplifying assumption, the gold content lies in a one-dimensional space, i.e., we are talking about gold distribution only about a line. We aim to find the location along this line where we would get the maximum gold in a few numbers of drilling (as drilling is expensive).
     </p>
     <p>
       Now, at the start of the activity, we have no idea about the amount of gold at different locations. The only way we can get the information about the amount of gold is by drilling at different locations. This drilling is costly. So we want to <strong>minimize the number of drillings required</strong> while still <strong>finding the location of maximum gold quickly</strong>.<d-footnote>Interestingly, our example is similar to one of the first use of Gaussian Process (GP) (also called kriging)<d-cite key="goldKridge"></d-cite>, where Prof. Krige modelled gold concentrations using GPs.</d-footnote>
@@ -91,7 +91,7 @@
       <li>
         <p>
           <strong>Problem 1: Best Estimate of Gold Distribution</strong><br/>
-          In this problem, we want to estimate the amount of gold on the one-dimensional line. Since the cost of drillings limits us, we can not drill at every location. Instead, we should drill at those locations that provide us with the <strong>maximum information</strong> about the distribution of the gold. This problem is akin to 
+          In this problem, we want to estimate the amount of gold on the one-dimensional line. We can not drill at every location due to the prohibitive cost. Instead, we should drill at those locations that provide us with the <strong>maximum information</strong> about the distribution of the gold. This problem is akin to 
           <strong>
             active learning<d-cite key="settles2009active,Tong2001"></d-cite>
           </strong>.
@@ -101,7 +101,7 @@
       <li>
         <p>
           <strong>Problem 2: Location of Maximum Gold</strong><br/>
-          In this problem, we want to find the location in the one-dimensional space where the gold quantity is the maximum. This problem focuses on finding the location with the most gold content. This problem is akin to 
+          In this problem, we want to find the location in the one-dimensional space where the gold quantity is the maximum, using a small number of drillings. This problem is akin to 
           <strong>
             Bayesian Optimization<d-cite key="humanOut,nandoBOtut"></d-cite>
           </strong> (BO).
@@ -119,7 +119,7 @@
     <h2>Active Learning</h2>
 
     <p>
-      In machine learning problems, often, unlabelled data is easily available, but labeling could be an expensive task. As an example, for a speech-to-text task, the ground truth labeling or annotation task requires expert(s) to label words and sentences manually. In our gold mining problem, drilling (akin to labeling) is an expensive operation, and we would like to minimize it. But, without drilling, we can not estimate the gold concentration. Active learning would solve this problem by posing a smart strategy to choose the next drilling site. While there are various methods and techniques in the active learning literature, for the sake of brevity, we will look only at <strong>uncertainty reduction</strong>. This method chooses the next query point as the one our model is the most uncertain about. One of the ways we can reduce the uncertainty is by choosing the point at which we have the maximum variance (we are most uncertain).
+      For many machine learning problems, unlabelled data is easily available. However, labeling could be an expensive task. As an example, for a speech-to-text task, the ground truth labeling or annotation task requires expert(s) to label words and sentences manually. In our gold mining problem, drilling (akin to labeling) is an expensive operation, and we would like to minimize it. But, without drilling, we can not estimate the gold concentration. Active learning would solve this problem by posing a smart strategy to choose the next drilling site. While there are various methods and techniques in the active learning literature, for the sake of brevity, we will look only at <strong>uncertainty reduction</strong>. This method chooses the next query point as the one our model is the most uncertain about. One of the ways we can reduce the uncertainty is by choosing the point at which we have the maximum variance (we are most uncertain).
     </p>
 
     <h3>Surrogate Model</h3>
@@ -263,7 +263,7 @@
         </tr>
         <tr>
           <td><d-math>f</d-math> may be noisy. If noise is present, we’ll assume it is independent and normally distributed, with common but unknown variance.</td>
-          <td>This constraint is still satisfied in our case as we had have taken noiseless measurements. Which can be considered as a Gaussian noise with zero mean and zero standard deviation.</td>
+          <td>This constraint is also satisfied as we have noiseless measurements.</td>
         </tr>
       </table>
 <!-- 
@@ -321,8 +321,9 @@
     <p>
       Our original optimization problem <d-math>x^* = \text{argmax}_{x \in A} f(x)</d-math> is hard because <d-math>f</d-math> is expensive to evaluate. The key idea of BO is to transform this original difficult optimization into a sequence of easier inexpensive optimizations of functions called an acquisition function (<d-math>\alpha(x)</d-math>). Intuitively, an acquisition function describes how useful it would be to evaluate a point (for the maximisation problem<d-footnote>Please find <a href="https://www.cse.wustl.edu/~garnett/cse515t/spring_2015/files/lecture_notes/12.pdf">these</a> slides from Washington University in St. Louis to know more.</d-footnote>). At each step, we optimize the acquisition function to determine the point it suggests is best to sample.
     </p>
-    <p class="check">
-      You may be wondering what's "Bayesian" about this sequence of optimization problems. Let us re-wind and go back to our surrogate model and build the link between all the things we have discussed thus far, by noting the steps of BO<d-footnote>Please find <a href="https://youtu.be/EnXxO3BAgYk">this</a> amazing video from Javier González at The Gaussian Process Summer School 2019.</d-footnote>
+
+    <p>
+      Let us re-wind and build the link between all the things we have discussed thus far, by noting the steps of BO<d-footnote>Please find <a href="https://youtu.be/EnXxO3BAgYk">this</a> amazing video from Javier González at The Gaussian Process Summer School 2019.</d-footnote>.
     </p>
     <p>
       <ol>
@@ -340,9 +341,15 @@
         </li>
       </ol>
     </p>
+
     <p>
-      We now have three core ideas associated with acquisition functions: i) they are a function of the surrogate posterior; ii) they combine exploration and exploitation; and iii) they are inexpensive to evaluate. Let’s look at a few commonly used acquisition functions to understand the concept better.
+      You may be wondering what's "Bayesian" about this sequence of optimization problems. As we'll see, uncertainty plays a critical role in finding how promising it is to evaluate a point. We, therefore, sequentially refine our surrogate's uncertainty (posterior) with each evaluation via Bayesian posterior updating<d-cite key="nandoBOLoop"></d-cite>. We, therefore, call these sequential optimizations "Bayesian" Optimization.
     </p>
+
+    <p>
+      We need to have three core ideas associated with acquisition functions: i) they are a function of the surrogate posterior; ii) they combine exploration and exploitation; and iii) they are inexpensive to evaluate. Let’s look at a few commonly used acquisition functions to understand them better.
+    </p>
+
 <!-- 
     <p>
       Now, to take into account the combination of exploration and exploitation, we try to use a function that combines the two aspects. These utility functions are called acquisition functions. These functions can be considered a function of the posterior of the surrogate model we might be using.
