@@ -312,14 +312,14 @@ img {vertical-align: middle;}
 
 /*Taken from https://www.w3schools.com/howto/howto_js_rangeslider.asp*/
 .slidecontainer {
-  width: 86%;
+  width: 80%;
   float: left;
 }
 
 .slider {
   -webkit-appearance: none;
   cursor:grabbing;
-  width: 100%;
+  width: 95%;
   height: 10px;
   border-radius: 5px;
   background: #d3d3d3;
@@ -327,6 +327,7 @@ img {vertical-align: middle;}
   opacity: 0.7;
   -webkit-transition: .2s;
   transition: opacity .2s;
+  vertical-align: center;
 }
 
 .slider:hover {
@@ -337,18 +338,19 @@ img {vertical-align: middle;}
   -webkit-appearance: none;
   appearance: none;
   border-radius: 8px;
-  width: 23px;
-  height: 23px;
+  width: 20px;
+  height: 20px;
   border: 0;
   background: black;
   cursor: pointer;
+  vertical-align: center;
 }
 
 button {
   cursor:grabbing;
   float: left;
-  width: 31px;
-  height: 31px;
+  width: 8%;
+  height: 12%;
   border-radius: 7px;
 }
 
