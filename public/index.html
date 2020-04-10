@@ -262,7 +262,7 @@
         <tr>
           <td><d-math>f</d-math> is derivative-free:
           evaluations do not give gradient information.</td>
-          <td>Our evaluation (by drilling) of the amount of gold content at a location didn't give us any gradient information.</td>
+          <td>Our evaluation (by drilling) of the amount of gold content at a location did not give us any gradient information.</td>
         </tr>
         <tr>
           <td><d-math>f</d-math> is expensive to evaluate:
@@ -501,7 +501,7 @@
     <h3 id="expectedimprovementei">Expected Improvement (EI)</h3>
 
     <p>
-      Probability of improvement only looked at <em>how likely</em> is an improvement, but, shouldn't we be looking into <em>how much</em> we can improve? The next criterion called, Expected Improvement, (EI) does exactly that<d-footnote>A good
+      Probability of improvement only looked at <em>how likely</em> is an improvement, but, should not we be looking into <em>how much</em> we can improve? The next criterion called, Expected Improvement, (EI) does exactly that<d-footnote>A good
         introduction to the Expected Improvement acquisition function is by <a href="https://thuijskens.github.io/2016/12/29/bayesian-optimisation/" target="_blank">this post</a> by Thomas Huijskens and <a
           href="https://people.orie.cornell.edu/pfrazier/Presentations/2018.11.INFORMS.tutorial.pdf" target="_blank">these slides</a> by Peter Frazier</d-footnote>!
       The idea is fairly simple - choose the next point as the one which has the highest expected improvement over the current max <d-math>f(x^+)</d-math>, where <d-math> x^+ = \text{argmax}_{x_i \in x_{1:t}}f(x_i)</d-math> and <d-math>x_i</d-math> is the location queried at <d-math>i^{th}</d-math> time step. 
@@ -519,7 +519,7 @@
     </p>
 
     <p>
-      In essence, we are trying to select the point that minimizes the distance to the objective evaluated at the maximum. Unfortunately, we don't know the ground truth function, <d-math>f</d-math>. Mockus<d-cite key="mockusEI"></d-cite> proposed
+      In essence, we are trying to select the point that minimizes the distance to the objective evaluated at the maximum. Unfortunately, we do not know the ground truth function, <d-math>f</d-math>. Mockus<d-cite key="mockusEI"></d-cite> proposed
       the following acquisition function to overcome the issue.
     </p>
 
@@ -575,7 +575,7 @@
       <d-figure><img src="images/MAB_pngs/EI/3/0.png" /></d-figure>
     </figure>
     <p>
-      Is this better than before? It turns out a yes and a no. We see that here we do too much exploration, given the value of <d-math>\epsilon = 3</d-math>. This results in early reaching something close to global maxima, but unfortunately, we don't exploit to get more gains near the global maxima. We would have liked an acquisition function that tried to exploit a bit more after reaching somewhere close to the global maxima.
+      Is this better than before? It turns out a yes and a no. We see that here we do too much exploration, given the value of <d-math>\epsilon = 3</d-math>. This results in early reaching something close to global maxima, but unfortunately, we do not exploit to get more gains near the global maxima. We would have liked an acquisition function that tried to exploit a bit more after reaching somewhere close to the global maxima.
     </p>
 
     <h4 class="collapsible">PI vs. EI</h4>
@@ -625,21 +625,21 @@
       <ul>
         <li>
           <p>
-            Locations <d-math>x</d-math> with high variance (<d-math>\sigma(x)</d-math>) will show a larger variance in the functional values sampled from the surrogate posterior. This can aid exploration as high variation can lead to sampled functions with a high value at locations with high variance. This will ensure an <strong>exploratory</strong> behaviour.
+            Locations <d-math>x</d-math> with high variance (<d-math>\sigma(x)</d-math>) will show a larger variance in the functional values sampled from the surrogate posterior. This can aid exploration as high variation can lead to sampled functions with a high value at locations with high variance. This will ensure an <strong>exploratory</strong> behavior.
           </p>
           <p>
-            As an example of this behaviour, we see that optimizing Sample 3 above will lead to exploration.
+            As an example of this behavior, we see that optimizing Sample 3 above will lead to exploration.
           </p>
 
         </li>
         <li>
           <p>
             The current max value evaluated be denoted by <d-math>f(x^+)</d-math>. The sampled functions will need to pass through or closely from the current max value (due to low <d-math>\sigma(x)</d-math>) at the evaluated locations. This will
-            ensure an <strong>exploiting</strong> behaviour of the acquisition function.
+            ensure an <strong>exploiting</strong> behavior of the acquisition function.
           </p>
 
           <p>
-            As an example of this behaviour, we see that all the sampled functions pass through the current max at <d-math>x = 0.5</d-math>. This helps the acquisition function to exploit the best functional value in some sense.
+            As an example of this behavior, we see that all the sampled functions pass through the current max at <d-math>x = 0.5</d-math>. This helps the acquisition function to exploit the best functional value in some sense.
           </p>
 
         </li>
@@ -850,7 +850,7 @@
 
       <p>The most common use case of Bayesian Optimization is <em>hyperparameter tuning</em>: finding the best performing hyperparameters on machine learning models. At last, hyperparameter tuning is an optimization problem (optimizing our metric of choice).</p>
 
-      <p>Usually, when training a model isn't expensive and time-consuming, we might just do a grid search to find the optimum hyperparameters. The primary issue with grid search is that it is not feasible if getting the functional value is extremely costly, as in the case of a large neural network that takes days to train. This might result in days of waiting to get the accuracy scores. Further, grid search scales poorly in terms of the number of hyperparameters.
+      <p>Usually, when training a model is not expensive and time-consuming, we might just do a grid search to find the optimum hyperparameters. The primary issue with grid search is that it is not feasible if getting the functional value is extremely costly, as in the case of a large neural network that takes days to train. This might result in days of waiting to get the accuracy scores. Further, grid search scales poorly in terms of the number of hyperparameters.
 
       <p>We turn to BO to counter the expensiveness of getting the functional values (accuracy values) and these increased dimensions.</p>
 
@@ -877,7 +877,7 @@
         </ul>
       </p>
       <p>
-        Let us apply Bayesian Optimization to learn the best hyperparameters for this classification task<d-footnote> <strong>Note</strong>: the surface plots you see for the Ground Truth Accuracies below were calculated for each possible hyperparameter for showcasing purposes only. We don't have these values in real applications.
+        Let us apply Bayesian Optimization to learn the best hyperparameters for this classification task<d-footnote> <strong>Note</strong>: the surface plots you see for the Ground Truth Accuracies below were calculated for each possible hyperparameter for showcasing purposes only. We do not have these values in real applications.
         </d-footnote>. The optimum values for &#60<d-math>C, \ \gamma</d-math>&#62 have been found via running grid search at high granularity.
       </p>
 
@@ -918,7 +918,7 @@
       </figure>
 
     <p>
-        We see all our acquisition functions other than the random were able to reach the best possible solution. We see the random method seemed to perform much better initially, but it couldn't beat the BO framework at the end of the optimization. The initial subpar performance of BO is attributed to the initial exploration.
+        We see all our acquisition functions other than the random were able to reach the best possible solution. We see the random method seemed to perform much better initially, but it could not beat the BO framework at the end of the optimization. The initial subpar performance of BO is attributed to the initial exploration.
     </p>
 
       <p class="check"><b> SOME of the content is getting cut in the collapsible towards the end!</b></p>
@@ -975,14 +975,14 @@
         </figure>
 
         <p>
-          Looking at the ground truth, we see the black-box function we are trying to optimize isn't too smooth, and therefore we see that our optimization strategies seem to struggle compared to the last example. This shows that the effectiveness of BO depends on the surrogate's efficiency to model the actual black-box function. It is still interesting to notice that the BO framework beats the random strategy.
+          Looking at the ground truth, we see the black-box function we are trying to optimize is not too smooth, and therefore we see that our optimization strategies seem to struggle compared to the last example. This shows that the effectiveness of BO depends on the surrogate's efficiency to model the actual black-box function. It is still interesting to notice that the BO framework beats the random strategy.
         </p>
 
         <h3>Example 3 -- Neural Networks</h3>
         <p>
           Let us take this example to get an idea of how to apply Bayesian Optimization to training neural networks like CNNs on Mnist. Here we will be using <d-code language="python">scikit-optim</d-code>, which also provides us support for
           optimizing
-          our function on a mix of categorical, integral, and real variables. We won't be plotting the ground truth here, as it's extremely costly to do so. Below are some code snippets that go into adding Bayesian Optimization for hyperparameter
+          our function on a mix of categorical, integral, and real variables. We will not be plotting the ground truth here, as it is extremely costly to do so. Below are some code snippets that go into adding Bayesian Optimization for hyperparameter
           tuning.
         </p>
 
@@ -1063,7 +1063,7 @@
         </p>
 
         <p>
-          Looking at the above example, we can see that incorporating Bayesian Optimization isn't a big problem and saves a lot of time we can see that the network was able to get to an accuracy of nearly one in around three iterations. That's
+          Looking at the above example, we can see that incorporating Bayesian Optimization isn't a big problem and saves a lot of time we can see that the network was able to get to an accuracy of nearly one in around three iterations. That is
           impressive! The example above has been inspired by Hvass Laboratories' Tutorial<d-footnote> <a href="https://github.com/Hvass-Labs/TensorFlow-Tutorials/blob/master/19_Hyper-Parameters.ipynb">Notebook</a> showcasing hyperparameter
             optimization in Tensorflow. </d-footnote> on <d-code language="python">scikit-optim</d-code>.
         </p>
@@ -1075,7 +1075,7 @@
           The parameters selected by the optimizer were <d-math langugage="python">[4, 0.0019, 'relu']</d-math>, i.e., batch size of 8, learning rate of 1.9e-2 and 'relu' activation function.
         </p>
         <p>
-          If we had performed a naive grid search, it would have taken us a lot more iterations <d-math>(5 \times 2 \times 7)</d-math>, and we still wouldn't have tested a learning rate near the learning rate returned by the optimizer. Suppose using grid search resulted in us taking twenty-five iterations. If we convert it to the time we spent over the Bayesian Optimization approach, we will get a better idea of the amount of time that can be saved when evaluation of the ground truth functions is even more costly.
+          If we had performed a naive grid search, it would have taken us a lot more iterations <d-math>(5 \times 2 \times 7)</d-math>, and we still would not have tested a learning rate near the learning rate returned by the optimizer. Suppose using grid search resulted in us taking twenty-five iterations. If we convert it to the time we spent over the Bayesian Optimization approach, we will get a better idea of the amount of time that can be saved when evaluation of the ground truth functions is even more costly.
         </p>
 
         <p>
