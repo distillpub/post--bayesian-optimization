@@ -608,7 +608,17 @@
       For our surrogate GP model, Thompson sampling involves drawing a function sample from the posterior and maximizing it, which is trivial to do.
     </p>
 
+    <p>
+      Below we have an image showing three sampled functions from the learned surrogate posterior. The training data constituted the point <d-math>x = 0.5</d-math> and the corresponding functional value.
+    </p>
+
     <p class="check"> <b> Add the new plots for Thompson sampling </b> </p>
+
+    <figure>
+      <d-figure>
+        <img src="images/MAB_gifs/thompson.svg" />
+      </d-figure>
+    </figure>
 
     <p>
       The intuition behind Thompson sampling can be understood by noticing two important observations.
@@ -617,12 +627,21 @@
           <p>
             Locations <d-math>x</d-math> with high variance (<d-math>\sigma(x)</d-math>) will show a larger variance in the functional values sampled from the surrogate posterior. This can aid exploration as high variation can lead to sampled functions with a high value at locations with high variance. This will ensure an <strong>exploratory</strong> behaviour.
           </p>
+          <p>
+            As an example of this behaviour, we see that optimizing Sample 3 above will lead to exploration.
+          </p>
+
         </li>
         <li>
           <p>
             The current max value evaluated be denoted by <d-math>f(x^+)</d-math>. The sampled functions will need to pass through or closely from the current max value (due to low <d-math>\sigma(x)</d-math>) at the evaluated locations. This will
             ensure an <strong>exploiting</strong> behaviour of the acquisition function.
           </p>
+
+          <p>
+            As an example of this behaviour, we see that all the sampled functions pass through the current max at <d-math>x = 0.5</d-math>. This helps the acquisition function to exploit the best functional value in some sense.
+          </p>
+
         </li>
       </ul>
       <p>
@@ -902,8 +921,9 @@
         We see all our acquisition functions other than the random were able to reach the best possible solution. We see the random method seemed to perform much better initially, but it couldn't beat the BO framework at the end of the optimization. The initial subpar performance of BO is attributed to the initial exploration.
     </p>
 
-      <h3 class="collapsible">Other Examples</h3>
       <p class="check"><b> SOME of the content is getting cut in the collapsible towards the end!</b></p>
+
+      <h3 class="collapsible">Other Examples</h3>
       <div class="content">
         <h3>Example 2 -- Random Forest</h3>
 
@@ -1055,11 +1075,11 @@
           The parameters selected by the optimizer were <d-math langugage="python">[4, 0.0019, 'relu']</d-math>, i.e., batch size of 8, learning rate of 1.9e-2 and 'relu' activation function.
         </p>
         <p>
-          If we had performed a naive grid search, it would have taken us a lot more iterations <d-math>(5 \times 2 \times 7)</d-math>, and we still wouldn't have tested a learning rate near the learning rate returned by the optimizer. Suppose using grid search resulted in us taking 25 iterations. If we convert it to the time we spent over the Bayesian Optimization approach, we will get a better idea of the amount of time that can be saved when evaluation of the ground truth functions is even more costly.
+          If we had performed a naive grid search, it would have taken us a lot more iterations <d-math>(5 \times 2 \times 7)</d-math>, and we still wouldn't have tested a learning rate near the learning rate returned by the optimizer. Suppose using grid search resulted in us taking twenty-five iterations. If we convert it to the time we spent over the Bayesian Optimization approach, we will get a better idea of the amount of time that can be saved when evaluation of the ground truth functions is even more costly.
         </p>
 
         <p>
-          We would have saved around 5 hours by using BO for our hypothetical scenario of using Grid Search.
+          We would have saved around five hours by using BO for our hypothetical scenario of using Grid Search.
         </p>
       </div>
 
