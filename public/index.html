@@ -1180,34 +1180,43 @@
       </div>
     </div>
 
-        <h2 id="embracebayesianoptimization">Embrace Bayesian Optimization</h2>
+    <h2 id="embracebayesianoptimization">Embrace Bayesian Optimization</h2>
 
-        <p>
-          Optimizing or tuning hyperparams is an important facet of modern machine learning algorithms and BO is an efficient way of tuning the same.
-        </p>
-        <p>
-          Having read all the way through, you might have been sold on the idea about the time you can save by asking Bayesian Optimizer to find the best hyperparameters for your fantastic model. There are a plethora of Bayesian Optimization libraries available. We have linked a few below. Do check them out.
-        </p>
+    <p>
+      Optimizing or tuning hyperparams is an important facet of modern machine learning algorithms and BO is an efficient way of tuning the same.
+    </p>
+    <p>
+      Having read all the way through, you might have been sold on the idea about the time you can save by asking Bayesian Optimizer to find the best hyperparameters for your fantastic model. There are a plethora of Bayesian Optimization libraries available. We have linked a few below. Do check them out.
+    </p>
 
-        <ul>
-          <li><a href="https://scikit-optimize.github.io/">scikit-optimize</a>
-            <d-footnote>Really nice tutorial showcasing hyperparameter optimization on a neural network available at this <a href="https://github.com/Hvass-Labs/TensorFlow-Tutorials/blob/master/19_Hyper-Parameters.ipynb">link</a>.
-            </d-footnote>
-          </li>
+    <ul>
+      <li><a href="https://scikit-optimize.github.io/">scikit-optimize</a>
+        <d-footnote>Really nice tutorial showcasing hyperparameter optimization on a neural network available at this <a href="https://github.com/Hvass-Labs/TensorFlow-Tutorials/blob/master/19_Hyper-Parameters.ipynb">link</a>.
+        </d-footnote>
+      </li>
 
-          <li><a href="https://app.sigopt.com/docs/overview/python">sigopt</a></li>
+      <li><a href="https://app.sigopt.com/docs/overview/python">sigopt</a></li>
 
-          <li><a href="http://hyperopt.github.io/hyperopt/">hyperopt</a></li>
+      <li><a href="http://hyperopt.github.io/hyperopt/">hyperopt</a></li>
 
-          <li><a href="https://github.com/HIPS/Spearmint">spearmint</a></li>
+      <li><a href="https://github.com/HIPS/Spearmint">spearmint</a></li>
 
-          <li><a href="https://github.com/Yelp/MOE">MOE</a></li>
-        </ul>
+      <li><a href="https://github.com/Yelp/MOE">MOE</a></li>
+    </ul>
 
-        <p>
-          We hope you had a good time reading the article and hope you are ready to <strong>exploit</strong> the power of BO. In case you wish to <strong>explore</strong> more, please read the <a href="#FurtherReading">Further Reading</a> section
-          below.
-        </p>
+    <p>
+      We hope you had a good time reading the article and hope you are ready to <strong>exploit</strong> the power of BO. In case you wish to <strong>explore</strong> more, please read the <a href="#FurtherReading">Further Reading</a> section
+      below.
+    </p>
+
+
+
+
+    <h2 id="ack">Acknowledgement</h2>
+
+    <p>
+      This article was made possible with inputs from numerous people. Firstly, we would like to thank all the Distill reviewers for their punctilious and actionable feedback. These fantastic reviews immensely helped strengthen our article. We further express our gratitude towards the Distill Editors, who were extremely kind and helped us navigate various steps to publish our work. We would also like to thank <a herf="https://sgarg87.github.io/">Dr. Sahil Garg</a> for his feedback on the flow of the article. Lastly, we would like to acknowledge the help we received from <a herf="https://colah.github.io/">Christopher Olah<a> and the <a herf="http://initiatives.iitgn.ac.in/writingstudio/wp/">Writing Studio</a> to improve the script of our article.
+    </p>
 
   </d-article>
 
@@ -1328,49 +1337,4 @@
   </d-appendix>
 
 </body>
-
 </html>
-
-<!--
-<figure>
-  <d-figure><img src="images/MAB_gifs/active-gp.gif" /></d-figure>
-</figure>
-
-<figure>
-  <d-figure><img src="images/MAB_gifs/mab-gp-pi-eps0.5.gif" /></d-figure>
-</figure>
-
-<ul>
-  <li>
-    <p>Here are representative animations showing the process of drilling at new locations and to reduce the uncertainty and get the best predictions showcasing the <strong>Active learning</strong> problem.</p>
-  </li>
-
-  <li>
-    <p>And drilling at locations to get the location of the maximum gold reserve, showcasing the <strong>Bayesian Optimization</strong> problem.</p>
-  </li>
-</ul>
-
-<p>We will build the solution to both of these problems from the ground up.</p>
-
-
-<h1 id="bayesianoptimizationvsgradientdescent">Bayesian Optimization vs. Gradient Descent</h1>
-
-<p>Some of the main differences between BO and GD as pointed out at StackExchange<d-cite key="BOvsGD"></d-cite>:</p>
-
-<ul>
-  <li>The biggest difference between Bayesian Optimization and Gradient Descent is that in the latter case, we have access to the gradient values.</li>
-
-  <li>BO doesn't assume the function to be convex, in the case of Gradient Descent if you would like to get to the global minima, your function should be convex.</li>
-
-  <li>BO assumes the function we are optimizing is fairly smooth.</li>
-
-  <li>BO doesn't scale well with large data, as the GP inference is cubic in the number of points.</li>
-</ul>
-
-<p>There has been work done in Bayesian Optimization to make use of gradient information. The idea is based on the fact that the Gaussian Processes' predictions can be updated to take in the gradient information we get from the
-  function
-  we are trying to optimize. For more information, we would suggest looking at the paper Bayesian Optimization with Gradients<d-cite key="BOwtGD"></d-cite> from Wu et. al..</p>
-
-<p>Now, as we have described BO more technically, let's have a look at how we can use this method in the case of Hyperparameter Tuning. Hyperparameters, you ask?</p>
-
-</html> -->
