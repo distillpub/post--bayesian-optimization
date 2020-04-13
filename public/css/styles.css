@@ -324,7 +324,9 @@ img {vertical-align: middle;}
   -webkit-appearance: none;
   cursor:grabbing;
   width: 95%;
-  height: 10px;
+  height: 1.5em;
+  margin-top: .38em;
+  margin-bottom: .38em;
   border-radius: 5px;
   background: #d3d3d3;
   outline: none;
@@ -353,8 +355,8 @@ img {vertical-align: middle;}
 button {
   cursor:grabbing;
   float: left;
-  width: 8%;
-  height: 12%;
+  width: 2.2em;
+  height: 2.2em;
   border-radius: 7px;
 }
 
