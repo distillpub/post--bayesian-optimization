@@ -120,7 +120,7 @@
     <h2>Active Learning</h2>
 
     <p>
-For many machine learning problems, unlabelled data is readily available. However, labeling (or querying) could be an expensive task, and we want to minimize it. As an example, for a speech-to-text task, the ground truth labeling or annotation task requires expert(s) to label words and sentences manually. In our gold mining problem, drilling (akin to labeling) is an expensive operation. Active learning poses smart strategies for labeling, with the aim of obtaining high accuracy while minimizing the number of instances to be labeled. While there are various methods and techniques in the active learning literature, for the sake of brevity, we will look only at <strong>uncertainty reduction</strong>. This method chooses the most uncertain point as the next query point. Often, the variance acts as a measure of uncertainty.
+For many machine learning problems, unlabelled data is readily available. However, labeling (or querying) could be an expensive task, and we want to minimize it. As an example, for a speech-to-text task, the ground truth labeling or annotation task requires expert(s) to label words and sentences manually. In our gold mining problem, drilling (akin to labeling) is an expensive operation. Active learning poses smart strategies for labeling, to obtain high accuracy while minimizing the number of instances to be labeled. While there are various methods and techniques in the active learning literature, for the sake of brevity, we will look only at <strong>uncertainty reduction</strong>. This method chooses the most uncertain point as the next query point. Often, the variance acts as a measure of uncertainty.
     </p>
 
     <h3>Surrogate Model</h3>
@@ -188,7 +188,7 @@ For many machine learning problems, unlabelled data is readily available. Howeve
     </h3>
 
     <ol>
-      <li>Choose the point that with the highest uncertainty and add it to train set (or query/label that point)</li>
+      <li>Choose the point with the highest uncertainty and add it to train set (or query/label that point)</li>
       <li>Train on the new train set</li>
       <li>Go to #1 till convergence or budget elapsed</li>
     </ol>
@@ -202,7 +202,7 @@ For many machine learning problems, unlabelled data is readily available. Howeve
 
 
     <p>
-      The idea of choosing the most uncertain location leads to querying of the points that are the farthest from current set of train points. We are able to estimate the true distribution of gold in a few iterations. At every iteration, our active learning procedure <strong> explores
+      The idea of choosing the most uncertain location leads to querying of the points that are the farthest from the current set of train points. As we see from the visualization, we can estimate the true distribution of gold in a few iterations. At every iteration, our active learning procedure <strong> explores
       </strong> the domain to make our estimates better.
     </p>
 
