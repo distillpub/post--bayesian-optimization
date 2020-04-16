@@ -1,3 +1,9 @@
+.controls{
+  display: inline-flex;
+  width: -webkit-fill-available;
+  text-align: center;
+}
+
 .column {
   width: 45%;
 }
@@ -316,8 +322,7 @@ img {vertical-align: middle;}
 
 /*Taken from https://www.w3schools.com/howto/howto_js_rangeslider.asp*/
 .slidecontainer {
-  width: 80%;
-  float: left;
+  width: -webkit-fill-available;
 }
 
 .slider {

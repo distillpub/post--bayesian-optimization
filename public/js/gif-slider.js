@@ -51,19 +51,15 @@ function appendInputButtons() {
     button2.appendChild(document.createTextNode(">"))
     button2.setAttribute("onclick", 
       "changePng(this.parentNode.parentNode.parentNode, true)")
-    button2.setAttribute("padding-top", "5px")
 
-    div.setAttribute("align", "center")
+    div.setAttribute("class", "controls")
 
     var div1 = document.createElement("div")
     div1.appendChild(button1)
-    div1.setAttribute("float", "left")
     var div2 = document.createElement("div")
     div2.setAttribute("class", "slidecontainer")
-    div2.setAttribute("float", "left")
     div2.appendChild(input)
     var div3 = document.createElement("div")
-    div3.setAttribute("float", "right")
     div3.appendChild(button2)
 
     div.appendChild(div1)
