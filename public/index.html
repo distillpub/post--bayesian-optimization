@@ -64,20 +64,20 @@
     </strike> -->
       Many modern machine learning algorithms have a large number of hyperparameters. To effectively use these algorithms, we need to pick good hyperparameter values.
 
-      In this article, we will talk about Bayesian Optimization (BO), which is a suite of techniques often used to efficiently tune the hyperparameters, optimization parameters, and other model parameters. Besides being used in the above scenarios, BO is a suite of techniques for optimizing any black-box function.
+      In this article, we will talk about Bayesian Optimization (BO), a suite of techniques often used to efficiently tune the hyperparameters, optimization parameters, and other model parameters. More generally, BO can be used to optimize any black-box function.
     </p>
     <p>
 
     </p>
 
     <p>
-      Before we talk in-depth about using BO to tune model parameters, we study BO to maximize (optimize) a black-box function.
+      However, before we talk in-depth about using BO to tune model parameters, we will study using BO to maximize (optimize) a black-box function.
     </p>
 
     <h1>Mining Gold!</h1>
     <p>
-      Let us start the discussion with the example of gold mining. Our goal is to mine for gold in a new, unknown land<d-footnote>Interestingly, our example is similar to one of the first use of Gaussian Process (GP) (also called kriging)<d-cite key="goldKridge"></d-cite>, where Prof. Krige modelled gold concentrations using GPs.</d-footnote>.
-      For now, let us make a simplifying assumption, the gold content lies in a one-dimensional space, i.e., we are talking about gold distribution only about a line. We aim to find the location along this line where we would get the maximum gold in a few numbers of drilling (as drilling is expensive).
+      Let's start with the example of gold mining. Our goal is to mine for gold in a new, unknown land<d-footnote>Interestingly, our example is similar to one of the first use of Gaussian Process (GP) (also called kriging)<d-cite key="goldKridge"></d-cite>, where Prof. Krige modelled gold concentrations using GPs.</d-footnote>.
+      For now, let us make a simplifying assumption, the gold content lies in a one-dimensional space, i.e., we are talking about gold distribution only about a line. We want to find the location along this line with the maximum gold while only drilling a few times (as drilling is expensive).
     </p>
     <p>
       Initially, we have no idea about the amount of gold at different locations. The only way to learn the gold distribution is by drilling at different locations. This drilling is costly. Thus, we want to <strong>minimize the number of drillings required</strong> while still <strong>finding the location of maximum gold quickly</strong>.
