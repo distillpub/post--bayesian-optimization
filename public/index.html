@@ -660,7 +660,7 @@
       <h3 class="collapsible"> Other Acquisition Functions </h3>
       <div class="content">
 
-        <p style="padding-top: 1em;">We have seen various acquisition functions until now. One trivial way to come up with acquisition functions is to have a explore/exploit combination.
+        <p>We have seen various acquisition functions until now. One trivial way to come up with acquisition functions is to have a explore/exploit combination.
         <p>
 
         <h3> Upper Confidence Bound (UCB) </h3>
@@ -672,57 +672,6 @@
         <p>
           The intuition behind the UCB acquisition function is weighing of the  importance between the surrogate's mean  vs. the surrogate's uncertainty. The <d-math>\lambda</d-math> above is the hyperparameter that can control the preference between exploitation or exploration.
         </p>
-
-
-        <!--
-        <figure>
-          <d-figure><img src="images/MAB_gifs/acq_fn.svg" /></d-figure>
-        </figure>
-
-        <p>
-          In the figure above, we can see an instantiation of the above-mentioned acquisition function (shown in green) for some value of <d-math>\lambda</d-math>.
-          We can observe that mean near the location (predicted) of the just added point (red point) is high. Also, as we go far from the red point, we see that our uncertainty increases to a maximum. We can see that the acquisition function is low at
-          the sampled point (part of the train set), as there is no uncertainty at the point. However, as we move away from the red point, our variance increases, and so does our acquisition function. But, beyond a certain value, the acquisition
-          function keeps on decreasing. This is because while the variance or uncertainty is high for such points, the posterior mean is low.
-
-          We see at around the location
-          <d-math>x = 1.4</d-math>
-          we get the maximum value for the acquisition (green curve). Thus we next select this location to drill.
-        </p>
-
-        <p>
-          The intuition of using the acquisition function <d-math>\alpha(x) = \mu(x) + \lambda \times \sigma(x)</d-math> is that we are interested in finding the global mean <d-math>\mu</d-math>, so taking into account the estimated mean would be a
-          good idea.
-          Additionally, we would like to explore too (using <d-math>\sigma</d-math>); else we might be stuck in a local maxima if don't explore enough.
-        </p>
-
-        <p>
-          Let us now try different values of <d-math>\lambda</d-math> and see the maximum gold count found by our acquisition function.
-        </p>
-
-        <figure>
-          <d-figure><img src="images/MAB_gifs/mab-gp-1.gif" /></d-figure>
-        </figure>
-
-        <p>
-          For <d-math>\lambda=1</d-math> as shown in the above animation, we can see that we get stuck in the local maxima. This probably means that we are not exploring enough and only exploiting near the current maxima.
-        </p>
-
-        <figure>
-          <d-figure><img src="images/MAB_gifs/mab-gp-5.gif" /></d-figure>
-        </figure>
-
-        <p>
-          For <d-math>\lambda=5</d-math> as shown in the above animation, we can see that we still get stuck in the local maxima. Let us now increase <d-math>\lambda</d-math> even more.
-        </p>
-
-        <figure>
-          <d-figure><img src="images/MAB_gifs/mab-gp-10.gif" /></d-figure>
-        </figure>
-
-        <p>
-          Perfect! We see that setting this value of <d-math>\lambda=10</d-math> resulted in finding points near the global maxima and not getting stuck in a local maximum.
-        </p> -->
 
         <p>
           We can further form acquisition functions by combining the existing acquisition functions though the physical interpretability of such combinations might not be so straightforward. One reason we might want to combine two methods is to overcome the limitations of the individual methods.
@@ -757,34 +706,8 @@
           Srinivas et. al.<d-cite key="gpucbBounds"></d-cite> developed a schedule for <d-math>\beta</d-math> that they theoretically demonstrate to minimize cumulative regret.
         </p>
 
-      <!-- <figure>
-          <d-figure><img src="images/MAB_gifs/mab-gp-gp_ucb1-1.gif" /></d-figure>
-        </figure>
-
-        <p>
-          We seem to be exploiting too much, let us increase the exploratory hyperparameters!
-        </p>
-
-        <figure>
-          <d-figure><img src="images/MAB_gifs/mab-gp-gp_ucb3-1.gif" /></d-figure>
-        </figure>
-
-        <p>
-          Using this set of hyperparameters, we are able to get near global maxima and further "exploit" to find the global maximum. This was a result of increasing the value of <d-math>v</d-math> to
-          <d-math>3</d-math>. This shows that <d-math>v</d-math> gives weight to exploration.
-        </p>
-
-        <figure>
-          <d-figure><img src="images/MAB_gifs/mab-gp-gp_ucb1-3.gif" /></d-figure>
-        </figure>
-        <p>
-          Setting the values of the hyperparameters to <d-math>v = 1</d-math> and <d-math>\delta = 3</d-math> results in greater exploitation.</p>
-        <figure>
-          <d-figure><img src="images/MAB_gifs/mab-gp-ei_pi.gif" /></d-figure>
-        </figure>
-      -->
-
       </div>
+      
       <h3>Comparison</h3>
 
       <p>

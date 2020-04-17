@@ -204,7 +204,6 @@
   background-color: #e1f2f2;
   cursor: pointer;
   padding: 1em;
-  width: 100%;
   border: none;
   text-align: left;
   outline: none;
@@ -216,7 +215,7 @@
 }
 
 .content {
-  padding: 0 1em;
+  padding: .3em 1em;
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.2s ease-out;
