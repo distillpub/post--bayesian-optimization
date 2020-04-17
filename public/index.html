@@ -118,34 +118,32 @@
     <h2>Active Learning</h2>
 
     <p>
-For many machine learning problems, unlabelled data is readily available. However, labeling (or querying) could be an expensive task, and we want to minimize it. As an example, for a speech-to-text task, the ground truth labeling or annotation task requires expert(s) to label words and sentences manually. In our gold mining problem, drilling (akin to labeling) is an expensive operation. Active learning poses smart strategies for labeling, to obtain high accuracy while minimizing the number of instances to be labeled. While there are various methods and techniques in the active learning literature, for the sake of brevity, we will look only at <strong>uncertainty reduction</strong>. This method chooses the most uncertain point as the next query point. Often, the variance acts as a measure of uncertainty.
+      For many machine learning problems, unlabeled data is readily available. However, labeling (or querying) could be an expensive task which one would like to minimize. As an example, for a speech-to-text task, the annotation requires expert(s) to label words and sentences manually. More often, this is a time consuming and expensive task. In our gold mining problem, drilling (akin to labeling) is an expensive operation. Active learning provides a way to minimize labeling while maximizing modeling accuracy. While there are various methods in the active learning literature, we will only look at <strong>uncertainty reduction</strong>. This method chooses the most uncertain point as the next query point. Often, the variance acts as a measure of uncertainty.
     </p>
 
     <h3>Surrogate Model</h3>
     <p>
-      Active learning (along with BO, which we will see later) employ a surrogate model for modeling the unknown true function <d-math>f(x)</d-math>. The surrogate model should model the true function closely. In our example, <d-math>f(x)</d-math> denotes the true gold content on our new land, and unquestionably we do not know <d-math>f(x)</d-math>.
+      Active learning (along with BO, which we will see later) employs a surrogate model for modeling the unknown true function <d-math>f(x)</d-math>. The surrogate model ideally models the true function closely. In our example, <d-math>f(x)</d-math> denotes the true gold content on our new land, and unquestionably we do not know <d-math>f(x)</d-math>.
     </p>
 
     <h3>Bayesian Update</h3>
     <p>
-      <!-- The updatation of the surrogate model is the "Bayes" in BO.  -->
       Every evaluation (drilling) of <d-math>f(x)</d-math> gives the surrogate model more data to learn. The posterior for the surrogate is obtained using the Bayes Rule with this new data at every iteration. At the end of an iteration, the posterior becomes the prior for the next cycle.
     </p>
 
     <p>
-      It is common in the literature to use Gaussian Process (GP) as a surrogate. The priors of a GP can be set by using specific kernels and mean functions. Further, GPs give us not only the predictions but also the uncertainty estimates, which we leverage in active learning, as well as BO.
+      Commonly, surrogates employ Gaussian Processes. One can set priors of a Gaussian Process (GP) by using specific kernels and mean functions. Moreover, GPs provide predictions as well as uncertainty estimates. We leverage these quantities in both active learning and BO.
     </p>
 
     <h3>Gaussian Processes</h3>
 
     <p>
       One might want to look at this excellent Distill article<d-cite key="görtler2019a"></d-cite> on Gaussian Processes<d-cite key="Rasmussen2004"></d-cite>.
-      We use Gaussian Process regression to model the gold distribution along the one-dimensional line.
+      We will use Gaussian Process Regression to model the gold distribution.
     </p>
 
     <p>
-      Let us now visualize our true function <d-math>f(x)</d-math>. The gold distribution in our data is bi-modal, with a maximum value around <d-math>x = 5</d-math>. For now, let us not worry about the X-axis or the
-      Y-axis units.
+      Let us visualize our true function <d-math>f(x)</d-math>. The gold distribution in our data is bi-modal, with a maximum value around <d-math>x = 5</d-math>. For now, let us not worry about the X-axis or the Y-axis units.
     </p>
     <figure class="smaller-img">
       <d-figure><img src="images/MAB_gifs/GT.svg" /></d-figure>
@@ -155,10 +153,10 @@ For many machine learning problems, unlabelled data is readily available. Howeve
     <h4 id="priormodel">Prior Model</h4>
 
     <p>
-      We define a prior over the set of functions based on our initial belief about the properties of the black-box function<d-cite key="Rasmussen2004"></d-cite>. These properties include periodicity, smoothness, among others. In our case, we consider the gold distribution to be smooth. We use kernels to set a prior that favors smooth functions, i.e., two points close in space will have a similar gold content. <d-footnote>Our prior uses the Matern 5/2 kernel. Our choice of Matern 5/2 kernel can be attributed to its property of favoring doubly differentiable functions. In contrast, Matern 3/2 favors singly differentiable functions.
+      We define a prior over a set of functions based on our initial beliefs of the black-box function<d-cite key="Rasmussen2004"></d-cite>. The prior tries to capture the properties of the black-box function, which include periodicity, smoothness, among others. In our case, we consider the gold distribution to be smooth. We use kernels to set a prior that favors smooth functions. <d-footnote>We use a Matern 5/2 kernel due to its property of favoring doubly differentiable functions. In contrast, Matern 3/2 favors singly differentiable functions.
 
       See <a href="http://www.gaussianprocess.org/gpml/">Rasmussen and Williams 2004</a> and <a href="https://scikit-learn.org/stable/modules/generated/sklearn.gaussian_process.kernels.Matern.html">scikit-learn</a>, for details regarding the Matern kernel.
-    </d-footnote> The black line and the grey shaded region indicate the mean (<d-math>\mu</d-math>) and uncertainty (technically we plotted (<d-math>\mu \pm \sigma </d-math>)) in our gold distribution estimate before drilling.
+    </d-footnote> The black line and the grey shaded region indicate the mean (<d-math>\mu</d-math>) and uncertainty <d-footnote> Technically we plotted (<d-math>\mu \pm \sigma </d-math>) </d-footnote> in our gold distribution estimate before drilling.
 
     </p>
 
@@ -169,7 +167,7 @@ For many machine learning problems, unlabelled data is readily available. Howeve
     <h4 id="addingtrainingdata">Adding Training Data</h4>
 
     <p>
-      Let us now add a point <d-math>(x = 0.5, \ y = f(0.5))</d-math> to the train set.
+      Let us now add the point <d-math>< x = 0.5, \ y = f(0.5) ></d-math> to the training set.
     </p>
 
     <figure>
@@ -177,17 +175,15 @@ For many machine learning problems, unlabelled data is readily available. Howeve
     </figure>
 
     <p>
-      We see now that the GP posterior (shown as our prediction) has changed, and we are very certain about the gold content in the vicinity of <d-math>x = 0.5</d-math>, but highly uncertain far away from it. Also, we can see that
-      the predicted gold concentration of points
-      near to <d-math>x = 0.5</d-math> is close to the actual value that we got from drilling<d-footnote>We can transform the data and fit a GP over <d-math>\log\left(f(x)\right)</d-math> instead of <d-math>f(x)</d-math> to ensure our prediction is non-negative</d-footnote>. Having discussed the Bayesian update for GP regression, we now discuss the key idea of active learning:
+      We see our surrogate's changed posterior <d-footnote>Shown as the prediction</d-footnote> is conveying the certainty in gold content near <d-math>x = 0.5</d-math>. Moreover, the predicted gold concentration of points near <d-math>x = 0.5</d-math> is close to the actual value that we got from drilling.<!-- <d-footnote>We can transform the data and fit a GP over <d-math>\log\left(f(x)\right)</d-math> instead of <d-math>f(x)</d-math> to ensure the  predictions are non-negative</d-footnote> . Having discussed the Bayesian update for GP regression, we will discuss the key idea of active learning: -->
     </p>
 
     <h3 id="activelearningprocedure">Active Learning Procedure
     </h3>
 
     <ol>
-      <li>Choose the point with the highest uncertainty and add it to train set (or query/label that point)</li>
-      <li>Train on the new train set</li>
+      <li>Choose and add the point with the highest uncertainty to the training set (by querying/labeling that point)</li>
+      <li>Train on the new training set</li>
       <li>Go to #1 till convergence or budget elapsed</li>
     </ol>
 
@@ -200,8 +196,8 @@ For many machine learning problems, unlabelled data is readily available. Howeve
 
 
     <p>
-      The idea of choosing the most uncertain location leads to querying of the points that are the farthest from the current set of train points. As we see from the visualization, we can estimate the true distribution of gold in a few iterations. At every iteration, our active learning procedure <strong> explores
-      </strong> the domain to make our estimates better.
+      Choosing the most uncertain location leads to querying of the points that are the farthest from the current set of train points. The visualization clears that one can estimate the true distribution in a few iterations. At every iteration, active learning <strong> explores
+      </strong> the domain to make the estimates better.
     </p>
 
     <h2 id="bayesianoptimization">Bayesian Optimization</h2>
