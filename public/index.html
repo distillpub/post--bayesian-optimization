@@ -76,11 +76,11 @@
 
     <h1>Mining Gold!</h1>
     <p>
-      Let's start with the example of gold mining. Our goal is to mine for gold in a new, unknown land<d-footnote>Interestingly, our example is similar to one of the first use of Gaussian Process (GP) (also called kriging)<d-cite key="goldKridge"></d-cite>, where Prof. Krige modelled gold concentrations using GPs.</d-footnote>.
+      Let us start with the example of gold mining. Our goal is to mine for gold in a new, unknown land<d-footnote>Interestingly, our example is similar to one of the first use of Gaussian Process (GP) (also called kriging)<d-cite key="goldKridge"></d-cite>, where Prof. Krige modelled gold concentrations using GPs.</d-footnote>.
       For now, let us make a simplifying assumption, the gold content lies in a one-dimensional space, i.e., we are talking about gold distribution only about a line. We want to find the location along this line with the maximum gold while only drilling a few times (as drilling is expensive).
     </p>
     <p>
-      Initially, we have no idea about the gold distribution. The only way to learn the gold distribution to drill at different locations. However, this drilling is costly. Thus, we want to <strong>minimize the number of drillings required</strong> while still <strong>finding the location of maximum gold quickly</strong>.
+      Initially, we have no idea about the gold distribution. The only way to learn it is to drill at different locations. However, this drilling is costly. Thus, we want to <strong>minimize the number of drillings required</strong> while still <strong>finding the location of maximum gold quickly</strong>.
     </p>
 
     <p>
@@ -91,7 +91,7 @@
       <li>
         <p>
           <strong>Problem 1: Best Estimate of Gold Distribution (Active Learning)</strong><br/>
-          Here we want to estimate the amount of gold on the one-dimensional line. We can not drill at every location due to the prohibitive cost. Instead, we should drill at those locations that provide us with the <strong>maximum information</strong> about the distribution of the gold. This problem is akin to
+          Here we want to estimate the amount of gold on the one-dimensional line, using a small number of drillings. We can not drill at every location due to the prohibitive cost. Instead, we should drill at those locations that provide us with the <strong>maximum information</strong> about the distribution of the gold. This problem is akin to
           <strong>
             active learning<d-cite key="settles2009active,Tong2001"></d-cite>
           </strong>.
