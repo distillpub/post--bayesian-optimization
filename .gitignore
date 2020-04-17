@@ -1,7 +1,4 @@
 *.ipynb_checkpoints/
-*active-gp-img
 public/images/data
-public/images/active-gp-img/*
 public.zip
 public/images/*.pkl
-public/images/bandit-learning-gp markdown.ipynb
