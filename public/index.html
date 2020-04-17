@@ -80,7 +80,7 @@
       For now, let us make a simplifying assumption, the gold content lies in a one-dimensional space, i.e., we are talking about gold distribution only about a line. We want to find the location along this line with the maximum gold while only drilling a few times (as drilling is expensive).
     </p>
     <p>
-      Initially, we have no idea about the amount of gold at different locations. The only way to learn the gold distribution is by drilling at different locations. This drilling is costly. Thus, we want to <strong>minimize the number of drillings required</strong> while still <strong>finding the location of maximum gold quickly</strong>.
+      Initially, we have no idea about the gold distribution. The only way to learn the gold distribution to drill at different locations. However, this drilling is costly. Thus, we want to <strong>minimize the number of drillings required</strong> while still <strong>finding the location of maximum gold quickly</strong>.
     </p>
 
     <p>
@@ -91,7 +91,7 @@
       <li>
         <p>
           <strong>Problem 1: Best Estimate of Gold Distribution (Active Learning)</strong><br/>
-          In this problem, we want to estimate the amount of gold on the one-dimensional line. We can not drill at every location due to the prohibitive cost. Instead, we should drill at those locations that provide us with the <strong>maximum information</strong> about the distribution of the gold. This problem is akin to
+          Here we want to estimate the amount of gold on the one-dimensional line. We can not drill at every location due to the prohibitive cost. Instead, we should drill at those locations that provide us with the <strong>maximum information</strong> about the distribution of the gold. This problem is akin to
           <strong>
             active learning<d-cite key="settles2009active,Tong2001"></d-cite>
           </strong>.
@@ -101,7 +101,7 @@
       <li>
         <p>
           <strong>Problem 2: Location of Maximum Gold (Bayesian Optimization)</strong><br/>
-          In this problem, we want to find the location in the one-dimensional space where the gold quantity is the maximum, using a small number of drillings. This problem is akin to
+          Here we want to find the location in the one-dimensional space where the gold quantity is the maximum, using a small number of drillings. This problem is akin to
           <strong>
             Bayesian Optimization<d-cite key="humanOut,nandoBOtut"></d-cite>
           </strong> (BO).
@@ -110,8 +110,7 @@
     </ul>
 
     <p>
-      In this article, we will soon see how the two problems are related,
-      but not the same.
+      We will soon see how the two problems are related, but not the same.
     </p>
 
 
