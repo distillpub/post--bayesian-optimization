@@ -476,16 +476,13 @@
         We have seen two closely related methods, The <em>Probability of Improvement</em> and the <em>Expected Improvement</em>.
       </p>
 
-      <p>
-        In the figure below, we make a scatter plot showing the policies' acquisition functions evaluated on different points in the domain (each dot is a point in the domain). In this plot, our train set consists of a single point <d-math>(0.5, f(0.5))</d-math>.
-      </p>
-
       <figure class="smaller-img">
         <d-figure><img src="images/MAB_gifs/Ei_Pi_graph/0.svg" /></d-figure>
       </figure>
       <p>
-        We can see that the <d-math>\alpha_{EI}</d-math> and <d-math>\alpha_{PI}</d-math> reach a maximum of 0.3 and around 0.44, respectively. Choosing a point with low <d-math>\alpha_{PI}</d-math> and high <d-math>\alpha_{EI}</d-math> is high risk (probability of improvement is low) and high reward (expected improvement is high).
-        If multiple points have the same (<d-math>\alpha_{EI}</d-math>), we should prioritize the point with lesser risk (higher <d-math>\alpha_{PI}</d-math>). Similarly, when the risks are the same (same <d-math>\alpha_{PI}</d-math>) for any two points, we should choose the point with greater reward (higher <d-math>\alpha_{EI}</d-math>).
+        The scatter plot above shows the policies' acquisition functions evaluated on different points<d-footnote>Each dot is a point in the search space. Additionally, the training set used while making the plot only consists of a single observation <d-math>(0.5, f(0.5))</d-math></d-footnote>.
+        We see that <d-math>\alpha_{EI}</d-math> and <d-math>\alpha_{PI}</d-math> reach a maximum of 0.3 and around 0.44, respectively. Choosing a point with low <d-math>\alpha_{PI}</d-math> and high <d-math>\alpha_{EI}</d-math> translates to high risk<d-footnote>Since "Probability of Improvement" is low</d-footnote> and high reward<d-footnote>Since "Expected Improvement" is high</d-footnote>.
+        In case of multiple points have the same <d-math>\alpha_{EI}</d-math>, we should prioritize the point with lesser risk (higher <d-math>\alpha_{PI}</d-math>). Similarly, when the risks are the same (same <d-math>\alpha_{PI}</d-math>) for any two points, we should choose the point with greater reward (higher <d-math>\alpha_{EI}</d-math>).
       </p>
     </div>
 
