@@ -489,7 +489,7 @@
     <h3 id="thompsonsampling">Thompson Sampling</h3>
 
     <p>
-      Another common acquisition function is Thompson Sampling <d-cite key="thompson"></d-cite>. At every step, we sample a function from the surrogate's posterior and optimize the sampled function. For example, in the case of the gold mining, we’d sample a plausible distribution of the gold given the evidence we have so far and evaluate wherever it peaks.
+      Another common acquisition function is Thompson Sampling <d-cite key="thompson"></d-cite>. At every step, we sample a function from the surrogate's posterior and optimize the sampled function. For example, in the case of gold mining, we’d sample a plausible distribution of the gold given the evidence we have so far and evaluate (drill) wherever it peaks.
     </p>
 
     <p>
@@ -503,17 +503,14 @@
     </figure>
 
     <p>
-
-
-
       The intuition behind Thompson sampling can be understood by noticing two important observations.
       <ul>
         <li>
           <p>
-            Locations <d-math>x</d-math> with high variance (<d-math>\sigma(x)</d-math>) will show a larger variance in the functional values sampled from the surrogate posterior. This can aid exploration as high variation can lead to sampled functions with a high value at locations with high variance. This will ensure an <strong>exploratory</strong> behavior.
+            Locations with high variance (<d-math> \sigma(x) </d-math>) will show a large variance in the functional values sampled from the surrogate posterior. This can aid exploration as high variation can lead to sampled functions with a high value at locations with high variance. This will ensure an <strong>exploratory</strong> behavior.
           </p>
           <p>
-            As an example, the three samples (sample #1, #2, #3) show high variance close to <d-math>x=6</d-math>. Optimizing sample 3  would lead to sampling <d-math>x=6</d-math> and thus lead to exploration.
+            As an example, the three samples (sample #1, #2, #3) show high variance close to <d-math>x=6</d-math>. Optimizing sample 3 will lead to evaluating <d-math>x=6</d-math>, which shows exploration.
           </p>
 
         </li>
@@ -524,18 +521,17 @@
           </p>
 
           <p>
-            As an example of this behavior, we see that all the sampled functions pass through the current max at <d-math>x = 0.5</d-math>. If <d-math>x = 0.5</d-math> was close to the global maxima then we would be able to <strong>exploit</strong> and choose a better maximum.
+            As an example of this behavior, we see that all the sampled functions above pass through the current max at <d-math>x = 0.5</d-math>. If <d-math>x = 0.5</d-math> was close to the global maxima then we would be able to <strong>exploit</strong> and choose a better maximum.
           </p>
 
         </li>
       </ul>
 
-
-    <p>
-      Notice that Thompson Sampling only required us to sample our posterior, not evaluate probabilities. This is a very useful property when there isn’t an easy way to evaluate probabilities.
-    </p>
       <p>
-        We now show a visualization of the Thompson sampling acquisition function.
+        Notice that Thompson Sampling only required us to sample our posterior, not evaluate probabilities. This is a very useful property when there isn’t an easy way to evaluate probabilities.
+      </p>
+      <p>
+        Below is a visualization that uses Thompson sampling for optimization. Again, we are able to reach the global optimum in relatively few iterations.
       </p>
 
       <figure class="gif-slider">
