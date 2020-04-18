@@ -296,28 +296,9 @@
     <h3>Probability of Improvement (PI)</h3>
 
     <p>
-      In the Probability of Improvement (PI) acquisition function, we query/evaluate the point with the highest probability of improvement over the current max <d-math>f(x^+)</d-math>, where <d-math> x^+ = \text{argmax}_{x_i \in x_{1:t}}f(x_i)</d-math> and <d-math>x_i</d-math> is the location queried at <d-math>i^{th}</d-math> time step.
-      The PI acquisition function (<d-math>\alpha_{PI}(x)</d-math>) at a location <d-math>x</d-math> is essentially the left tail probability of the posterior and thus a function of the surrogate posterior.
+      In this acquisition function, we evaluate the point with the highest probability of improvement over the current max <d-math>f(x^+)</d-math>, where <d-math> x^+ = \text{argmax}_{x_i \in x_{1:t}}f(x_i)</d-math> and <d-math>x_i</d-math> is the location queried at <d-math>i^{th}</d-math> time step.
+      This acquisition function essentially is the left tail probability of the surrogate posterior.
     </p>
-
-    <!--
-      <p>Let us understand this concept in two cases:</p>
-
-      <ol>
-        <li>
-          <p>
-            We have two points of similar means (of function values (gold in our case)). We now want to choose one of these to obtain the labels or values. We will choose the one with higher variance. This basically says that <strong>given the same exploitability, we choose the one with higher exploration value</strong>.
-          </p>
-        </li>
-        <li>
-          <p>
-            We have two points having the same variance. We would now choose the point with the higher mean. This basically says that <strong>given the same explorability, we will choose the one with higher exploitation value</strong>.
-          </p>
-        </li>
-        </ol>
-      -->
-
-      <p>The optimization procedure is given as:</p>
 
     <ol>
       <li>
@@ -338,25 +319,29 @@
       </li>
     </ol>
     <p>
-      Looking closely, essentially we are finding a value from the CDF of the probability distribution at each location. If our surrogate is a GP we can obtain an analytical expression, making the operation to calculate <d-math>\alpha_{PI}</d-math> cheap.
+      Looking closely, essentially we are finding a value from the CDF of the probability distribution at each location. If our surrogate is a GP we can obtain an analytical expression, enabling cheap calculation of <d-math>\alpha_{PI}</d-math>.
     </p>
     <d-math block>x_{t+1} = argmax_x \Phi\left(\frac{\mu_t(x) - f(x^+) - \epsilon}{\sigma_t(x)}\right)</d-math>
     <p>
       where <d-math>\Phi(\cdot)</d-math> indicates the CDF.
     </p>
 
+    <p class='check'>
+      Below is an image.
+    </p>
+
+    <figure>
+      <d-figure><img src="images/MAB_gifs/pi_cdf.png" /></d-figure>
+    </figure>
+
     <h4>Intuition behind <d-math>\epsilon</d-math> in PI</h4>
 
     <p>
-      PI makes use of <d-math>\epsilon</d-math> to strike a balance between exploration and exploitation. In the following plot, we visualize how changing the value of <d-math>\epsilon</d-math> affects the values of our acquisition function, resulting in different choices of points to evaluate. We selected two points as our candidate points <d-math>x \in \{1.0, 5.0\}</d-math>, and show their tail probabilities in shaded green and orange, respectively.
+      PI uses <d-math>\epsilon</d-math> to strike a balance between exploration and exploitation. <!-- In the following plot, we visualize how changing the value of <d-math>\epsilon</d-math> affects the values of our acquisition function, resulting in different choices of points to evaluate. We selected two points as our candidate points <d-math>x \in \{1.0, 5.0\}</d-math>, and show their tail probabilities in shaded green and orange, respectively. -->
       Increasing <d-math>\epsilon</d-math> results in the locations with a larger <d-math>\sigma</d-math> to have higher <d-math>\alpha_{PI}</d-math> as their probability density is spread more due to higher uncertainty.
     </p>
 
-    <!-- <p style="font-size: 18px;">
-      Feel free to play around with our <a href="#Teaser1">below</a> plot.
-    </p> -->
-
-    <div class="l-screen shaded-figure">
+    <!-- <div class="l-screen shaded-figure">
         <div>
           <text id="plotHead">
             The plot below shows how modifying ϵ leads to different points (locations) being selected to evaluate (drill) next. <br> This selection is based on the maximal probability of getting better gold content over the previous evaluations.
@@ -371,41 +356,30 @@
           <div class="Teaser2" id="Teaser2"></div>
           <div class="Teaser2" id="TeaserL2"></div>
         </d-figure>
-      </div>
+      </div> -->
 
-    <div class="l-page">
-        <div style="text-align: left">
-        <figure class="gif-slider">
-          <d-figure><img src="images/MAB_pngs/pi_cdf_new/0.png" /></d-figure>
-        </figure>
-      </div>
-    </div>
-
-
-
-    <p style="padding-top: 3em;">
-      Now we possess the intuition behind how the Probability of Improvement is calculated. Let us now change <d-math>\epsilon</d-math> and look at its effects.
+    <p>
+      Now that we possess the intuition behind <d-math>\epsilon</d-math>, let us see the effects of changing it.
     </p>
 
     <figure class="gif-slider">
       <d-figure><img src="images/MAB_pngs/PI/0.01/0.png" /></d-figure>
     </figure>
     <p>
-      Looking at the graph above<d-footnote>Ties are broken randomly.</d-footnote>, we can see that we reach the global maxima in a few iterations.
-
-      We may notice is that the surrogate possesses large uncertainty in <d-math>x \in [2, 4]</d-math> (can be identified by the grey translucent area) in the first seven iterations.
-      This high uncertainty can be explained by the high degree of exploitation, i.e., points in the vicinty of current maxima get queried. Thus, we see a high level of uncertainty in areas where our surrogate predicts low functional value (<d-math>x \in [2, 4]</d-math>). This observation also shows that we do not need to construct an accurate estimate of the black-box function (akin to active learning) to find its maximum.
+      Looking at the graph above<d-footnote>Ties are broken randomly.</d-footnote>, we see that we reach the global maxima in a few iterations.
+      Our surrogate possesses a large uncertainty in <d-math>x \in [2, 4]</d-math><d-footnote>This can be identified by the grey translucent area.</d-footnote> in the first eight-nine iterations.
+      The acquisition function initially exploits regions with high promise<d-footnote>Points in the vicinity of current maxima</d-footnote> which leads to a high uncertainty in the region <d-math>x \in [2, 4]</d-math>. This observation also shows that we do not need to construct an accurate estimate of the black-box function to find its maximum.
     </p>
 
     <figure class="gif-slider">
       <d-figure><img src="images/MAB_pngs/PI/0.3/0.png" /></d-figure>
     </figure>
     <p>
-      In the visualization above we can see that increasing the value of <d-math>\epsilon</d-math> to 0.3, enables us to explore more. However, it seems that we explore more than required.
+      The visualization above shows that increasing <d-math>\epsilon</d-math> to 0.3, enables us to explore more. However, it seems that we are exploring more than required.
     </p>
 
     <p>
-      Let us look at what happens if we increase <d-math>\epsilon</d-math> a bit more.
+      What happens if we increase <d-math>\epsilon</d-math> a bit more?
     </p>
 
     <figure class="gif-slider">
@@ -415,7 +389,7 @@
       We see that we made things worse! Our model now uses <d-math>\epsilon = 3</d-math>, which has effectively resulted in way too much exploration. This amount of exploration is not able to exploit when we land near the global maximum.
     </p>
 
-    <p> We can conclude from our quick experiments that <d-math>\epsilon</d-math> controls the degree of exploration in the PI acquisition function.
+    <p> Our quick experiments above help us conclude that <d-math>\epsilon</d-math> controls the degree of exploration in the PI acquisition function.
 
     <h3 id="expectedimprovementei">Expected Improvement (EI)</h3>
 
