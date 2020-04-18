@@ -394,7 +394,7 @@
     <h3 id="expectedimprovementei">Expected Improvement (EI)</h3>
 
     <p>
-      Probability of improvement only looked at <em>how likely</em> is an improvement, but, did not consider <em>how much</em> we can improve? The next criterion called, Expected Improvement, (EI) does exactly that<d-footnote>A good
+      Probability of improvement only looked at <em>how likely</em> is an improvement, but, did not consider <em>how much</em> we can improve? The next criterion, called Expected Improvement (EI), does exactly that<d-footnote>A good
         introduction to the Expected Improvement acquisition function is by <a href="https://thuijskens.github.io/2016/12/29/bayesian-optimisation/" target="_blank">this post</a> by Thomas Huijskens and <a
           href="https://people.orie.cornell.edu/pfrazier/Presentations/2018.11.INFORMS.tutorial.pdf" target="_blank">these slides</a> by Peter Frazier</d-footnote>!
       The idea is fairly simple - choose the next point as the one which has the highest expected improvement over the current max <d-math>f(x^+)</d-math>, where <d-math> x^+ = \text{argmax}_{x_i \in x_{1:t}}f(x_i)</d-math> and <d-math>x_i</d-math> is the location queried at <d-math>i^{th}</d-math> time step.
