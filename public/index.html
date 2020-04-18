@@ -202,29 +202,23 @@
 
     <h2 id="bayesianoptimization">Bayesian Optimization</h2>
     <p>
-      In Bayesian optimization (Problem 2), we aim to find the location of maximum gold content. Even though the problem setting is similar to active learning (Problem 1), the objectives of these two problems are different. BO deals with maximizing the black-box function, whereas active learning focuses on getting a good estimate of the black-box function.
+      In this problem we aim to find the location of maximum gold content. The setting is similar to problem 1, but the objectives are different. Bayesian Optimization (BO) is an optimization technique that solves problem 1, i.e., maximizing a black-box function, whereas active learning focuses on getting a good estimate of that black-box function.
     </p>
-<!--
-    <p>
-      Older problem - Earlier in the active learning problem, our motivation for drilling at locations was to predict the distribution of the gold content over all the locations in the one-dimensional line. We, therefore, had chosen the next
-      location to drill where we had maximum uncertainty about our estimate.
-    </p> -->
 
     <p>
-     We can find the maximum of the black-box function by first accurately estimating the black-box function using active learning and then choosing its maximum. However, since we are concerned only with finding the maximum, could we do better for BO? Assuming that our black-box function is smooth, it might be a good idea to evaluate at or near locations where our surrogate model's predicted mean is the highest, i.e., to <strong>exploit</strong>. However, unfortunately, our model mean is not always accurate since we have limited observations. Thus, we need to correct our model by evaluating or querying at points with high variance or <strong>exploration</strong>. BO looks at both <strong>exploitation</strong> and <strong>exploration</strong>, whereas in the case of active learning, we only cared about <strong>exploration</strong>.
+      One way to find the maximum would be to first run active learning and then select the point giving the maximum. However, in a sense, we waste evaluations to improve the estimates even though we are only concerned with finding the point giving the maximum. Assuming that our black-box function is smooth, it might be a good idea to evaluate at or near locations where our surrogate model's prediction is the highest, i.e., to <strong>exploit</strong>. However, due to the limited evaluations, our model's predictions are inaccurate as well. One can improve the model by evaluating at points with high variance or performing <strong>exploration</strong>. BO combines <strong>exploitation</strong> and <strong>exploration</strong>, whereas active learning solely <strong>explores</strong>.
     </p>
 
     <h1>Formalizing Bayesian Optimization</h1>
 
-      <span style="padding-bottom: 1em;">Let us now formally introduce Bayesian Optimization.
-        Our goal is to find the location (<d-math>{x}</d-math>) corresponding to the global maximum (or minimum) of a function <d-math>f: \mathbb{R}^d \mapsto \mathbb{R}</d-math>.
-        We now present the general constraints in BO and contrast them with the constraints in our gold mining example (based on the excellent slides/talk
-        <d-footnote>Talk from Peter Fraizer from Uber on Bayesian Optimization:<br>
+      <span style="padding-bottom: 1em;">
+        Let us now formally introduce Bayesian Optimization. Our goal is to find the location (<d-math>{x \in \mathbb{R}^d}</d-math>) corresponding to the global maximum (or minimum) of a function <d-math>f: \mathbb{R}^d \mapsto \mathbb{R}</d-math>.
+        We present the general constraints <d-footnote>based on the slides/talk from Peter Fraizer at Uber on Bayesian Optimization:<br>
           <ul>
             <li> <a href="https://www.youtube.com/watch?v=c4KKvyWW_Xk">Youtube Talk</a></li>
             <li> <a href="https://people.orie.cornell.edu/pfrazier/Presentations/2018.11.INFORMS.tutorial.pdf">Slide Deck</a></li>
           </ul>
-        </d-footnote> on tutorial on Bayesian optimization by Peter Fraizer).</span>
+        </d-footnote> in BO and contrast them with the constraints in our gold mining example.</span>
 
 
 
@@ -260,54 +254,9 @@
           <td>We assume noiseless measurements in our modeling (though, it is easy to incorporate normally distributed noise for GP regression).</td>
         </tr>
       </table>
-<!--
-      <div class="column">
-      <h3>General constrains</h3>
 
-      <ul>
-        <li>
-          <d-math>f</d-math>’s feasible set <d-math>A</d-math> is simple,
-          e.g., box constraints.
-        </li>
-        <li>
-          <d-math>f</d-math> is continuous but lacks special structure,
-          e.g., concavity, that would make it easy to optimize.
-        </li>
-        <li>
-          <d-math>f</d-math> is derivative-free:
-          evaluations do not give gradient information.
-        </li>
-        <li>
-          <d-math>f</d-math> is expensive to evaluate:
-          the number of times we can evaluate it
-          is severely limited.
-        </li>
-        <li>
-          <d-math>f</d-math> may be noisy. If noise is present, we’ll assume it
-          is independent and normally distributed, with
-          common but unknown variance.
-        </li>
-      </ul>
-      </div>
-
-      <div class="column">
-      <h3>Constraints in Gold Mining example</h3>
-      <ul>
-        <li>Our domain in the gold mining problem is a single-dimensional box constraint of <d-math>0 \leq x \leq 6</d-math>.</li>
-
-        <li>Our ground truth can be seen as neither convex nor concave function, which resulted in local minima as well.</li>
-
-        <li>Our evaluation (by drilling) of the amount of gold content at a location didn't give us any gradient information.</li>
-
-        <li>The function we used in the case of gold mining problem is extremely costly to evaluate (drilling costs millions).</li>
-
-        <li>This constraint is still satisfied in our case as we had have taken noiseless measurements. Which can be considered
-          as a Gaussian noise with zero mean and zero standard deviation.</li>
-      </ul>
-      </div>
-
- -->      <p>
-        We see that the gold mining problem fits into the criteria required to use BO. We will now introduce some additional topics before we can get the maximal gold!
+      <p>
+        Our gold mining problem is suited to use BO. Let us introduce some additional topics before you run to get the maximal gold for yourself!
       </p>
 
     <h3>Acquisition Functions</h3>
