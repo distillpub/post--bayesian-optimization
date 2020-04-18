@@ -659,16 +659,16 @@
 
       <p>We turn to BO to counter the expensiveness of getting the functional values (accuracy values) and these increased dimensions.</p>
 
-      <h3 id="example1">Example 1 -- Support Vector Machine</h3>
+      <h3 id="example1">Example 1 -- Support Vector Machine (SVM)</h3>
 
-      <p>Let us use an SVM on sklearn's moons dataset and try to find the optimal hyperparameter using BO. Let us have a look at the dataset first.</p>
+      <p>In this example, we use an SVM to learn a classification task on the sklearn's moons dataset. We will then use BO to optimize the model's accuracy. Let us have a look at the dataset first, which has two classes and two features.</p>
 
       <figure class="smaller-img">
         <d-figure><img src="images/MAB_gifs/moons.svg" /></d-figure>
       </figure>
 
       <p>
-        We solve the classification problem using Support Vector Machine (SVM). SVMs have two important hyperparameters,
+        Before we optimize our machine learning model with BO, let us discuss the hyperparameters that we plan to optimize.
       </p>
       <p>
         <ul>
@@ -697,25 +697,11 @@
       </figure>
 
       <p>Above we see a slider showing the work of the <em>Expected Improvement</em> acquisition function in finding the best hyperparameters.</p>
-<!--
-      <figure>
-        <d-figure><img src="images/MAB_gifs/gp3d-1-2-mat.gif" /></d-figure>
-      </figure>
-
-      <p>
-        Above we see a gif showing the work of the <em>Gaussian Processes Upper Confidence Bound</em> acquisition function in finding the best hyperparameters. This by far seems to perform the best with getting quite close to the global optimum value of hyperparameters (found using brute force).
-      </p>
-
-      <figure>
-        <d-figure><img src="images/MAB_gifs/rand3d.gif" /></d-figure>
-      </figure>
-
-      <p>Now our favorite, the Random acquisition function.</p> -->
 
       <h3 id="comparison">Comparison</h3>
 
       <p>
-        Below we will compare the acquisition functions in finding the best hyperparameters for our SVM model. We had again run the Random acquisition function several times with different seeds.
+        Below is a plot that compares the different acquisition functions. We ran the <em>random</em> acquisition function several times to average out it's results.
       </p>
 
       <figure>
@@ -723,7 +709,7 @@
       </figure>
 
     <p>
-        We see all our acquisition functions other than the random were able to reach the best possible solution. We see the random method seemed to perform much better initially, but it could not beat the BO framework at the end of the optimization. The initial subpar performance of BO is attributed to the initial exploration.
+        All our acquisition beat the <em>random</em> acquisition function at the end of all the optimization. We see the <em>random</em> method seemed to perform much better initially, but it could not reach the global optimum. The initial subpar performance of BO can be attributed to the initial exploration.
     </p>
 
  
@@ -752,21 +738,21 @@
         </figure>
 
         <p>
-          Above we see a gif showing the work of the <em>Probability of Improvement</em> acquisition function in finding the best hyperparameters.
+          Above is a typical BO run with <em>Probability of Improvement</em> acquisition function.
         </p>
 
         <figure class="gif-slider">
           <d-figure><img src="images/MAB_pngs/RFEI3d/0.01/0.png"></d-figure>
         </figure>
 
-        <p>Above we see a gif showing the work of the <em>Expected Improvement</em> acquisition function in finding the best hyperparameters.</p>
+        <p>Above we see a run showing the work of the <em>Expected Improvement</em> acquisition function in optimizing the hyperparameters.</p>
 
         <figure class="gif-slider">
           <d-figure><img src="images/MAB_pngs/RFGP_UCB3d/1-2/0.png"></d-figure>
         </figure>
 
         <p>
-          Above we see a gif showing the work of the <em>Gaussian Processes Upper Confidence Bound</em> acquisition function in finding the best hyperparameters.
+          Now using the <em>Gaussian Processes Upper Confidence Bound</em> acquisition function in optimizing the hyperparameters.
         </p>
 
         <figure class="gif-slider">
@@ -780,27 +766,24 @@
         </figure>
 
         <p>
-          Looking at the ground truth, we see the black-box function we are trying to optimize is not too smooth, and therefore we see that our optimization strategies seem to struggle compared to the last example. This shows that the effectiveness of BO depends on the surrogate's efficiency to model the actual black-box function. It is still interesting to notice that the BO framework beats the random strategy.
+          The optimization strategies seemed to struggle in this example. This can be attributed to the non-smooth ground truth. This shows that the effectiveness of BO depends on the surrogate's efficiency to model the actual black-box function. It is interesting to notice that the BO framework still beats the <em>random</em> strategy.
         </p>
 
         <h3>Example 3 -- Neural Networks</h3>
         <p>
-          Let us take this example to get an idea of how to apply Bayesian Optimization to training neural networks like CNNs on Mnist. Here we will be using <d-code language="python">scikit-optim</d-code>, which also provides us support for
-          optimizing
-          our function on a mix of categorical, integral, and real variables. We will not be plotting the ground truth here, as it is extremely costly to do so. Below are some code snippets that go into adding Bayesian Optimization for hyperparameter
-          tuning.
+          Let us take this example to get an idea of how to apply BO to train neural networks. Here we will be using <d-code language="python">scikit-optim</d-code>, which also provides us support for optimizing function with a search space of categorical, integral, and real variables. We will not be plotting the ground truth here, as it is extremely costly to do so. Below are some code snippets that show the ease of using BO packages for hyperparameter tuning.
         </p>
 
         <p>
-          The code below declares the search space for the optimization problem (hyperparameter tuning). In this example we are limiting the search space to be the following:
+          The code initially declares a search space for the optimization problem. We limit the search space to be the following:
           <ul>
             <li>
-              batch_size -- Our search space for the possible batch sizes consists of integer values s.t. batch_size = <d-math>2^i \ \forall \ 2 \leq i \leq 7 \ \& \ i \in \mathbb{Z}</d-math>.<br />
-              This hyperparameter sets the number of training examples to combine to find the gradients for a single step in gradient descent.
+              batch_size -- This hyperparameter sets the number of training examples to combine to find the gradients for a single step in gradient descent. </br> 
+              Our search space for the possible batch sizes consists of integer values s.t. batch_size = <d-math>2^i \ \forall \ 2 \leq i \leq 7 \ \& \ i \in \mathbb{Z}</d-math>.
             </li>
             <li>
-              learning rate -- We will be searching all the real numbers from the range <d-math>[10^{-6}, \ 1]</d-math>. We will be using logarithmic uniform distribution as our prior distribution if we are to sample random points from this space.<br />
-              This hyperparamter sets the stepsize with which we will perform gradient descent in the neural network.
+              learning rate -- This hyperparameter sets the stepsize with which we will perform gradient descent in the neural network. </br>
+              We will be searching over all the real numbers in the range <d-math>[10^{-6}, \ 1]</d-math>.
             </li>
             <li>
               activation -- We will have one categorical variable, i.e. the activation to apply to our neural network layers. This variable can take on values in the set <d-math>\{ relu, \ sigmoid \}</d-math>.
@@ -810,34 +793,30 @@
 
         <d-code block language="python">
           log_batch_size = Integer(
-          low=2,
-          high=7,
-          name='log_batch_size'
+            low=2,
+            high=7,
+            name='log_batch_size'
           )
-          lr = Real(
-          low=1e-6,
-          high=1e0,
-          prior='log-uniform',
-          name='lr'
+            lr = Real(
+            low=1e-6,
+            high=1e0,
+            prior='log-uniform',
+            name='lr'
           )
           activation = Categorical(
-          categories=['relu', 'sigmoid'],
-          name='activation'
+            categories=['relu', 'sigmoid'],
+            name='activation'
           )
 
           dimensions = [
-          dim_num_batch_size_to_base,
-          dim_learning_rate,
-          dim_activation
+            dim_num_batch_size_to_base,
+            dim_learning_rate,
+            dim_activation
           ]
         </d-code>
 
         <p>
-          Moving on, we have a minimizer function imported from <d-code language="python">scikit-optim</d-code> called <d-code language="python">gp-minimize</d-code>. One can change the acquisition function from a number of available options.
-          Below we have a code snippet showing the calling of the optimization function with the <em>Expected Improvement</em> acquisition function.
-        </p>
-        <p>
-          <strong>Note</strong>: One will need to negate the accuracy values as we are using the minimizer function from <d-code language="python">scikit-optim</d-code>.
+          Now import <d-code language="python">gp-minimize</d-code><d-footnote><strong>Note</strong>: One will need to negate the accuracy values as we are using the minimizer function from <d-code language="python">scikit-optim</d-code>.</d-footnote> from <d-code language="python">scikit-optim</d-code> to perform the optimization. Below we show calling the optimizer using <em>Expected Improvement</em>, but of course we can select from a number of other acquisition functions.
         </p>
 
         <d-code block language="python">
@@ -845,12 +824,12 @@
           default_parameters = [4, 1e-1, 'relu']
 
           # bayesian optimization
-          search_result = gp_minimize(
-          func=train,
-          dimensions=dimensions,
-          acq_func='EI', # Expected Improvement.
-          n_calls=11,
-          x0=default_parameters
+            search_result = gp_minimize(
+            func=train,
+            dimensions=dimensions,
+            acq_func='EI', # Expected Improvement.
+            n_calls=11,
+            x0=default_parameters
           )
         </d-code>
 
@@ -859,32 +838,15 @@
         </figure>
 
         <p>
-          We now have the hyperparameters that have maximized your accuracy. In the graph above the y-axis denotes the <d-math>\left( f(x^+) \right)</d-math> and the x-axis denotes the number of times we have queried <d-math>(t)
-          </d-math> the neural network with some set of given hyperparameters.
+          In the graph above the y-axis denotes the best accuracy till then, <d-math>\left( f(x^+) \right)</d-math> and the x-axis denotes the evaluation number.
         </p>
 
         <p>
-          We can apply the BO for more dimensions (more hyperparameters), even if the dimensions which are categorical (as 'relu' vs 'sigmoid' above) can be incorporated into BO as it is done in scikit-optim.
+          Looking at the above example, we can see that incorporating BO is not difficult and can save a lot of time. Optimizing to get an accuracy of nearly one in around seven iterations is impressive!<d-footnote>The example above has been inspired by <a href="https://github.com/Hvass-Labs/TensorFlow-Tutorials/blob/master/19_Hyper-Parameters.ipynb">Hvass Laboratories' Tutorial Notebook</a> showcasing hyperparameter optimization in TensorFlow using <d-code language="python">scikit-optim</d-code>.</d-footnote>
         </p>
 
         <p>
-          Looking at the above example, we can see that incorporating Bayesian Optimization isn't a big problem and saves a lot of time we can see that the network was able to get to an accuracy of nearly one in around three iterations. That is
-          impressive! The example above has been inspired by Hvass Laboratories' Tutorial<d-footnote> <a href="https://github.com/Hvass-Labs/TensorFlow-Tutorials/blob/master/19_Hyper-Parameters.ipynb">Notebook</a> showcasing hyperparameter
-            optimization in Tensorflow. </d-footnote> on <d-code language="python">scikit-optim</d-code>.
-        </p>
-
-        <p>
-          While running the experiment on our laptops, each of the evaluation cost us an approximate of 15 minutes. Looking at the number of evaluations required by the Bayesian Optimization approach, we were able to get to an accuracy of nearly 1.0 in just 5 iterations.
-        </p>
-        <p>
-          The parameters selected by the optimizer were <d-math langugage="python">[4, 0.0019, 'relu']</d-math>, i.e., batch size of 8, learning rate of 1.9e-2 and 'relu' activation function.
-        </p>
-        <p>
-          If we had performed a naive grid search, it would have taken us a lot more iterations <d-math>(5 \times 2 \times 7)</d-math>, and we still would not have tested a learning rate near the learning rate returned by the optimizer. Suppose using grid search resulted in us taking twenty-five iterations. If we convert it to the time we spent over the Bayesian Optimization approach, we will get a better idea of the amount of time that can be saved when evaluation of the ground truth functions is even more costly.
-        </p>
-
-        <p>
-          We would have saved around five hours by using BO for our hypothetical scenario of using Grid Search.
+          Let us get the numbers into perspective. If we had run this optimization using grid search, it would have taken around <d-math>(5 \times 2 \times 7)</d-math> iterations. Whereas, BO only took seven iterations. Each iteration took around fifteen minutes, this sets the time required for the grid search to complete around seventeen hours!
         </p>
       </div>
 
