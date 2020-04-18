@@ -262,28 +262,28 @@
     <h3>Acquisition Functions</h3>
 
     <p>
-      Our original optimization problem <d-math>x^* = \text{argmax}_{x \in A} f(x)</d-math> is hard because <d-math>f</d-math> is <b>expensive</b> to evaluate.
-      The key idea of BO is to <b>transform</b> this original difficult optimization into a <b>sequence</b> of easier <b>inexpensive</b> optimizations of functions called an <b>acquisition function</b> (<d-math>\alpha(x)</d-math>).
-      Intuitively, acquisition functions are heuristics<d-footnote>https://botorch.org/docs/acquisition</d-footnote> employed to evaluate the utility of a point for achieving the objective of maximizing the underlying black-box function (<d-math>f(x)</d-math>)<d-footnote>Please find <a href="https://www.cse.wustl.edu/~garnett/cse515t/spring_2015/files/lecture_notes/12.pdf">these</a> slides from Washington University in St. Louis to know more and the following </d-footnote>.
+      Our original optimization problem, <d-math>x^* = \text{argmax}_{x \in A} f(x)</d-math> is hard because <d-math>f</d-math> is <b>expensive</b> to evaluate.
+      The idea of BO is to <b>transform</b> the original optimization into a <b>sequence</b> of easier <b>inexpensive</b> optimizations of functions called an <b>acquisition functions</b> (<d-math>\alpha(x)</d-math>).
+      Intuitively, acquisition functions are heuristics<d-footnote>https://botorch.org/docs/acquisition</d-footnote> that evaluate the utility of a point for maximizing the underlying black-box function (<d-math>f(x)</d-math>)<d-footnote>Please find <a href="https://www.cse.wustl.edu/~garnett/cse515t/spring_2015/files/lecture_notes/12.pdf">these</a> slides from Washington University in St. Louis to know more and the following </d-footnote>.
       At each step, we optimize the acquisition function to determine the next point to sample.
     </p>
 
     <p>
-      Let us re-wind and build the link between all the things we have discussed thus far, by noting the steps of BO<d-footnote>Please find <a href="https://youtu.be/EnXxO3BAgYk">this</a> amazing video from Javier González at The Gaussian Process Summer School 2019.</d-footnote> and specifically highlighting the "Bayesian" in BO.
+      Let us re-wind and link the things discussed thus far, by noting the steps of BO<d-footnote>Please find <a href="https://youtu.be/EnXxO3BAgYk">this</a> amazing video from Javier González at The Gaussian Process Summer School 2019.</d-footnote> and explicitly highlighting the "Bayesian" in BO.
     </p>
     <p>
       <ol>
         <li>
-          We first choose a surrogate model for modeling the true function <d-math>f</d-math> and define its <b>prior</b> (in the case of GPs, we define the prior over the space of objectives).
+          We first choose a surrogate model for modeling the true function <d-math>f</d-math> and define its <b>prior</b>
         </li>
         <li>
-          Given the set of <b>observations</b> (function samplings), use Bayes rule to obtain the <b>posterior</b>.
+          Given the set of <b>observations</b> (function evaluations), use Bayes rule to obtain the <b>posterior</b>.
         </li>
         <li>
-          Use an acquisition function <d-math>\alpha(x)</d-math>, which is a function of the posterior, to decide where to sample next <d-math>x_t = \text{argmax}_x \alpha(x)</d-math>.
+          Use an acquisition function <d-math>\alpha(x)</d-math>, which is a function of the posterior, to decide the next sample point <d-math>x_t = \text{argmax}_x \alpha(x)</d-math>.
         </li>
         <li>
-          Add newly sampled data to the set of <b>observations</b> and Goto Step #2 till convergence or budget elapses.
+          Add newly sampled data to the set of <b>observations</b> and goto Step #2 till convergence or budget elapses.
         </li>
       </ol>
     </p>
@@ -291,26 +291,7 @@
     <p>
       Thus, the "Bayesian" in BO is sequentially refining our surrogate's posterior (and thus uncertainty) with each evaluation via Bayesian posterior updating<d-cite key="nandoBOLoop"></d-cite>.
     </p>
-
-      <p> Let us now look into a few commonly used acquisition functions. </p>
-
-
-<!--
-    <p>
-      Now, to take into account the combination of exploration and exploitation, we try to use a function that combines the two aspects. These utility functions are called acquisition functions. These functions can be considered a function of the posterior of the surrogate model we might be using.
-    </p>
-
-    <p>
-      We can write a general form of an acquisition function (<d-math>\alpha(x)</d-math>) as a function of the mean(<d-math>\mu(x)</d-math>) and the variance(<d-math>\sigma(x)</d-math>), which is in turn specifying that <d-math>\alpha(x)
-      </d-math> is a function of exploration and exploitation.
-      <d-math block>
-        \alpha(x) = g(\mu(x), \sigma(x))
-      </d-math>
-      At each iteration <d-math>t</d-math>, we would recompute
-      <d-math>\alpha(x) </d-math> and choose the location
-      <d-math> x_t = _\text{argmax}\alpha_t(x)</d-math>
-      as the next location/point to query.
-    </p> -->
+    <p>Let us now look at a few common acquisition functions.</p>
 
     <h3>Probability of Improvement (PI)</h3>
 
