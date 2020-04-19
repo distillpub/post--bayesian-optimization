@@ -80,7 +80,7 @@
       For now, let us make a simplifying assumption, the gold content lies in a one-dimensional space, i.e., we are talking about gold distribution only about a line. We want to find the location along this line with the maximum gold while only drilling a few times (as drilling is expensive).
     </p>
     <p>
-      Initially, we have no idea about the gold distribution. The only way to learn it is to drill at different locations. However, this drilling is costly. Thus, we want to <strong>minimize the number of drillings required</strong> while still <strong>finding the location of maximum gold quickly</strong>.
+      Initially, we have no idea about the gold distribution. The only way to learn the gold distribution is to drill at different locations. However, this drilling is costly. Thus, we want to <strong>minimize the number of drillings required</strong> while still <strong>finding the location of maximum gold quickly</strong>.
     </p>
 
     <p>
@@ -118,21 +118,21 @@
     <h2>Active Learning</h2>
 
     <p>
-      For many machine learning problems, unlabeled data is readily available. However, labeling (or querying) could be an expensive task which one would like to minimize. As an example, for a speech-to-text task, the annotation requires expert(s) to label words and sentences manually. More often, this is a time consuming and expensive task. In our gold mining problem, drilling (akin to labeling) is an expensive operation. Active learning provides a way to minimize labeling while maximizing modeling accuracy. While there are various methods in the active learning literature, we will only look at <strong>uncertainty reduction</strong>. This method chooses the most uncertain point as the next query point. Often, the variance acts as a measure of uncertainty.
+      For many machine learning problems, unlabeled data is readily available. However, labeling (or querying) is often expensive. As an example, for a speech-to-text task, the annotation requires expert(s) to label words and sentences manually. More often, this is a time consuming and expensive task. In our gold mining problem, drilling (akin to labeling) is an expensive operation. Active learning provides a way to minimize labeling while maximizing modeling accuracy. While there are various methods in the active learning literature, we look at <strong>uncertainty reduction</strong>. This method chooses the most uncertain point as the next query point. Often, the variance acts as a measure of uncertainty.
     </p>
 
     <h3>Surrogate Model</h3>
     <p>
-      Active learning (along with BO, which we will see later) employs a surrogate model for modeling the unknown true function <d-math>f(x)</d-math>. The surrogate model ideally models the true function closely. In our example, <d-math>f(x)</d-math> denotes the true gold content on our new land, and unquestionably we do not know <d-math>f(x)</d-math>.
+      Active learning (along with BO, which we will see later) employs a surrogate model for modeling the unknown true function <d-math>f(x)</d-math>. The surrogate ideally models the true function closely. In our example, <d-math>f(x)</d-math> denotes the true gold content on our new land, and unquestionably we do not know <d-math>f(x)</d-math>.
     </p>
 
     <h3>Bayesian Update</h3>
     <p>
-      Every evaluation (drilling) of <d-math>f(x)</d-math> gives the surrogate model more data to learn. The posterior for the surrogate is obtained using the Bayes Rule with this new data at every iteration. At the end of an iteration, the posterior becomes the prior for the next cycle.
+      Every evaluation (drilling) of <d-math>f(x)</d-math> gives the surrogate model more data to learn. The posterior for the surrogate is obtained using the Bayes Rule with this new data at every iteration. At the end of an iteration, the posterior becomes the prior for the next iteration.
     </p>
 
     <p>
-      Commonly, surrogates employ Gaussian Processes. One can set priors of a Gaussian Process (GP) by using specific kernels and mean functions. Moreover, GPs provide predictions as well as uncertainty estimates. We leverage these quantities in both active learning and BO.
+      Gaussian Processes are commonly used as surrogate models. One can set priors of a Gaussian Process (GP) by using specific kernels and mean functions. Moreover, GPs provide predictions as well as uncertainty estimates. We leverage these quantities in both active learning and BO.
     </p>
 
     <h3>Gaussian Processes</h3>
@@ -175,8 +175,8 @@
     </figure>
 
     <p>
-      We see our surrogate's changed posterior <d-footnote>Shown as the prediction</d-footnote> is conveying the certainty in gold content near <d-math>x = 0.5</d-math>. Moreover, the predicted gold concentration of points near <d-math>x = 0.5</d-math> is close to the actual value that we got from drilling.<!-- <d-footnote>We can transform the data and fit a GP over <d-math>\log\left(f(x)\right)</d-math> instead of <d-math>f(x)</d-math> to ensure the  predictions are non-negative</d-footnote> . Having discussed the Bayesian update for GP regression, we will discuss the key idea of active learning: -->
-    </p>
+      We see our surrogate's posterior is conveying the certainty in gold content near <d-math>x = 0.5</d-math>. Moreover, the predicted gold concentration of points near <d-math>x = 0.5</d-math> is close to the actual value that we got from drilling.<!-- <d-footnote>We can transform the data and fit a GP over <d-math>\log\left(f(x)\right)</d-math> instead of <d-math>f(x)</d-math> to ensure the  predictions are non-negative</d-footnote> .  -->
+    Having discussed the Bayesian update for GP regression, we will discuss the key idea of active learning.</p>
 
     <h3 id="activelearningprocedure">Active Learning Procedure
     </h3>
@@ -196,7 +196,7 @@
 
 
     <p>
-      Choosing the most uncertain location leads to querying of the points that are the farthest from the current set of train points. The visualization clears that one can estimate the true distribution in a few iterations. At every iteration, active learning <strong> explores
+      Choosing the most uncertain location leads to querying of the points that are the farthest from the current set of train points. The visualization shows that one can estimate the true distribution in a few iterations. At every iteration, active learning <strong> explores
       </strong> the domain to make the estimates better.
     </p>
 
@@ -206,7 +206,7 @@
     </p>
 
     <p>
-      One way to find the maximum would be to first run active learning and then select the point giving the maximum. However, in a sense, we waste evaluations to improve the estimates even though we are only concerned with finding the point giving the maximum. Assuming that our black-box function is smooth, it might be a good idea to evaluate at or near locations where our surrogate model's prediction is the highest, i.e., to <strong>exploit</strong>. However, due to the limited evaluations, our model's predictions are inaccurate as well. One can improve the model by evaluating at points with high variance or performing <strong>exploration</strong>. BO combines <strong>exploitation</strong> and <strong>exploration</strong>, whereas active learning solely <strong>explores</strong>.
+      One way to find the maximum would be to first run active learning to accurately estimate the true function and then find its maximum. However, should we waste evaluations to improve the estimates, when we are only concerned with finding the maximum? Assuming that our black-box function is smooth, it might be a good idea to evaluate at or near locations where our surrogate model's prediction is the highest, i.e., to <strong>exploit</strong>. However, due to the limited evaluations, our model's predictions are inaccurate. One can improve the model by evaluating at points with high variance or performing <strong>exploration</strong>. BO combines <strong>exploitation</strong> and <strong>exploration</strong>, whereas active learning solely <strong>explores</strong>.
     </p>
 
     <h1>Formalizing Bayesian Optimization</h1>
@@ -263,9 +263,9 @@
 
     <p>
       Our original optimization problem, <d-math>x^* = \text{argmax}_{x \in A} f(x)</d-math> is hard because <d-math>f</d-math> is <b>expensive</b> to evaluate.
-      The idea of BO is to <b>transform</b> the original optimization into a <b>sequence</b> of easier <b>inexpensive</b> optimizations of functions called an <b>acquisition functions</b> (<d-math>\alpha(x)</d-math>).
+      The idea of BO is to <b>transform</b> the original optimization into a <b>sequence</b> of easier <b>inexpensive</b> optimizations of functions called <b>acquisition functions</b> (<d-math>\alpha(x)</d-math>).
       Intuitively, acquisition functions are heuristics<d-footnote>https://botorch.org/docs/acquisition</d-footnote> that evaluate the utility of a point for maximizing the underlying black-box function (<d-math>f(x)</d-math>)<d-footnote>Please find <a href="https://www.cse.wustl.edu/~garnett/cse515t/spring_2015/files/lecture_notes/12.pdf">these</a> slides from Washington University in St. Louis to know more and the following </d-footnote>.
-      At each step, we optimize the acquisition function to determine the next point to sample.
+      At each step, we optimize the acquisition function to determine the next point to sample/query.
     </p>
 
     <p>
@@ -274,7 +274,7 @@
     <p>
       <ol>
         <li>
-          We first choose a surrogate model for modeling the true function <d-math>f</d-math> and define its <b>prior</b>
+          We first choose a surrogate model for modeling the true function <d-math>f</d-math> and define its <b>prior</b>.
         </li>
         <li>
           Given the set of <b>observations</b> (function evaluations), use Bayes rule to obtain the <b>posterior</b>.
@@ -283,13 +283,13 @@
           Use an acquisition function <d-math>\alpha(x)</d-math>, which is a function of the posterior, to decide the next sample point <d-math>x_t = \text{argmax}_x \alpha(x)</d-math>.
         </li>
         <li>
-          Add newly sampled data to the set of <b>observations</b> and goto Step #2 till convergence or budget elapses.
+          Add newly sampled data to the set of <b>observations</b> and goto step #2 till convergence or budget elapses.
         </li>
       </ol>
     </p>
 
     <p>
-      Thus, the "Bayesian" in BO is sequentially refining our surrogate's posterior (and thus uncertainty) with each evaluation via Bayesian posterior updating<d-cite key="nandoBOLoop"></d-cite>.
+      Thus, the "Bayesian" in BO is sequentially refining our surrogate's posterior (and thus uncertainty) with each evaluation via Bayes rule<d-cite key="nandoBOLoop"></d-cite>.
     </p>
     <p>Let us now look at a few common acquisition functions.</p>
 
@@ -297,7 +297,7 @@
 
     <p>
       In this acquisition function, we evaluate the point with the highest probability of improvement over the current max <d-math>f(x^+)</d-math>, where <d-math> x^+ = \text{argmax}_{x_i \in x_{1:t}}f(x_i)</d-math> and <d-math>x_i</d-math> is the location queried at <d-math>i^{th}</d-math> time step.
-      This acquisition function essentially is the left tail probability of the surrogate posterior.
+      This acquisition function is the left tail probability of the surrogate posterior.
     </p>
 
     <ol>
@@ -319,15 +319,15 @@
       </li>
     </ol>
     <p>
-      Looking closely, essentially we are finding a value from the CDF of the probability distribution at each location. If our surrogate is a GP we can obtain an analytical expression, enabling cheap calculation of <d-math>\alpha_{PI}</d-math>.
+      Looking closely, essentially we are finding a value from the CDF of the probability distribution at each location. If our surrogate is a GP we can obtain an analytical expression:
     </p>
     <d-math block>x_{t+1} = argmax_x \Phi\left(\frac{\mu_t(x) - f(x^+) - \epsilon}{\sigma_t(x)}\right)</d-math>
     <p>
       where <d-math>\Phi(\cdot)</d-math> indicates the CDF.
     </p>
 
-    <p class='check'>
-      The visualization below tries to show the way Pi is calculated. The orange line represents the <d-math>f(x^+ + \epsilon)</d-math> we have been talking about earlier. The portion of probability density that has not been clipped by this line in a way represents the PI value at that location. It is this specific value that represents the "probability of improvement over current max".
+    <p>
+      The visualization below shows the calculation of <d-math>\alpha_{PI}(x)</d-math>. The orange line represents the current max (plus an <d-math> \epsilon</d-math>) or <d-math> f(x^+ + \epsilon)</d-math>. The violet region shows the probability density at each point. The grey regions shows the probability density below the current max. The "area" of the violet region at each point is the represents the "probability of improvement over current maximum".
     </p>
 
     <figure>
@@ -359,7 +359,7 @@
       </div> -->
 
     <p>
-      Now that we possess the intuition behind <d-math>\epsilon</d-math>, let us see the effects of changing it.
+      Let us now see the PI acquisition function in action. We start with <d-math>\epsilon=0.01</d-math>.
     </p>
 
     <figure class="gif-slider">
@@ -367,15 +367,15 @@
     </figure>
     <p>
       Looking at the graph above<d-footnote>Ties are broken randomly.</d-footnote>, we see that we reach the global maxima in a few iterations.
-      Our surrogate possesses a large uncertainty in <d-math>x \in [2, 4]</d-math><d-footnote>This can be identified by the grey translucent area.</d-footnote> in the first eight-nine iterations.
-      The acquisition function initially exploits regions with high promise<d-footnote>Points in the vicinity of current maxima</d-footnote> which leads to a high uncertainty in the region <d-math>x \in [2, 4]</d-math>. This observation also shows that we do not need to construct an accurate estimate of the black-box function to find its maximum.
+      Our surrogate possesses a large uncertainty in <d-math>x \in [2, 4]</d-math><d-footnote>This can be identified by the grey translucent area.</d-footnote> in the first few iterations.
+      The acquisition function initially <strong>exploits</strong> regions with high promise<d-footnote>Points in the vicinity of current maxima</d-footnote> which leads to a high uncertainty in the region <d-math>x \in [2, 4]</d-math>. This observation also shows that we do not need to construct an accurate estimate of the black-box function to find its maximum.
     </p>
 
     <figure class="gif-slider">
       <d-figure><img src="images/MAB_pngs/PI/0.3/0.png" /></d-figure>
     </figure>
     <p>
-      The visualization above shows that increasing <d-math>\epsilon</d-math> to 0.3, enables us to explore more. However, it seems that we are exploring more than required.
+      The visualization above shows that increasing <d-math>\epsilon</d-math> to 0.3, enables us to <strong>explore</strong> more. However, it seems that we are exploring more than required.
     </p>
 
     <p>
@@ -386,7 +386,7 @@
       <d-figure><img src="images/MAB_pngs/PI/3/0.png" /></d-figure>
     </figure>
     <p>
-      We see that we made things worse! Our model now uses <d-math>\epsilon = 3</d-math>, which has effectively resulted in way too much exploration. This amount of exploration is not able to exploit when we land near the global maximum.
+      We see that we made things worse! Our model now uses <d-math>\epsilon = 3</d-math>, which has effectively resulted in way too much exploration. This amount of exploration is not able to exploit when we land near the global maximum. Moreover, with high exploration, the setting becomes similar to active learning.
     </p>
 
     <p> Our quick experiments above help us conclude that <d-math>\epsilon</d-math> controls the degree of exploration in the PI acquisition function.
@@ -394,10 +394,10 @@
     <h3 id="expectedimprovementei">Expected Improvement (EI)</h3>
 
     <p>
-      Probability of improvement only looked at <em>how likely</em> is an improvement, but, did not consider <em>how much</em> we can improve? The next criterion, called Expected Improvement (EI), does exactly that<d-footnote>A good
+      Probability of improvement only looked at <em>how likely</em> is an improvement, but, did not consider <em>how much</em> we can improve. The next criterion, called Expected Improvement (EI), does exactly that<d-footnote>A good
         introduction to the Expected Improvement acquisition function is by <a href="https://thuijskens.github.io/2016/12/29/bayesian-optimisation/" target="_blank">this post</a> by Thomas Huijskens and <a
           href="https://people.orie.cornell.edu/pfrazier/Presentations/2018.11.INFORMS.tutorial.pdf" target="_blank">these slides</a> by Peter Frazier</d-footnote>!
-      The idea is fairly simple - choose the next point as the one which has the highest expected improvement over the current max <d-math>f(x^+)</d-math>, where <d-math> x^+ = \text{argmax}_{x_i \in x_{1:t}}f(x_i)</d-math> and <d-math>x_i</d-math> is the location queried at <d-math>i^{th}</d-math> time step.
+      The idea is fairly simple - choose the next query point as the one which has the highest expected improvement over the current max <d-math>f(x^+)</d-math>, where <d-math> x^+ = \text{argmax}_{x_i \in x_{1:t}}f(x_i)</d-math> and <d-math>x_i</d-math> is the location queried at <d-math>i^{th}</d-math> time step.
     </p>
 
     <p>
@@ -489,7 +489,7 @@
     <h3 id="thompsonsampling">Thompson Sampling</h3>
 
     <p>
-      Another common acquisition function is Thompson Sampling <d-cite key="thompson"></d-cite>. At every step, we sample a function from the surrogate's posterior and optimize the sampled function. For example, in the case of gold mining, we’d sample a plausible distribution of the gold given the evidence we have so far and evaluate (drill) wherever it peaks.
+      Another common acquisition function is Thompson Sampling <d-cite key="thompson"></d-cite>. At every step, we sample a function from the surrogate's posterior and optimize the sampled function. For example, in the case of gold mining, we would sample a plausible distribution of the gold given the evidence we have so far and evaluate (drill) wherever it peaks.
     </p>
 
     <p>
@@ -527,32 +527,29 @@
         </li>
       </ul>
 
-      <p>
-        Notice that Thompson Sampling only required us to sample our posterior, not evaluate probabilities. This is a very useful property when there isn’t an easy way to evaluate probabilities.
-      </p>
-      <p>
-        Below is a visualization that uses Thompson sampling for optimization. Again, we are able to reach the global optimum in relatively few iterations.
-      </p>
+
 
       <figure class="gif-slider">
         <d-figure><img src="images/MAB_pngs/Thompson/0.01/0.png" /></d-figure>
       </figure>
 
+      <p>
+The visualization above uses Thompson sampling for optimization. Again, we are able to reach the global optimum in relatively few iterations.
+      </p>
+
       <h3>Random</h3>
 
       <p>
         We have been using intelligent acquisition functions until now.
-        If we were to chose our evaluation positions <d-math>x</d-math>
-        randomly, we effectively will have changed our acquisition function
-        to a Random acquisition function.
-      </p>
+        We can create a random acquisition functions by sampling <d-math>x</d-math>
+        randomly.      </p>
 
       <figure class="gif-slider">
         <d-figure><img src="images/MAB_pngs/Rand/0.png" /></d-figure>
       </figure>
 
       <h3>Summary of Acquisition Functions</h3> <p>
-        Before we go ahead and provide an empirical comparison of different acquisition functions, let us summarize the core ideas associated with acquisition functions: i) they are heuristics for evaluating the utility of a point; ii) they are a function of the surrogate posterior; iii) they combine exploration and exploitation; and iv) they are inexpensive to evaluate</p>
+        Before we go ahead and provide an empirical comparison of different acquisition functions, let us summarize the core ideas associated with acquisition functions: i) they are heuristics for evaluating the utility of a point; ii) they are a function of the surrogate posterior; iii) they combine exploration and exploitation; and iv) they are inexpensive to evaluate.</p>
 
       <h3 class="collapsible"> Other Acquisition Functions </h3>
       <div class="content">
@@ -620,7 +617,7 @@
       </figure>
 
       <p>
-        We see that the on average, the <em>random</em> acquisition strategy struggles to find a good solution, whereas the other methods are more efficient in the number of iterations to find a good solution. Most acquisition functions reach fairly close to the global maxima in as few as three iterations.
+        On average, the <em>random</em> acquisition strategy struggles to find a good solution. The other acquisition functions can find a good solution in a small number of iterations. Infact, most acquisition functions reach fairly close to the global maxima in as few as three iterations.
       </p>
 
 
@@ -646,7 +643,7 @@
       <p>Before we talk about Bayesian optimization for hyperparameter tuning<d-cite key="Snoek2012,NIPS2011_4443,Bergstra"></d-cite>, we will quickly differentiate between hyperparameters and parameters: hyperparameters are set before learning and the parameters are learned from the data. To illustrate the difference, we take the example of Ridge regression.
       </p>
       <d-math block>
-        \hat{\theta}^{ridge} = argmin_{\theta\ \in \ \mathbb{R}^p} \sum\limits_{i=1}^{n} \left(y_i - x_i^T\theta \right)^2 + \lambda \sum\limits_{i=1}^{p} \theta^2_j
+        \hat{\theta}_{ridge} = argmin_{\theta\ \in \ \mathbb{R}^p} \sum\limits_{i=1}^{n} \left(y_i - x_i^T\theta \right)^2 + \lambda \sum\limits_{j=1}^{p} \theta^2_j
       </d-math>
       <p>
         In Ridge regression, the weight matrix <d-math>\theta</d-math> is the parameter, and the regularization coefficient <d-math>\lambda \geq 0</d-math> is the hyperparameter. <br />
@@ -655,20 +652,20 @@
 
       <p>The most common use case of Bayesian Optimization is <em>hyperparameter tuning</em>: finding the best performing hyperparameters on machine learning models.</p>
 
-      <p>When training a model is not expensive and time-consuming, we can do a grid search to find the optimum hyperparameters. However, grid search is not feasible if functional value is extremely costly, as in the case of a large neural network that takes days to train. This might result in days of waiting to get the accuracy scores. Further, grid search scales poorly in terms of the number of hyperparameters.
+      <p>When training a model is not expensive and time-consuming, we can do a grid search to find the optimum hyperparameters. However, grid search is not feasible if function evaluations are costly, as in the case of a large neural network that takes days to train. Further, grid search scales poorly in terms of the number of hyperparameters.
 
-      <p>We turn to BO to counter the expensiveness of getting the functional values (accuracy values) and these increased dimensions.</p>
+      <p>We turn to BO to counter the expensive nature of evaluating our black-box function (accuracy).</p>
 
       <h3 id="example1">Example 1 -- Support Vector Machine (SVM)</h3>
 
-      <p>In this example, we use an SVM to learn a classification task on the sklearn's moons dataset. We will then use BO to optimize the model's accuracy. Let us have a look at the dataset first, which has two classes and two features.</p>
+      <p>In this example, we use an SVM to classify on sklearn's moons dataset. We will then use BO to optimize the model's accuracy. Let us have a look at the dataset first, which has two classes and two features.</p>
 
       <figure class="smaller-img">
         <d-figure><img src="images/MAB_gifs/moons.svg" /></d-figure>
       </figure>
 
       <p>
-        Before we optimize our machine learning model with BO, let us discuss the hyperparameters that we plan to optimize.
+        Before we optimize our machine learning model with BO, let us discuss the hyperparameters that we plan to optimize:
       </p>
       <p>
         <ul>
@@ -701,7 +698,7 @@
       <h3 id="comparison">Comparison</h3>
 
       <p>
-        Below is a plot that compares the different acquisition functions. We ran the <em>random</em> acquisition function several times to average out it's results.
+        Below is a plot that compares the different acquisition functions. We ran the <em>random</em> acquisition function several times to average out its results.
       </p>
 
       <figure>
@@ -709,7 +706,7 @@
       </figure>
 
     <p>
-        All our acquisition beat the <em>random</em> acquisition function at the end of all the optimization. We see the <em>random</em> method seemed to perform much better initially, but it could not reach the global optimum. The initial subpar performance of BO can be attributed to the initial exploration.
+        All our acquisition beat the <em>random</em> acquisition function after 7 iterations. We see the <em>random</em> method seemed to perform much better initially, but it could not reach the global optimum. The initial subpar performance of BO can be attributed to the initial exploration.
     </p>
 
  
@@ -853,14 +850,10 @@
         <h1 id="conclusions">Conclusion and Summary</h1>
 
         <p>
-          In this article, we looked at Bayesian Optimization, which involves optimizing a black-box function. Our primary focus is on the cases when the function evaluations are expensive, making grid or exhaustive search impractical. We looked at the key components of BO. First, we looked at the notion of using a surrogate function (with a prior over the space of objective functions) to model our black-box function. Next, we looked at the "Bayes" in BO - the function evaluations are used as data to obtain the surrogate posterior. We look at acquisition functions, which are functions of the surrogate posterior and are optimized sequentially. This new sequential optimization is in-expensive and thus of utility of us. We also looked at a few acquisition functions and showed how these different functions balance exploration and exploitation. Finally, we looked at some practical examples of BO for optimizing hyper-parameters for machine learning models. We believe we have presented an interesting and effective suite of black-box optimization techniques. We now hope that we have whetted the reader's appetite!
-        </p>
+          In this article, we looked at Bayesian Optimization for optimizing a black-box function. BO is well suited when the function evaluations are expensive, making grid or exhaustive search impractical. We looked at the key components of BO. First, we looked at the notion of using a surrogate function (with a prior over the space of objective functions) to model our black-box function. Next, we looked at the "Bayes" in BO - the function evaluations are used as data to obtain the surrogate posterior. We look at acquisition functions, which are functions of the surrogate posterior and are optimized sequentially. This new sequential optimization is in-expensive and thus of utility of us. We also looked at a few acquisition functions and showed how these different functions balance exploration and exploitation. Finally, we looked at some practical examples of BO for optimizing hyper-parameters for machine learning models.         </p>
 
     <h2 id="embracebayesianoptimization">Embrace Bayesian Optimization</h2>
 
-    <p>
-      Optimizing or tuning hyperparams is an important facet of modern machine learning algorithms and BO is an efficient way of tuning the same.
-    </p>
     <p>
       Having read all the way through, you might have been sold on the idea about the time you can save by asking Bayesian Optimizer to find the best hyperparameters for your fantastic model. There are a plethora of Bayesian Optimization libraries available. We have linked a few below. Do check them out.
     </p>
@@ -878,11 +871,15 @@
       <li><a href="https://github.com/HIPS/Spearmint">spearmint</a></li>
 
       <li><a href="https://github.com/Yelp/MOE">MOE</a></li>
+
+	<li><a href="https://botorch.org/tutorials/">BOTorch</a></li>
+<li><a href="https://github.com/SheffieldML/GPyOpt">GPyOpt</a></li>
+<li><a href="https://github.com/dragonfly/dragonfly">DragonFly</a></li>
     </ul>
 
     <p>
       We hope you had a good time reading the article and hope you are ready to <strong>exploit</strong> the power of BO. In case you wish to <strong>explore</strong> more, please read the <a href="#FurtherReading">Further Reading</a> section
-      below.
+      below. We also provide our repository to reproduce the entire article.  
     </p>
 
 
@@ -891,7 +888,7 @@
     <h2 id="ack">Acknowledgements</h2>
 
     <p>
-      This article was made possible with inputs from numerous people. Firstly, we would like to thank all the Distill reviewers for their punctilious and actionable feedback. These fantastic reviews immensely helped strengthen our article. We further express our gratitude towards the Distill Editors, who were extremely kind and helped us navigate various steps to publish our work. We would also like to thank <a href="https://sgarg87.github.io/">Dr. Sahil Garg</a> for his feedback on the flow of the article. Lastly, we would like to acknowledge the help we received from <a href="https://colah.github.io/">Christopher Olah</a> and the <a href="http://initiatives.iitgn.ac.in/writingstudio/wp/">Writing Studio</a> to improve the script of our article.
+      This article was made possible with inputs from numerous people. Firstly, we would like to thank all the Distill reviewers for their punctilious and actionable feedback. These fantastic reviews immensely helped strengthen our article. We further express our gratitude towards the Distill Editors, who were extremely kind and helped us navigate various steps to publish our work. We would also like to thank <a href="https://sgarg87.github.io/">Dr. Sahil Garg</a> for his feedback on the flow of the article. We would like to acknowledge the help we received from <a href="http://initiatives.iitgn.ac.in/writingstudio/wp/">Writing Studio</a> to improve the script of our article. Lastly, we sincerely thank <a href="https://colah.github.io/">Christopher Olah</a>. His inputs, suggestions, multiple rounds of iterations made this article substantially better.  
     </p>
 
   </d-article>
