@@ -64,23 +64,23 @@
     </strike> -->
       Many modern machine learning algorithms have a large number of hyperparameters. To effectively use these algorithms, we need to pick good hyperparameter values.
 
-      In this article, we will talk about Bayesian Optimization (BO), a suite of techniques often used to efficiently tune the hyperparameters, optimization parameters, and other model parameters. More generally, BO can be used to optimize any black-box function.
+      In this article, we talk about Bayesian Optimization (BO), a suite of techniques often used to tune hyperparameters. More generally, BO can be used to optimize any black-box function.
     </p>
     <p>
 
     </p>
 
     <p>
-      However, before we talk in-depth about using BO to tune model parameters, we will study using BO to maximize (optimize) a black-box function.
+      We first study using BO to maximize (optimize) a black-box function.
     </p>
 
     <h1>Mining Gold!</h1>
     <p>
-      Let us start with the example of gold mining. Our goal is to mine for gold in a new, unknown land<d-footnote>Interestingly, our example is similar to one of the first use of Gaussian Process (GP) (also called kriging)<d-cite key="goldKridge"></d-cite>, where Prof. Krige modelled gold concentrations using GPs.</d-footnote>.
-      For now, let us make a simplifying assumption, the gold content lies in a one-dimensional space, i.e., we are talking about gold distribution only about a line. We want to find the location along this line with the maximum gold while only drilling a few times (as drilling is expensive).
+      Let us start with the example of gold mining. Our goal is to mine for gold in an unknown land<d-footnote>Interestingly, our example is similar to one of the first use of Gaussian Process (GP) (also called kriging)<d-cite key="goldKridge"></d-cite>, where Prof. Krige modelled gold concentrations using GPs.</d-footnote>.
+      For now, we assume that the gold is distributed about a line. We want to find the <strong>location</strong> along this line with the <strong>maximum</strong> gold while only <strong>drilling</strong> a few times (as drilling is expensive).
     </p>
     <p>
-      Initially, we have no idea about the gold distribution. The only way to learn the gold distribution is to drill at different locations. However, this drilling is costly. Thus, we want to <strong>minimize the number of drillings required</strong> while still <strong>finding the location of maximum gold quickly</strong>.
+      Initially, we have no idea about the gold distribution. We can learn the gold distribution by drilling at different locations. However, this drilling is costly. Thus, we want to <strong>minimize the number of drillings required</strong> while still <strong>finding the location of maximum gold quickly</strong>.
     </p>
 
     <p>
@@ -91,7 +91,7 @@
       <li>
         <p>
           <strong>Problem 1: Best Estimate of Gold Distribution (Active Learning)</strong><br/>
-          Here we want to estimate the amount of gold on the one-dimensional line, using a small number of drillings. We can not drill at every location due to the prohibitive cost. Instead, we should drill at those locations that provide us with the <strong>maximum information</strong> about the distribution of the gold. This problem is akin to
+          In this problem, we want to accurately estimate the gold distribution along the line, using a small number of drillings. We can not drill at every location due to the prohibitive cost. Instead, we should drill at locations providing <strong>high information</strong> about the gold distribution. This problem is akin to
           <strong>
             active learning<d-cite key="settles2009active,Tong2001"></d-cite>
           </strong>.
@@ -101,7 +101,7 @@
       <li>
         <p>
           <strong>Problem 2: Location of Maximum Gold (Bayesian Optimization)</strong><br/>
-          Here we want to find the location in the one-dimensional space where the gold quantity is the maximum, using a small number of drillings. This problem is akin to
+          In this problem, we want to find the location of maximum gold content, using a small number of drillings. This problem is akin to
           <strong>
             Bayesian Optimization<d-cite key="humanOut,nandoBOtut"></d-cite>
           </strong> (BO).
@@ -110,7 +110,7 @@
     </ul>
 
     <p>
-      We will soon see how the two problems are related, but not the same.
+      We will soon see how these two problems are related, but not the same.
     </p>
 
 
@@ -118,32 +118,32 @@
     <h2>Active Learning</h2>
 
     <p>
-      For many machine learning problems, unlabeled data is readily available. However, labeling (or querying) is often expensive. As an example, for a speech-to-text task, the annotation requires expert(s) to label words and sentences manually. More often, this is a time consuming and expensive task. In our gold mining problem, drilling (akin to labeling) is an expensive operation. Active learning provides a way to minimize labeling while maximizing modeling accuracy. While there are various methods in the active learning literature, we look at <strong>uncertainty reduction</strong>. This method chooses the most uncertain point as the next query point. Often, the variance acts as a measure of uncertainty.
+      For many machine learning problems, unlabeled data is readily available. However, labeling (or querying) is often expensive. As an example, for a speech-to-text task, the annotation requires expert(s) to label words and sentences manually. Similarly, in our gold mining problem, drilling (akin to labeling) is expensive. Active learning minimizes labeling costs while maximizing modeling accuracy. While there are various methods in the active learning literature, we look at <strong>uncertainty reduction</strong>. This method proposes labeling the point whose model uncertainty is the highest. Often, the variance acts as a measure of uncertainty.
     </p>
 
     <h3>Surrogate Model</h3>
     <p>
-      Active learning (along with BO, which we will see later) employs a surrogate model for modeling the unknown true function <d-math>f(x)</d-math>. The surrogate ideally models the true function closely. In our example, <d-math>f(x)</d-math> denotes the true gold content on our new land, and unquestionably we do not know <d-math>f(x)</d-math>.
+      Active learning (along with BO, which we see later) employs a surrogate model for modeling the unknown true function <d-math>f(x)</d-math>. The surrogate ideally models the true function closely. 
     </p>
 
     <h3>Bayesian Update</h3>
     <p>
-      Every evaluation (drilling) of <d-math>f(x)</d-math> gives the surrogate model more data to learn. The posterior for the surrogate is obtained using the Bayes Rule with this new data at every iteration. At the end of an iteration, the posterior becomes the prior for the next iteration.
+      Every evaluation (drilling) of <d-math>f(x)</d-math> gives the surrogate model more data to learn. The posterior for the surrogate is obtained using the Bayes rule with this new data. At the end of an evaluation, the posterior becomes the prior for the next evaluation.
     </p>
 
     <p>
-      Gaussian Processes are commonly used as surrogate models. One can set priors of a Gaussian Process (GP) by using specific kernels and mean functions. Moreover, GPs provide predictions as well as uncertainty estimates. We leverage these quantities in both active learning and BO.
+      Gaussian Processes are commonly used as surrogate models. One can set priors of a Gaussian Process (GP) by using specific kernels and mean functions. Moreover, GPs provide uncertainty estimates, which we leverage in both active learning and BO.
     </p>
 
     <h3>Gaussian Processes</h3>
 
     <p>
       One might want to look at this excellent Distill article<d-cite key="görtler2019a"></d-cite> on Gaussian Processes<d-cite key="Rasmussen2004"></d-cite>.
-      We will use Gaussian Process Regression to model the gold distribution.
+      We use Gaussian Process regression to model the gold distribution.
     </p>
 
     <p>
-      Let us visualize our true function <d-math>f(x)</d-math>. The gold distribution in our data is bi-modal, with a maximum value around <d-math>x = 5</d-math>. For now, let us not worry about the X-axis or the Y-axis units.
+      Let us visualize our true function <d-math>f(x)</d-math>. The gold distribution is bi-modal, with a maximum value around <d-math>x = 5</d-math>. For now, let us not worry about the X-axis or the Y-axis units.
     </p>
     <figure class="smaller-img">
       <d-figure><img src="images/MAB_gifs/GT.svg" /></d-figure>
@@ -153,10 +153,10 @@
     <h4 id="priormodel">Prior Model</h4>
 
     <p>
-      We define a prior over a set of functions based on our initial beliefs of the black-box function<d-cite key="Rasmussen2004"></d-cite>. The prior tries to capture the properties of the black-box function, which include periodicity, smoothness, among others. In our case, we consider the gold distribution to be smooth. We use kernels to set a prior that favors smooth functions. <d-footnote>We use a Matern 5/2 kernel due to its property of favoring doubly differentiable functions. In contrast, Matern 3/2 favors singly differentiable functions.
+      We define a prior over a set of functions based on our initial beliefs of the black-box function<d-cite key="Rasmussen2004"></d-cite>. We consider the gold distribution to be smooth by setting the  prior appropriately. <d-footnote>We use a Matern 5/2 kernel due to its property of favoring doubly differentiable functions. In contrast, Matern 3/2 favors singly differentiable functions.
 
       See <a href="http://www.gaussianprocess.org/gpml/">Rasmussen and Williams 2004</a> and <a href="https://scikit-learn.org/stable/modules/generated/sklearn.gaussian_process.kernels.Matern.html">scikit-learn</a>, for details regarding the Matern kernel.
-    </d-footnote> The black line and the grey shaded region indicate the mean (<d-math>\mu</d-math>) and uncertainty <d-footnote> Technically we plotted (<d-math>\mu \pm \sigma </d-math>) </d-footnote> in our gold distribution estimate before drilling.
+    </d-footnote> The black line and the grey shaded region indicate the mean (<d-math>\mu</d-math>) and uncertainty  (<d-math>\mu \pm \sigma </d-math>) in our gold distribution estimate before drilling.
 
     </p>
 
@@ -175,8 +175,8 @@
     </figure>
 
     <p>
-      We see our surrogate's posterior is conveying the certainty in gold content near <d-math>x = 0.5</d-math>. Moreover, the predicted gold concentration of points near <d-math>x = 0.5</d-math> is close to the actual value that we got from drilling.<!-- <d-footnote>We can transform the data and fit a GP over <d-math>\log\left(f(x)\right)</d-math> instead of <d-math>f(x)</d-math> to ensure the  predictions are non-negative</d-footnote> .  -->
-    Having discussed the Bayesian update for GP regression, we will discuss the key idea of active learning.</p>
+      We see our surrogate's posterior is certainty near <d-math>x = 0.5</d-math> and uncertain away from it. We can similarly add more training points and obtain a more certain estimate of <d-math>f(x)</d-math>. However, we want to minimize the number of evaluations. Thus, we should choose the next query point "smartly" using active learning. <!-- <d-footnote>We can transform the data and fit a GP over <d-math>\log\left(f(x)\right)</d-math> instead of <d-math>f(x)</d-math> to ensure the  predictions are non-negative</d-footnote> .  -->
+    We now discuss the key idea of active learning.</p>
 
     <h3 id="activelearningprocedure">Active Learning Procedure
     </h3>
@@ -195,18 +195,13 @@
     </figure>
 
 
-    <p>
-      Choosing the most uncertain location leads to querying of the points that are the farthest from the current set of train points. The visualization shows that one can estimate the true distribution in a few iterations. At every iteration, active learning <strong> explores
+    <p>The visualization shows that one can estimate the true distribution in a few iterations. Furthermore, choosing the most uncertain location leads to querying points farthest from the current set of training points. At every iteration, active learning <strong> explores
       </strong> the domain to make the estimates better.
     </p>
 
     <h2 id="bayesianoptimization">Bayesian Optimization</h2>
     <p>
-      In this problem we aim to find the location of maximum gold content. The setting is similar to problem 1, but the objectives are different. Bayesian Optimization (BO) is an optimization technique that solves problem 1, i.e., maximizing a black-box function, whereas active learning focuses on getting a good estimate of that black-box function.
-    </p>
-
-    <p>
-      One way to find the maximum would be to first run active learning to accurately estimate the true function and then find its maximum. However, should we waste evaluations to improve the estimates, when we are only concerned with finding the maximum? Assuming that our black-box function is smooth, it might be a good idea to evaluate at or near locations where our surrogate model's prediction is the highest, i.e., to <strong>exploit</strong>. However, due to the limited evaluations, our model's predictions are inaccurate. One can improve the model by evaluating at points with high variance or performing <strong>exploration</strong>. BO combines <strong>exploitation</strong> and <strong>exploration</strong>, whereas active learning solely <strong>explores</strong>.
+      In this problem we aim to find the location of maximum gold content. One way to find the maximum would be to first run active learning to accurately estimate the true function, and then find its maximum. However, should we waste evaluations to improve the estimates, when we are only concerned with finding the maximum? Assuming that our black-box function is smooth, it might be a good idea to evaluate at or near locations where our surrogate model's prediction is the highest, i.e., to <strong>exploit</strong>. However, due to the limited evaluations, our model's predictions are inaccurate. One can improve the model by evaluating at points with high variance or performing <strong>exploration</strong>. BO combines <strong>exploitation</strong> and <strong>exploration</strong>, whereas active learning solely <strong>explores</strong>.
     </p>
 
     <h1>Formalizing Bayesian Optimization</h1>
@@ -256,7 +251,7 @@
       </table>
 
       <p>
-        Our gold mining problem is suited to use BO. Let us introduce some additional topics before you run to get the maximal gold for yourself!
+        Our gold mining problem is suited to use BO. Let us introduce some additional topics before we run to get the maximal gold!
       </p>
 
     <h3>Acquisition Functions</h3>
@@ -264,8 +259,8 @@
     <p>
       Our original optimization problem, <d-math>x^* = \text{argmax}_{x \in A} f(x)</d-math> is hard because <d-math>f</d-math> is <b>expensive</b> to evaluate.
       The idea of BO is to <b>transform</b> the original optimization into a <b>sequence</b> of easier <b>inexpensive</b> optimizations of functions called <b>acquisition functions</b> (<d-math>\alpha(x)</d-math>).
-      Intuitively, acquisition functions are heuristics<d-footnote>https://botorch.org/docs/acquisition</d-footnote> that evaluate the utility of a point for maximizing the underlying black-box function (<d-math>f(x)</d-math>)<d-footnote>Please find <a href="https://www.cse.wustl.edu/~garnett/cse515t/spring_2015/files/lecture_notes/12.pdf">these</a> slides from Washington University in St. Louis to know more and the following </d-footnote>.
-      At each step, we optimize the acquisition function to determine the next point to sample/query.
+      Intuitively, acquisition functions are heuristics<d-footnote>https://botorch.org/docs/acquisition</d-footnote> that evaluate the utility of a point for maximizing <d-math>f(x)</d-math><d-footnote>Please find <a href="https://www.cse.wustl.edu/~garnett/cse515t/spring_2015/files/lecture_notes/12.pdf">these</a> slides from Washington University in St. Louis to know more and the following </d-footnote>.
+      At each step, we <strong>optimize</strong> the <strong>acquisition function</strong> to determine the next point to sample/query.
     </p>
 
     <p>
@@ -297,7 +292,7 @@
 
     <p>
       In this acquisition function, we evaluate the point with the highest probability of improvement over the current max <d-math>f(x^+)</d-math>, where <d-math> x^+ = \text{argmax}_{x_i \in x_{1:t}}f(x_i)</d-math> and <d-math>x_i</d-math> is the location queried at <d-math>i^{th}</d-math> time step.
-      This acquisition function is the left tail probability of the surrogate posterior.
+      This acquisition function is the upper-tail probability of the surrogate posterior.
     </p>
 
     <ol>
@@ -319,7 +314,7 @@
       </li>
     </ol>
     <p>
-      Looking closely, essentially we are finding a value from the CDF of the probability distribution at each location. If our surrogate is a GP we can obtain an analytical expression:
+If our surrogate is a GP we can obtain an analytical expression:
     </p>
     <d-math block>x_{t+1} = argmax_x \Phi\left(\frac{\mu_t(x) - f(x^+) - \epsilon}{\sigma_t(x)}\right)</d-math>
     <p>
@@ -327,7 +322,7 @@
     </p>
 
     <p>
-      The visualization below shows the calculation of <d-math>\alpha_{PI}(x)</d-math>. The orange line represents the current max (plus an <d-math> \epsilon</d-math>) or <d-math> f(x^+ + \epsilon)</d-math>. The violet region shows the probability density at each point. The grey regions shows the probability density below the current max. The "area" of the violet region at each point is the represents the "probability of improvement over current maximum".
+      The visualization below shows the calculation of <d-math>\alpha_{PI}(x)</d-math>. The orange line represents the current max (plus an <d-math> \epsilon</d-math>) or <d-math> f(x^+) + \epsilon</d-math>. The violet region shows the probability density at each point. The grey regions shows the probability density below the current max. The "area" of the violet region at each point represents the "probability of improvement over current maximum".
     </p>
 
     <figure>
@@ -338,7 +333,7 @@
 
     <p>
       PI uses <d-math>\epsilon</d-math> to strike a balance between exploration and exploitation. <!-- In the following plot, we visualize how changing the value of <d-math>\epsilon</d-math> affects the values of our acquisition function, resulting in different choices of points to evaluate. We selected two points as our candidate points <d-math>x \in \{1.0, 5.0\}</d-math>, and show their tail probabilities in shaded green and orange, respectively. -->
-      Increasing <d-math>\epsilon</d-math> results in the locations with a larger <d-math>\sigma</d-math> to have higher <d-math>\alpha_{PI}</d-math> as their probability density is spread more due to higher uncertainty.
+      Increasing <d-math>\epsilon</d-math> results in querying locations with a larger <d-math>\sigma</d-math> as their probability density is spread.
     </p>
 
     <!-- <div class="l-screen shaded-figure">
@@ -386,7 +381,7 @@
       <d-figure><img src="images/MAB_pngs/PI/3/0.png" /></d-figure>
     </figure>
     <p>
-      We see that we made things worse! Our model now uses <d-math>\epsilon = 3</d-math>, which has effectively resulted in way too much exploration. This amount of exploration is not able to exploit when we land near the global maximum. Moreover, with high exploration, the setting becomes similar to active learning.
+      We see that we made things worse! Our model now uses <d-math>\epsilon = 3</d-math>, and we are unable exploit when we land near the global maximum. Moreover, with high exploration, the setting becomes similar to active learning.
     </p>
 
     <p> Our quick experiments above help us conclude that <d-math>\epsilon</d-math> controls the degree of exploration in the PI acquisition function.
@@ -421,7 +416,7 @@
     </d-math>
 
     <p>
-      where <d-math>f(x^+)</d-math> is the maximum value that has been encountered so far. This equation for the case of GP surrogate, can be converted an analytical expression shown below.
+      where <d-math>f(x^+)</d-math> is the maximum value that has been encountered so far. This equation for GP surrogate is an analytical expression shown below.
     </p>
 
     <d-math block>
@@ -435,10 +430,10 @@
     <p>
       where <d-math>\Phi(\cdot)</d-math> indicates CDF and <d-math>\phi(\cdot)</d-math> indicates pdf.
     </p>
-    <p>From the above expression, we can see that <em>Expected Improvement</em> will be high when the expected value of <d-math>\mu_t(x) - f(x^+)</d-math> is high, or when the uncertainty <d-math>\sigma_t(x)</d-math> around a point is high.
+    <p>From the above expression, we can see that <em>Expected Improvement</em> will be high when: i) the expected value of <d-math>\mu_t(x) - f(x^+)</d-math> is high, or, ii) when the uncertainty <d-math>\sigma_t(x)</d-math> around a point is high.
 
 
-    <p> Like the Probability of Improvement's acquisition function, we can moderate the amount of explorability of the Expected Improvement's acquisition function by setting the <d-math>\epsilon</d-math> hyperparameter.
+    <p> Like the PI acquisition function, we can moderate the amount of exploration of EI acquisition function by modifying <d-math>\epsilon</d-math>.
     </p>
 
     <figure class="gif-slider">
@@ -489,7 +484,7 @@
     <h3 id="thompsonsampling">Thompson Sampling</h3>
 
     <p>
-      Another common acquisition function is Thompson Sampling <d-cite key="thompson"></d-cite>. At every step, we sample a function from the surrogate's posterior and optimize the sampled function. For example, in the case of gold mining, we would sample a plausible distribution of the gold given the evidence we have so far and evaluate (drill) wherever it peaks.
+      Another common acquisition function is Thompson Sampling <d-cite key="thompson"></d-cite>. At every step, we sample a function from the surrogate's posterior and optimize it. For example, in the case of gold mining, we would sample a plausible distribution of the gold given the evidence and evaluate (drill) wherever it peaks.
     </p>
 
     <p>
@@ -507,17 +502,16 @@
       <ul>
         <li>
           <p>
-            Locations with high variance (<d-math> \sigma(x) </d-math>) will show a large variance in the functional values sampled from the surrogate posterior. This can aid exploration as high variation can lead to sampled functions with a high value at locations with high variance. This will ensure an <strong>exploratory</strong> behavior.
+            Locations with high uncertainty (<d-math> \sigma(x) </d-math>) will show a large variance in the functional values sampled from the surrogate posterior. Thus, there is a non-trivial probability that a sample can take high value in a highly uncertain region. This can aid <strong>exploration</strong>.
           </p>
           <p>
-            As an example, the three samples (sample #1, #2, #3) show high variance close to <d-math>x=6</d-math>. Optimizing sample 3 will lead to evaluating <d-math>x=6</d-math>, which shows exploration.
+            As an example, the three samples (sample #1, #2, #3) show high variance close to <d-math>x=6</d-math>. Optimizing sample 3 will aid in exploration by evaluating <d-math>x=6</d-math>.
           </p>
 
         </li>
         <li>
           <p>
-            The sampled functions will need to pass through or closely from the current max value (due to low <d-math>\sigma(x)</d-math>) at the evaluated locations. This will
-            ensure an <strong>exploiting</strong> behavior of the acquisition function.
+            The sampled functions must pass through the current max value, as there is no uncertainty at the evaluated locations. This will ensure an <strong>exploiting</strong> behavior of the acquisition function.
           </p>
 
           <p>
@@ -547,9 +541,10 @@ The visualization above uses Thompson sampling for optimization. Again, we are a
       <figure class="gif-slider">
         <d-figure><img src="images/MAB_pngs/Rand/0.png" /></d-figure>
       </figure>
-
+	<p> The visualization above shows that the performance of random acquisition function is not that bad! However, if our optimization was more complex (more dimensions), then, random acquisition might perform poorly.
+</p>
       <h3>Summary of Acquisition Functions</h3> <p>
-        Before we go ahead and provide an empirical comparison of different acquisition functions, let us summarize the core ideas associated with acquisition functions: i) they are heuristics for evaluating the utility of a point; ii) they are a function of the surrogate posterior; iii) they combine exploration and exploitation; and iv) they are inexpensive to evaluate.</p>
+        Let us now summarize the core ideas associated with acquisition functions: i) they are heuristics for evaluating the utility of a point; ii) they are a function of the surrogate posterior; iii) they combine exploration and exploitation; and iv) they are inexpensive to evaluate.</p>
 
       <h3 class="collapsible"> Other Acquisition Functions </h3>
       <div class="content">
@@ -608,8 +603,7 @@ The visualization above uses Thompson sampling for optimization. Again, we are a
         We now compare the performance of different acquisition functions on the gold mining problem<d-footnote>To know more about the difference between acquisition functions look at <a href="https://www.cs.ubc.ca/~nando/540-2013/lectures/l7.pdf">these</a> amazing
           slides from Nando De Freitas</d-footnote>. We have used the optimum hyperparameters for each acquisition function.
 
-          We ran the random acquisition function several times with different seeds. We have plotted the mean and the standard deviation (only for random acquisition (shown in shaded blue region)) below. We can see the standard deviation (variance) of the random acquisition is high, which is expected as we are randomly
-          choosing points <d-math>x</d-math> to evaluate our black-box function <d-math>f</d-math>.
+          We ran the random acquisition function several times with different seeds and plot the mean gold sensed at every iteration.
       </p>
 
       <figure>
@@ -617,7 +611,7 @@ The visualization above uses Thompson sampling for optimization. Again, we are a
       </figure>
 
       <p>
-        On average, the <em>random</em> acquisition strategy struggles to find a good solution. The other acquisition functions can find a good solution in a small number of iterations. Infact, most acquisition functions reach fairly close to the global maxima in as few as three iterations.
+        The <em>random</em> strategy is initially comparable or better than other acquisition functions. However, the maximum gold sensed by <em>random</em> strategy grows slowly. In comparison, the other acquisition functions can find a good solution in a small number of iterations. Infact, most acquisition functions reach fairly close to the global maxima in as few as three iterations.
       </p>
 
 
@@ -631,11 +625,6 @@ The visualization above uses Thompson sampling for optimization. Again, we are a
       the
       single dimensional case can be easily ported to multi-variable functions.</p>
     -->
-      <h3 id="whyisthiseasier">Why is it beneficial to optimize the acquisition function?</h3>
-
-      <p>
-        We have replaced the original optimization problem (optimizing the given black-box function) to another optimization problem (optimization of acquisition function). How is this any better than the last problem? Evaluating the acquisition function is much cheaper. In contrast, the original black-box function is extremely costly to evaluate, by definition.
-      </p>
 
 
       <h2>Hyperparameter Tuning</h2>
@@ -658,15 +647,8 @@ The visualization above uses Thompson sampling for optimization. Again, we are a
 
       <h3 id="example1">Example 1 -- Support Vector Machine (SVM)</h3>
 
-      <p>In this example, we use an SVM to classify on sklearn's moons dataset. We will then use BO to optimize the model's accuracy. Let us have a look at the dataset first, which has two classes and two features.</p>
+      <p>In this example, we use an SVM to classify on sklearn's moons dataset, and use BO to optimize SVM hyperparameters.
 
-      <figure class="smaller-img">
-        <d-figure><img src="images/MAB_gifs/moons.svg" /></d-figure>
-      </figure>
-
-      <p>
-        Before we optimize our machine learning model with BO, let us discuss the hyperparameters that we plan to optimize:
-      </p>
       <p>
         <ul>
           <li>
@@ -678,6 +660,13 @@ The visualization above uses Thompson sampling for optimization. Again, we are a
           </li>
         </ul>
       </p>
+
+<p> Let us have a look at the dataset first, which has two classes and two features.</p>
+
+      <figure class="smaller-img">
+        <d-figure><img src="images/MAB_gifs/moons.svg" /></d-figure>
+      </figure>
+
       <p>
         Let us apply Bayesian Optimization to learn the best hyperparameters for this classification task<d-footnote> <strong>Note</strong>: the surface plots you see for the Ground Truth Accuracies below were calculated for each possible hyperparameter for showcasing purposes only. We do not have these values in real applications.
         </d-footnote>. The optimum values for &#60<d-math>C, \ \gamma</d-math>&#62 have been found via running grid search at high granularity.
@@ -706,7 +695,7 @@ The visualization above uses Thompson sampling for optimization. Again, we are a
       </figure>
 
     <p>
-        All our acquisition beat the <em>random</em> acquisition function after 7 iterations. We see the <em>random</em> method seemed to perform much better initially, but it could not reach the global optimum. The initial subpar performance of BO can be attributed to the initial exploration.
+        All our acquisition beat the <em>random</em> acquisition function after seven iterations. We see the <em>random</em> method seemed to perform much better initially, but it could not reach the global optimum. The initial subpar performance of BO can be attributed to the initial exploration.
     </p>
 
  
