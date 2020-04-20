@@ -590,19 +590,6 @@ The visualization above uses Thompson sampling for optimization. Again, we can r
         The <em>random</em> strategy is initially comparable to or better than other acquisition functions. However, the maximum gold sensed by <em>random</em> strategy grows slowly. In comparison, the other acquisition functions can find a good solution in a small number of iterations. In fact, most acquisition functions reach fairly close to the global maxima in as few as three iterations.
       </p>
 
-
-      <!--
-    <h2 id="higherdimensions">Higher Dimensions</h2>
-
-    <p>For now we have been looking at real-valued single dimensional function, i.e. <d-math>f: \mathbb{R} \texttt{ -> } \mathbb{R}</d-math> data where we needed to find the value of <d-math>\boldsymbol{x}</d-math> where we reached
-      global
-      maximum. Let's move on and try to tackle real-valued functions of <d-math>n</d-math> real variables functions, i.e. <d-math>f: \mathbb{R}^n \texttt{ -> } \mathbb{R}</d-math>. We will soon see that our methods that we saw earlier
-      for
-      the
-      single dimensional case can be easily ported to multi-variable functions.</p>
-    -->
-
-
       <h2>Hyperparameter Tuning</h2>
 
       <p>Before we talk about Bayesian optimization for hyperparameter tuning<d-cite key="Snoek2012,NIPS2011_4443,Bergstra"></d-cite>, we will quickly differentiate between hyperparameters and parameters: hyperparameters are set before learning and the parameters are learned from the data. To illustrate the difference, we take the example of Ridge regression.

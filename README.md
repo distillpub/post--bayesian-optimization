@@ -12,16 +12,6 @@ Authors
 Offline viewing
 ---------------
 
-Run the following command to view the post.
-```sh
-./view.sh
-```
-
-or, just plainly open `public/index.html` in your browser.
+Open `public/index.html` in your browser.
 
 *NB - the citations may not appear correctly in the offline render*
-
-Experimentation Notebook
----------------
-
-Experiments were performed on ipynb linked [here](https://github.com/nipunbatra/distillpub/blob/master/public/images/bandit-learning-gp.ipynb).
