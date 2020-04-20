@@ -118,7 +118,7 @@
     <h2>Active Learning</h2>
 
     <p>
-      For many machine learning problems, unlabeled data is readily available. However, labeling (or querying) is often expensive. As an example, for a speech-to-text task, the annotation requires expert(s) to label words and sentences manually. Similarly, in our gold mining problem, drilling (akin to labeling) is expensive. Active learning minimizes labeling costs while maximizing modeling accuracy. While there are various methods in the active learning literature, we look at <strong>uncertainty reduction</strong>. This method proposes labeling the point whose model uncertainty is the highest. Often, the variance acts as a measure of uncertainty.
+      For many machine learning problems, unlabeled data is readily available. However, labeling (or querying) is often expensive. As an example, for a speech-to-text task, the annotation requires expert(s) to label words and sentences manually. Similarly, in our gold mining problem, drilling (akin to labeling) is expensive. Active learning minimizes labeling costs while maximizing modeling accuracy. While there are various methods in active learning literature, we look at <strong>uncertainty reduction</strong>. This method proposes labeling the point whose model uncertainty is the highest. Often, the variance acts as a measure of uncertainty.
     </p>
 
     <h3>Surrogate Model</h3>
@@ -128,7 +128,7 @@
 
     <h3>Bayesian Update</h3>
     <p>
-      Every evaluation (drilling) of <d-math>f(x)</d-math> gives the surrogate model more data to learn. The posterior for the surrogate is obtained using the Bayes rule with this new data. At the end of an evaluation, the posterior becomes the prior for the next evaluation.
+      Every evaluation (drilling) of <d-math>f(x)</d-math> gives the surrogate model more data to learn. We can apply Bayes rule to obtain the surrogate posterior. At the end of an evaluation, the posterior becomes the prior for the next evaluation.
     </p>
 
     <p>
@@ -201,7 +201,7 @@
 
     <h2 id="bayesianoptimization">Bayesian Optimization</h2>
     <p>
-      In this problem we aim to find the location of maximum gold content. One way to find the maximum would be to first run active learning to accurately estimate the true function, and then find its maximum. However, should we waste evaluations to improve the estimates, when we are only concerned with finding the maximum? Assuming that our black-box function is smooth, it might be a good idea to evaluate at or near locations where our surrogate model's prediction is the highest, i.e., to <strong>exploit</strong>. However, due to the limited evaluations, our model's predictions are inaccurate. One can improve the model by evaluating at points with high variance or performing <strong>exploration</strong>. BO combines <strong>exploitation</strong> and <strong>exploration</strong>, whereas active learning solely <strong>explores</strong>.
+      In this problem, we aim to find the location of maximum gold content. One way to find the maximum would be first to run active learning to estimate the true function accurately, and then find its maximum. However, should we waste evaluations to improve the estimates, when we are only concerned with finding the maximum? Assuming that our black-box function is smooth, it might be a good idea to evaluate at or near locations where our surrogate model's prediction is the highest, i.e., to <strong>exploit</strong>. However, due to the limited evaluations, our model's predictions are inaccurate. One can improve the model by evaluating at points with high variance or performing <strong>exploration</strong>. BO combines <strong>exploitation</strong> and <strong>exploration</strong>, whereas active learning solely <strong>explores</strong>.
     </p>
 
     <h1>Formalizing Bayesian Optimization</h1>
@@ -322,7 +322,7 @@ If our surrogate is a GP we can obtain an analytical expression:
     </p>
 
     <p>
-      The visualization below shows the calculation of <d-math>\alpha_{PI}(x)</d-math>. The orange line represents the current max (plus an <d-math> \epsilon</d-math>) or <d-math> f(x^+) + \epsilon</d-math>. The violet region shows the probability density at each point. The grey regions shows the probability density below the current max. The "area" of the violet region at each point represents the "probability of improvement over current maximum".
+      The visualization below shows the calculation of <d-math>\alpha_{PI}(x)</d-math>. The orange line represents the current max (plus an <d-math> \epsilon</d-math>) or <d-math> f(x^+) + \epsilon</d-math>. The violet region shows the probability density at each point. The grey regions show the probability density below the current max. The "area" of the violet region at each point represents the "probability of improvement over current maximum".
     </p>
 
     <figure>
@@ -433,7 +433,7 @@ If our surrogate is a GP we can obtain an analytical expression:
     <p>From the above expression, we can see that <em>Expected Improvement</em> will be high when: i) the expected value of <d-math>\mu_t(x) - f(x^+)</d-math> is high, or, ii) when the uncertainty <d-math>\sigma_t(x)</d-math> around a point is high.
 
 
-    <p> Like the PI acquisition function, we can moderate the amount of exploration of EI acquisition function by modifying <d-math>\epsilon</d-math>.
+    <p> Like the PI acquisition function, we can moderate the amount of exploration of the EI acquisition function by modifying <d-math>\epsilon</d-math>.
     </p>
 
     <figure class="gif-slider">
@@ -462,7 +462,7 @@ If our surrogate is a GP we can obtain an analytical expression:
       <d-figure><img src="images/MAB_pngs/EI/3/0.png" /></d-figure>
     </figure>
     <p>
-      Is this better than before? It turns out a yes and a no. We see that here we do too much exploration, given the value of <d-math>\epsilon = 3</d-math>. This results in early reaching something close to global maxima, but unfortunately, we do not exploit to get more gains near the global maxima.
+      Is this better than before? It turns out a yes and a no. We see that here we do too much exploration, given the value of <d-math>\epsilon = 3</d-math>. We quickly reach close to global maxima, but unfortunately, do not exploit to get more gains near the global maxima.
     </p>
 
     <h4 class="collapsible">PI vs. EI</h4>
@@ -498,24 +498,24 @@ If our surrogate is a GP we can obtain an analytical expression:
     </figure>
 
     <p>
-      The intuition behind Thompson sampling can be understood by noticing two important observations.
+      We can understand the intuition behind Thompson sampling by two observations:
       <ul>
         <li>
           <p>
-            Locations with high uncertainty (<d-math> \sigma(x) </d-math>) will show a large variance in the functional values sampled from the surrogate posterior. Thus, there is a non-trivial probability that a sample can take high value in a highly uncertain region. This can aid <strong>exploration</strong>.
+            Locations with high uncertainty (<d-math> \sigma(x) </d-math>) will show a large variance in the functional values sampled from the surrogate posterior. Thus, there is a non-trivial probability that a sample can take high value in a highly uncertain region. Optimizing such samples can aid <strong>exploration</strong>.
           </p>
           <p>
-            As an example, the three samples (sample #1, #2, #3) show high variance close to <d-math>x=6</d-math>. Optimizing sample 3 will aid in exploration by evaluating <d-math>x=6</d-math>.
+            As an example, the three samples (sample #1, #2, #3) show a high variance close to <d-math>x=6</d-math>. Optimizing sample 3 will aid in exploration by evaluating <d-math>x=6</d-math>.
           </p>
 
         </li>
         <li>
           <p>
-            The sampled functions must pass through the current max value, as there is no uncertainty at the evaluated locations. This will ensure an <strong>exploiting</strong> behavior of the acquisition function.
+            The sampled functions must pass through the current max value, as there is no uncertainty at the evaluated locations. Thus, optimizing samples from surrogate posterior will ensure an <strong>exploiting</strong> behavior.
           </p>
 
           <p>
-            As an example of this behavior, we see that all the sampled functions above pass through the current max at <d-math>x = 0.5</d-math>. If <d-math>x = 0.5</d-math> was close to the global maxima then we would be able to <strong>exploit</strong> and choose a better maximum.
+            As an example of this behavior, we see that all the sampled functions above pass through the current max at <d-math>x = 0.5</d-math>. If <d-math>x = 0.5</d-math> were close to the global maxima, then we would be able to <strong>exploit</strong> and choose a better maximum.
           </p>
 
         </li>
@@ -528,20 +528,20 @@ If our surrogate is a GP we can obtain an analytical expression:
       </figure>
 
       <p>
-The visualization above uses Thompson sampling for optimization. Again, we are able to reach the global optimum in relatively few iterations.
+The visualization above uses Thompson sampling for optimization. Again, we can reach the global optimum in relatively few iterations.
       </p>
 
       <h3>Random</h3>
 
       <p>
         We have been using intelligent acquisition functions until now.
-        We can create a random acquisition functions by sampling <d-math>x</d-math>
+        We can create a random acquisition function by sampling <d-math>x</d-math>
         randomly.      </p>
 
       <figure class="gif-slider">
         <d-figure><img src="images/MAB_pngs/Rand/0.png" /></d-figure>
       </figure>
-	<p> The visualization above shows that the performance of random acquisition function is not that bad! However, if our optimization was more complex (more dimensions), then, random acquisition might perform poorly.
+	<p> The visualization above shows that the performance of the random acquisition function is not that bad! However, if our optimization was more complex (more dimensions), then, the random acquisition might perform poorly.
 </p>
       <h3>Summary of Acquisition Functions</h3> <p>
         Let us now summarize the core ideas associated with acquisition functions: i) they are heuristics for evaluating the utility of a point; ii) they are a function of the surrogate posterior; iii) they combine exploration and exploitation; and iv) they are inexpensive to evaluate.</p>
@@ -611,7 +611,7 @@ The visualization above uses Thompson sampling for optimization. Again, we are a
       </figure>
 
       <p>
-        The <em>random</em> strategy is initially comparable or better than other acquisition functions. However, the maximum gold sensed by <em>random</em> strategy grows slowly. In comparison, the other acquisition functions can find a good solution in a small number of iterations. Infact, most acquisition functions reach fairly close to the global maxima in as few as three iterations.
+        The <em>random</em> strategy is initially comparable to or better than other acquisition functions. However, the maximum gold sensed by <em>random</em> strategy grows slowly. In comparison, the other acquisition functions can find a good solution in a small number of iterations. In fact, most acquisition functions reach fairly close to the global maxima in as few as three iterations.
       </p>
 
 
@@ -874,7 +874,7 @@ The visualization above uses Thompson sampling for optimization. Again, we are a
 
 
 
-    <h2 id="ack">Acknowledgements</h2>
+    <h2 id="ack">Acknowledgments</h2>
 
     <p>
       This article was made possible with inputs from numerous people. Firstly, we would like to thank all the Distill reviewers for their punctilious and actionable feedback. These fantastic reviews immensely helped strengthen our article. We further express our gratitude towards the Distill Editors, who were extremely kind and helped us navigate various steps to publish our work. We would also like to thank <a href="https://sgarg87.github.io/">Dr. Sahil Garg</a> for his feedback on the flow of the article. We would like to acknowledge the help we received from <a href="http://initiatives.iitgn.ac.in/writingstudio/wp/">Writing Studio</a> to improve the script of our article. Lastly, we sincerely thank <a href="https://colah.github.io/">Christopher Olah</a>. His inputs, suggestions, multiple rounds of iterations made this article substantially better.  
