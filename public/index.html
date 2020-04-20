@@ -326,7 +326,7 @@ If our surrogate is a GP we can obtain an analytical expression:
     </p>
 
     <figure>
-      <d-figure><img src="images/MAB_gifs/pi_cdf.png" /></d-figure>
+      <d-figure><img src="images/MAB_gifs/density.svg" /></d-figure>
     </figure>
 
     <h4>Intuition behind <d-math>\epsilon</d-math> in PI</h4>
@@ -354,11 +354,11 @@ If our surrogate is a GP we can obtain an analytical expression:
       </div> -->
 
     <p>
-      Let us now see the PI acquisition function in action. We start with <d-math>\epsilon=0.01</d-math>.
+      Let us now see the PI acquisition function in action. We start with <d-math>\epsilon=0.075</d-math>.
     </p>
 
     <figure class="gif-slider">
-      <d-figure><img src="images/MAB_pngs/PI/0.01/0.png" /></d-figure>
+      <d-figure><img src="images/MAB_pngs/PI/0.075/0.png" /></d-figure>
     </figure>
     <p>
       Looking at the graph above<d-footnote>Ties are broken randomly.</d-footnote>, we see that we reach the global maxima in a few iterations.
@@ -476,7 +476,7 @@ If our surrogate is a GP we can obtain an analytical expression:
       </figure>
       <p>
         The scatter plot above shows the policies' acquisition functions evaluated on different points<d-footnote>Each dot is a point in the search space. Additionally, the training set used while making the plot only consists of a single observation <d-math>(0.5, f(0.5))</d-math></d-footnote>.
-        We see that <d-math>\alpha_{EI}</d-math> and <d-math>\alpha_{PI}</d-math> reach a maximum of 0.3 and around 0.44, respectively. Choosing a point with low <d-math>\alpha_{PI}</d-math> and high <d-math>\alpha_{EI}</d-math> translates to high risk<d-footnote>Since "Probability of Improvement" is low</d-footnote> and high reward<d-footnote>Since "Expected Improvement" is high</d-footnote>.
+        We see that <d-math>\alpha_{EI}</d-math> and <d-math>\alpha_{PI}</d-math> reach a maximum of 0.3 and around 0.47, respectively. Choosing a point with low <d-math>\alpha_{PI}</d-math> and high <d-math>\alpha_{EI}</d-math> translates to high risk<d-footnote>Since "Probability of Improvement" is low</d-footnote> and high reward<d-footnote>Since "Expected Improvement" is high</d-footnote>.
         In case of multiple points have the same <d-math>\alpha_{EI}</d-math>, we should prioritize the point with lesser risk (higher <d-math>\alpha_{PI}</d-math>). Similarly, when the risks are the same (same <d-math>\alpha_{PI}</d-math>) for any two points, we should choose the point with greater reward (higher <d-math>\alpha_{EI}</d-math>).
       </p>
     </div>
@@ -728,7 +728,7 @@ The visualization above uses Thompson sampling for optimization. Again, we can r
         </p>
 
         <figure class="gif-slider">
-          <d-figure><img src="images/MAB_pngs/RFEI3d/0.01/0.png"></d-figure>
+          <d-figure><img src="images/MAB_pngs/RFEI3d/0.5/0.png"></d-figure>
         </figure>
 
         <p>Above we see a run showing the work of the <em>Expected Improvement</em> acquisition function in optimizing the hyperparameters.</p>
@@ -752,7 +752,7 @@ The visualization above uses Thompson sampling for optimization. Again, we can r
         </figure>
 
         <p>
-          The optimization strategies seemed to struggle in this example. This can be attributed to the non-smooth ground truth. This shows that the effectiveness of BO depends on the surrogate's efficiency to model the actual black-box function. It is interesting to notice that the BO framework still beats the <em>random</em> strategy.
+          The optimization strategies seemed to struggle in this example. This can be attributed to the non-smooth ground truth. This shows that the effectiveness of BO depends on the surrogate's efficiency to model the actual black-box function. It is interesting to notice that the BO framework still beats the <em>random</em> strategy using various acquisition functions.
         </p>
 
         <h3>Example 3 -- Neural Networks</h3>
