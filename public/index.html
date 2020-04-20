@@ -7,12 +7,8 @@
   <title>Exploring Bayesian Optimization</title>
   <script defer src="js/template.v2.js"></script>
   <link rel="stylesheet" type="text/css" href="css/styles.css">
-  <script src="https://d3js.org/d3.v4.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.js"></script>
-  <script defer src="js/plot.js"></script>
   <script defer src="js/hider.js"></script>
   <script defer src="js/gif-slider.js"></script>
-  <script type="text/javascript" src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 
 </head>
 
@@ -59,9 +55,6 @@
 
   <d-article style="overflow-x: unset;">
     <p>
-    <!-- <strike>
-      We are increasingly getting used to machine learning algorithms with a large number of hyperparameters along with numerous optimization parameters. For example, neural networks with hyperparameters like the number of layers or optimization parameters like the learning rate, the dropout rate, among others. Or random forests with hyperparameters such as the number of trees, and the maximum depth of an individual tree. How do we efficiently tune these to optimize our machine learning model?
-    </strike> -->
       Many modern machine learning algorithms have a large number of hyperparameters. To effectively use these algorithms, we need to pick good hyperparameter values.
 
       In this article, we talk about Bayesian Optimization (BO), a suite of techniques often used to tune hyperparameters. More generally, BO can be used to optimize any black-box function.
@@ -326,7 +319,7 @@ If our surrogate is a GP we can obtain an analytical expression:
     </p>
 
     <figure>
-      <d-figure><img src="images/MAB_gifs/density_pi.svg" /></d-figure>
+      <d-figure><img src="images/MAB_gifs/density_pi.png" /></d-figure>
     </figure>
 
     <h4>Intuition behind <d-math>\epsilon</d-math> in PI</h4>
@@ -335,23 +328,6 @@ If our surrogate is a GP we can obtain an analytical expression:
       PI uses <d-math>\epsilon</d-math> to strike a balance between exploration and exploitation. <!-- In the following plot, we visualize how changing the value of <d-math>\epsilon</d-math> affects the values of our acquisition function, resulting in different choices of points to evaluate. We selected two points as our candidate points <d-math>x \in \{1.0, 5.0\}</d-math>, and show their tail probabilities in shaded green and orange, respectively. -->
       Increasing <d-math>\epsilon</d-math> results in querying locations with a larger <d-math>\sigma</d-math> as their probability density is spread.
     </p>
-
-    <!-- <div class="l-screen shaded-figure">
-        <div>
-          <text id="plotHead">
-            The plot below shows how modifying ϵ leads to different points (locations) being selected to evaluate (drill) next. <br> This selection is based on the maximal probability of getting better gold content over the previous evaluations.
-          </text>
-        </div>
-        <d-figure>
-          <div class="Teaser1" id="Teaser1"></div>
-          <div class="Teaser1" id="TeaserL1"></div>
-        </d-figure>
-      </br>
-        <d-figure>
-          <div class="Teaser2" id="Teaser2"></div>
-          <div class="Teaser2" id="TeaserL2"></div>
-        </d-figure>
-      </div> -->
 
     <p>
       Let us now see the PI acquisition function in action. We start with <d-math>\epsilon=0.075</d-math>.
