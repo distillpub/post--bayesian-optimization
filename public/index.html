@@ -57,23 +57,32 @@
     <p>
       Many modern machine learning algorithms have a large number of hyperparameters. To effectively use these algorithms, we need to pick good hyperparameter values.
 
-      In this article, we talk about Bayesian Optimization (BO), a suite of techniques often used to tune hyperparameters. More generally, BO can be used to optimize any black-box function.
+      In this article, we talk about Bayesian Optimization, a suite of techniques often used to tune hyperparameters. More generally, Bayesian Optimization can be used to optimize any black-box function.
     </p>
     <p>
 
     </p>
 
-    <p>
-      We first study using BO to maximize (optimize) a black-box function.
-    </p>
+    <!-- <p>
+      We first study using Bayesian Optimization to maximize (optimize) a black-box function.
+    </p> -->
 
     <h1>Mining Gold!</h1>
     <p>
       Let us start with the example of gold mining. Our goal is to mine for gold in an unknown land<d-footnote>Interestingly, our example is similar to one of the first use of Gaussian Process (GP) (also called kriging)<d-cite key="goldKridge"></d-cite>, where Prof. Krige modelled gold concentrations using GPs.</d-footnote>.
-      For now, we assume that the gold is distributed about a line. We want to find the <strong>location</strong> along this line with the <strong>maximum</strong> gold while only <strong>drilling</strong> a few times (as drilling is expensive).
+      For now, we assume that the gold is distributed about a line. We want to find the location along this line with the maximum gold while only drilling a few times (as drilling is expensive).
     </p>
+
     <p>
-      Initially, we have no idea about the gold distribution. We can learn the gold distribution by drilling at different locations. However, this drilling is costly. Thus, we want to <strong>minimize the number of drillings required</strong> while still <strong>finding the location of maximum gold quickly</strong>.
+      Let us suppose that the gold distribution <d-math>f(x)</d-math> looks something like the function below. It is bi-modal, with a maximum value around <d-math>x = 5</d-math>. For now, let us not worry about the X-axis or the Y-axis units.
+    </p>
+
+    <figure class="smaller-img">
+      <d-figure><img src="images/MAB_gifs/GT.svg" /></d-figure>
+    </figure>
+
+    <p>
+      Initially, we have no idea about the gold distribution. We can learn the gold distribution by drilling at different locations. However, this drilling is costly. Thus, we want to <!-- <strong> -->minimize the number of drillings required<!-- </strong> --> while still <!-- <strong> -->finding the location of maximum gold quickly<!-- </strong> -->.
     </p>
 
     <p>
@@ -84,9 +93,9 @@
       <li>
         <p>
           <strong>Problem 1: Best Estimate of Gold Distribution (Active Learning)</strong><br/>
-          In this problem, we want to accurately estimate the gold distribution along the line, using a small number of drillings. We can not drill at every location due to the prohibitive cost. Instead, we should drill at locations providing <strong>high information</strong> about the gold distribution. This problem is akin to
+          In this problem, we want to accurately estimate the gold distribution on the new land.<!--  along the line, using a small number of drillings.  --> We can not drill at every location due to the prohibitive cost. Instead, we should drill at locations providing <strong>high information</strong> about the gold distribution. This problem is akin to
           <strong>
-            active learning<d-cite key="settles2009active,Tong2001"></d-cite>
+            Active Learning<d-cite key="settles2009active,Tong2001"></d-cite>
           </strong>.
         </p>
       </li>
@@ -94,10 +103,10 @@
       <li>
         <p>
           <strong>Problem 2: Location of Maximum Gold (Bayesian Optimization)</strong><br/>
-          In this problem, we want to find the location of maximum gold content, using a small number of drillings. This problem is akin to
+          In this problem, we want to find the location of maximum gold content. We again can not drill at every location. Instead, we should drill at locations showing <strong>high promise</strong> about the gold content.<!-- , using a small number of drillings. --> This problem is akin to
           <strong>
             Bayesian Optimization<d-cite key="humanOut,nandoBOtut"></d-cite>
-          </strong> (BO).
+          </strong>.
         </p>
       </li>
     </ul>
@@ -111,12 +120,50 @@
     <h2>Active Learning</h2>
 
     <p>
-      For many machine learning problems, unlabeled data is readily available. However, labeling (or querying) is often expensive. As an example, for a speech-to-text task, the annotation requires expert(s) to label words and sentences manually. Similarly, in our gold mining problem, drilling (akin to labeling) is expensive. Active learning minimizes labeling costs while maximizing modeling accuracy. While there are various methods in active learning literature, we look at <strong>uncertainty reduction</strong>. This method proposes labeling the point whose model uncertainty is the highest. Often, the variance acts as a measure of uncertainty.
+      For many machine learning problems, unlabeled data is readily available. However, labeling (or querying) is often expensive. As an example, for a speech-to-text task, the annotation requires expert(s) to label words and sentences manually. Similarly, in our gold mining problem, drilling (akin to labeling) is expensive. 
     </p>
 
+    <p>
+      Active learning minimizes labeling costs while maximizing modeling accuracy. While there are various methods in active learning literature, we look at <strong>uncertainty reduction</strong>. This method proposes labeling the point whose model uncertainty is the highest. Often, the variance acts as a measure of uncertainty.
+    </p>
+
+    <p>
+      Since we only know the true value of our function at a few points, we need a <em>surrogate model</em> for the values our function takes elsewhere. This surrogate should be flexible enough to model the true function. Using a GP is a common choice, both because of their flexibility and because they give us uncertainty estimates.
+      <d-footnote>
+        Gaussian Process supports setting of priors by using specific kernels and mean functions. One might want to look at this excellent Distill article<d-cite key="görtler2019a"></d-cite> on Gaussian Processes<d-cite key="Rasmussen2004"></d-cite> to learn more.
+      </d-footnote>
+    </p>
+
+    <p>
+      Our surrogate model starts with a prior of <d-math>f(x)</d-math> &#8212 in the case of gold, we pick a prior assuming that it’s smoothly distributed.
+      <d-footnote>
+        Specifics: We use a Matern 5/2 kernel due to its property of favoring doubly differentiable functions. <!-- In contrast, Matern 3/2 favors singly differentiable functions. --> See <a href="http://www.gaussianprocess.org/gpml/">Rasmussen and Williams 2004</a> and <a href="https://scikit-learn.org/stable/modules/generated/sklearn.gaussian_process.kernels.Matern.html">scikit-learn</a>, for details regarding the Matern kernel.
+      </d-footnote>
+      As we evaluate points (drilling) we get more data for our surrogate to learn from, updating it according to Bayes’ rule.
+    </p>
+
+    <figure class="l-page">
+      <d-figure><img src="images/MAB_gifs/prior2posterior.png" /></d-figure>
+    <figcaption>
+      Each new data point updates our surrogate model, moving it closer to the ground truth. The black line and the grey shaded region indicate the mean <d-math>(\mu)</d-math> and uncertainty <d-math>(\mu \pm \sigma)</d-math> in our gold distribution estimate before and after drilling.
+    </figcaption>
+    </figure>
+
+    <p>
+      In the above example, we started with uniform uncertainty. But after our first update, the posterior is certain near <d-math>x = 0.5</d-math> and uncertain away from it. We could just keep adding more training points and obtain a more certain estimate of <d-math>f(x)</d-math>.
+    </p>
+
+    <p>
+      However, we want to minimize the number of evaluations. Thus, we should choose the next query point "smartly" using active learning. Although there are many ways to pick smart points, we will be picking the most uncertain one.
+    </p>
+
+    <p>
+      This gives us the following procedure:
+    </p>
+  <!-- 
     <h3>Surrogate Model</h3>
     <p>
-      Active learning (along with BO, which we see later) employs a surrogate model for modeling the unknown true function <d-math>f(x)</d-math>. The surrogate ideally models the true function closely. 
+      Active learning (along with Bayesian Optimization, which we see later) employs a surrogate model for modeling the unknown true function <d-math>f(x)</d-math>. The surrogate ideally models the true function closely. 
     </p>
 
     <h3>Bayesian Update</h3>
@@ -125,7 +172,7 @@
     </p>
 
     <p>
-      Gaussian Processes are commonly used as surrogate models. One can set priors of a Gaussian Process (GP) by using specific kernels and mean functions. Moreover, GPs provide uncertainty estimates, which we leverage in both active learning and BO.
+      Gaussian Processes are commonly used as surrogate models. One can set priors of a Gaussian Process (GP) by using specific kernels and mean functions. Moreover, GPs provide uncertainty estimates, which we leverage in both active learning and Bayesian Optimization.
     </p>
 
     <h3>Gaussian Processes</h3>
@@ -168,11 +215,11 @@
     </figure>
 
     <p>
-      We see our surrogate's posterior is certainty near <d-math>x = 0.5</d-math> and uncertain away from it. We can similarly add more training points and obtain a more certain estimate of <d-math>f(x)</d-math>. However, we want to minimize the number of evaluations. Thus, we should choose the next query point "smartly" using active learning. <!-- <d-footnote>We can transform the data and fit a GP over <d-math>\log\left(f(x)\right)</d-math> instead of <d-math>f(x)</d-math> to ensure the  predictions are non-negative</d-footnote> .  -->
+      We see our surrogate's posterior is certainty near <d-math>x = 0.5</d-math> and uncertain away from it. We can similarly add more training points and obtain a more certain estimate of <d-math>f(x)</d-math>. However, we want to minimize the number of evaluations. Thus, we should choose the next query point "smartly" using active learning. !-- <d-footnote>We can transform the data and fit a GP over <d-math>\log\left(f(x)\right)</d-math> instead of <d-math>f(x)</d-math> to ensure the  predictions are non-negative</d-footnote> .  --
     We now discuss the key idea of active learning.</p>
-
     <h3 id="activelearningprocedure">Active Learning Procedure
     </h3>
+  -->
 
     <ol>
       <li>Choose and add the point with the highest uncertainty to the training set (by querying/labeling that point)</li>
@@ -188,16 +235,37 @@
     </figure>
 
 
-    <p>The visualization shows that one can estimate the true distribution in a few iterations. Furthermore, choosing the most uncertain location leads to querying points farthest from the current set of training points. At every iteration, active learning <strong> explores
-      </strong> the domain to make the estimates better.
+    <p>The visualization shows that one can estimate the true distribution in a few iterations. Furthermore, the most uncertain positions are often the farthest points from the current evaluation points. At every iteration, active learning <strong>explores</strong> the domain to make the estimates better.
     </p>
 
     <h2 id="bayesianoptimization">Bayesian Optimization</h2>
     <p>
-      In this problem, we aim to find the location of maximum gold content. One way to find the maximum would be first to run active learning to estimate the true function accurately, and then find its maximum. However, should we waste evaluations to improve the estimates, when we are only concerned with finding the maximum? Assuming that our black-box function is smooth, it might be a good idea to evaluate at or near locations where our surrogate model's prediction is the highest, i.e., to <strong>exploit</strong>. However, due to the limited evaluations, our model's predictions are inaccurate. One can improve the model by evaluating at points with high variance or performing <strong>exploration</strong>. BO combines <strong>exploitation</strong> and <strong>exploration</strong>, whereas active learning solely <strong>explores</strong>.
+      In the previous section, we picked points in order to determine an accurate model of the gold content. But what if our goal is simply to find the location of maximum gold content? Of course, we could do active learning to estimate the  true function accurately and then find its maximum. But that seems pretty wasteful &#8212 why should we use evaluations improving our estimates of regions where the function has low gold content when we only care about the maximum?
     </p>
 
-    <h1>Formalizing Bayesian Optimization</h1>
+    <P>
+      This is the core question is Bayesian Optimization: "Based on what we know so far, which point should we evaluate next?" Remember that evaluating each point is expensive, so we want to pick carefully! In the active learning case, we picked the most uncertain point, exploring the function. But in Bayesian Optimization, we need to balance exploring uncertain regions, which might unexpectedly have high gold content, against focusing on regions we already know have higher gold content (a kind of exploitation).
+    </P>
+
+    <p>
+      We make this decision with something called an acquisition function. Acquisition functions are heuristics<d-footnote>https://botorch.org/docs/acquisition</d-footnote> for how desirable it is to evaluate a point, based on our present model. We’ll spend much of this section going through different options for acquisition functions.
+    </p>
+
+    <p>
+      This brings us to how Bayesian Optimization works. At every step, we determine what the best point to evaluate next is according to the acquisition function by optimizing it. We then update our model and repeat this process to determine the next point to evaluate.
+    </p>
+
+    <p>
+      You may be wondering what’s “Bayesian” about Bayesian Optimization if we’re just optimizing these acquisition functions. Well, at every step we maintain a model describing our estimates and uncertainty at each point, which we update according to Bayes’ rule at each step. Our acquisition functions are based on this model, and nothing would be possible without them!
+    </p>
+    
+    <!-- 
+      <p>
+        In this problem, we aim to find the location of maximum gold content. One way to find the maximum would be first to run active learning to estimate the true function accurately, and then find its maximum. However, should we waste evaluations to improve the estimates, when we are only concerned with finding the maximum? Assuming that our black-box function is smooth, it might be a good idea to evaluate at or near locations where our surrogate model's prediction is the highest, i.e., to <strong>exploit</strong>. However, due to the limited evaluations, our model's predictions are inaccurate. One can improve the model by evaluating at points with high variance or performing <strong>exploration</strong>. Bayesian Optimization combines <strong>exploitation</strong> and <strong>exploration</strong>, whereas active learning solely <strong>explores</strong>.
+      </p> 
+    -->
+    
+    <h3>Formalizing Bayesian Optimization</h1>
 
       <span style="padding-bottom: 1em;">
         Let us now formally introduce Bayesian Optimization. Our goal is to find the location (<d-math>{x \in \mathbb{R}^d}</d-math>) corresponding to the global maximum (or minimum) of a function <d-math>f: \mathbb{R}^d \mapsto \mathbb{R}</d-math>.
@@ -206,7 +274,7 @@
             <li> <a href="https://www.youtube.com/watch?v=c4KKvyWW_Xk">Youtube Talk</a></li>
             <li> <a href="https://people.orie.cornell.edu/pfrazier/Presentations/2018.11.INFORMS.tutorial.pdf">Slide Deck</a></li>
           </ul>
-        </d-footnote> in BO and contrast them with the constraints in our gold mining example.</span>
+        </d-footnote> in Bayesian Optimization and contrast them with the constraints in our gold mining example.</span>
 
 
 
@@ -244,20 +312,64 @@
       </table>
 
       <p>
-        Our gold mining problem is suited to use BO. Let us introduce some additional topics before we run to get the maximal gold!
+        To solve this problem, we’ll follow the following algorithm:
       </p>
+
+      <p>
+      <ol>
+        <li>
+          We first choose a surrogate model for modeling the true function <d-math>f</d-math> and define its <b>prior</b>.
+        </li>
+        <li>
+          Given the set of <b>observations</b> (function evaluations), use Bayes rule to obtain the <b>posterior</b>.
+        </li>
+        <li>
+          Use an acquisition function <d-math>\alpha(x)</d-math>, which is a function of the posterior, to decide the next sample point <d-math>x_t = \text{argmax}_x \alpha(x)</d-math>.
+        </li>
+        <li>
+          Add newly sampled data to the set of <b>observations</b> and goto step #2 till convergence or budget elapses.
+        </li>
+      </ol>
+    </p>
+
+      <!-- <p>
+        Our gold mining problem is suited to use Bayesian Optimization. Let us introduce some additional topics before we run to get the maximal gold!
+      </p> -->
 
     <h3>Acquisition Functions</h3>
 
     <p>
-      Our original optimization problem, <d-math>x^* = \text{argmax}_{x \in A} f(x)</d-math> is hard because <d-math>f</d-math> is <b>expensive</b> to evaluate.
-      The idea of BO is to <b>transform</b> the original optimization into a <b>sequence</b> of easier <b>inexpensive</b> optimizations of functions called <b>acquisition functions</b> (<d-math>\alpha(x)</d-math>).
-      Intuitively, acquisition functions are heuristics<d-footnote>https://botorch.org/docs/acquisition</d-footnote> that evaluate the utility of a point for maximizing <d-math>f(x)</d-math><d-footnote>Please find <a href="https://www.cse.wustl.edu/~garnett/cse515t/spring_2015/files/lecture_notes/12.pdf">these</a> slides from Washington University in St. Louis to know more and the following </d-footnote>.
-      At each step, we <strong>optimize</strong> the <strong>acquisition function</strong> to determine the next point to sample/query.
+      Acquisition functions<d-footnote>
+        Please find <a href="https://www.cse.wustl.edu/~garnett/cse515t/spring_2015/files/lecture_notes/12.pdf">these</a> slides from Washington University in St. Louis to know more about acquisition functions.
+      </d-footnote>. are crucial to Bayesian Optimization, and there are a wide variety of options. In the following sections, we’ll go through a number of options, providing intuition and examples.
+    </p>
+    
+    <!-- <p>
+      The core question is Bayesian Optimization is "Based on what we know so far, which point should we evaluate next?" Remember that evaluating each point is expensive, so we want to pick carefully! In the active learning case, we picked the most uncertain point, but in Bayesian Optimization we don't waste precious evaluations on uncertain regions that are not promising.
     </p>
 
     <p>
-      Let us re-wind and link the things discussed thus far, by noting the steps of BO<d-footnote>Please find <a href="https://youtu.be/EnXxO3BAgYk">this</a> amazing video from Javier González at The Gaussian Process Summer School 2019.</d-footnote> and explicitly highlighting the "Bayesian" in BO.
+      Acquisition functions are heuristics<d-footnote>https://botorch.org/docs/acquisition</d-footnote> for how desirable it is to evaluate a point, based on our present model. At every step, we determine what the best point to evaluate next is according to the acquisition function. We then update our model, and repeat this process to determine the next point to evaluate. 
+      <d-footnote>
+        Please find <a href="https://www.cse.wustl.edu/~garnett/cse515t/spring_2015/files/lecture_notes/12.pdf">these</a> slides from Washington University in St. Louis to know more about acquisition functions.
+      </d-footnote>.
+    </p> -->
+
+    <!-- 
+      <p>
+        Acquisition functions are crucial to Bayesian Optimization, and there are a wide variety of options. In the following sections, we’ll go through a number of options, providing intuition and examples.
+      </p>
+
+      <p>
+        Our original optimization problem, <d-math>x^* = \text{argmax}_{x \in A} f(x)</d-math> is hard because <d-math>f</d-math> is <b>expensive</b> to evaluate.
+        The idea of Bayesian Optimization is to <b>transform</b> the original optimization into a <b>sequence</b> of easier <b>inexpensive</b> optimizations of functions called <b>acquisition functions</b> (<d-math>\alpha(x)</d-math>).
+        Intuitively, acquisition functions are heuristics<d-footnote>https://botorch.org/docs/acquisition</d-footnote> that evaluate the utility of a point for maximizing <d-math>f(x)</d-math><d-footnote>Please find <a href="https://www.cse.wustl.edu/~garnett/cse515t/spring_2015/files/lecture_notes/12.pdf">these</a> slides from Washington University in St. Louis to know more and the following </d-footnote>.
+        At each step, we <strong>optimize</strong> the <strong>acquisition function</strong> to determine the next point to sample/query.
+      </p>
+    -->
+
+    <p>
+      Let us re-wind and link the things discussed thus far, by noting the steps of Bayesian Optimization<d-footnote>Please find <a href="https://youtu.be/EnXxO3BAgYk">this</a> amazing video from Javier González at The Gaussian Process Summer School 2019.</d-footnote> and explicitly highlighting the "Bayesian" in Bayesian Optimization.
     </p>
     <p>
       <ol>
@@ -277,7 +389,7 @@
     </p>
 
     <p>
-      Thus, the "Bayesian" in BO is sequentially refining our surrogate's posterior (and thus uncertainty) with each evaluation via Bayes rule<d-cite key="nandoBOLoop"></d-cite>.
+      Thus, the "Bayesian" in Bayesian Optimization is sequentially refining our surrogate's posterior (and thus uncertainty) with each evaluation via Bayes rule<d-cite key="nandoBOLoop"></d-cite>.
     </p>
     <p>Let us now look at a few common acquisition functions.</p>
 
@@ -322,7 +434,7 @@ If our surrogate is a GP we can obtain an analytical expression:
       <d-figure><img src="images/MAB_gifs/density_pi.png" /></d-figure>
     </figure>
 
-    <h4>Intuition behind <d-math>\epsilon</d-math> in PI</h4>
+    <h4>Intuition behind <span style='text-transform: none'><d-math>\epsilon</d-math></span> in PI</h4>
 
     <p>
       PI uses <d-math>\epsilon</d-math> to strike a balance between exploration and exploitation. <!-- In the following plot, we visualize how changing the value of <d-math>\epsilon</d-math> affects the values of our acquisition function, resulting in different choices of points to evaluate. We selected two points as our candidate points <d-math>x \in \{1.0, 5.0\}</d-math>, and show their tail probabilities in shaded green and orange, respectively. -->
@@ -606,11 +718,11 @@ The visualization above uses Thompson sampling for optimization. Again, we can r
 
       <p>When training a model is not expensive and time-consuming, we can do a grid search to find the optimum hyperparameters. However, grid search is not feasible if function evaluations are costly, as in the case of a large neural network that takes days to train. Further, grid search scales poorly in terms of the number of hyperparameters.
 
-      <p>We turn to BO to counter the expensive nature of evaluating our black-box function (accuracy).</p>
+      <p>We turn to Bayesian Optimization to counter the expensive nature of evaluating our black-box function (accuracy).</p>
 
       <h3 id="example1">Example 1 -- Support Vector Machine (SVM)</h3>
 
-      <p>In this example, we use an SVM to classify on sklearn's moons dataset, and use BO to optimize SVM hyperparameters.
+      <p>In this example, we use an SVM to classify on sklearn's moons dataset, and use Bayesian Optimization to optimize SVM hyperparameters.
 
       <p>
         <ul>
@@ -658,7 +770,7 @@ The visualization above uses Thompson sampling for optimization. Again, we can r
       </figure>
 
     <p>
-        All our acquisition beat the <em>random</em> acquisition function after seven iterations. We see the <em>random</em> method seemed to perform much better initially, but it could not reach the global optimum. The initial subpar performance of BO can be attributed to the initial exploration.
+        All our acquisition beat the <em>random</em> acquisition function after seven iterations. We see the <em>random</em> method seemed to perform much better initially, but it could not reach the global optimum. The initial subpar performance of Bayesian Optimization can be attributed to the initial exploration.
     </p>
 
  
@@ -687,7 +799,7 @@ The visualization above uses Thompson sampling for optimization. Again, we can r
         </figure>
 
         <p>
-          Above is a typical BO run with <em>Probability of Improvement</em> acquisition function.
+          Above is a typical Bayesian Optimization run with <em>Probability of Improvement</em> acquisition function.
         </p>
 
         <figure class="gif-slider">
@@ -715,12 +827,12 @@ The visualization above uses Thompson sampling for optimization. Again, we can r
         </figure>
 
         <p>
-          The optimization strategies seemed to struggle in this example. This can be attributed to the non-smooth ground truth. This shows that the effectiveness of BO depends on the surrogate's efficiency to model the actual black-box function. It is interesting to notice that the BO framework still beats the <em>random</em> strategy using various acquisition functions.
+          The optimization strategies seemed to struggle in this example. This can be attributed to the non-smooth ground truth. This shows that the effectiveness of Bayesian Optimization depends on the surrogate's efficiency to model the actual black-box function. It is interesting to notice that the Bayesian Optimization framework still beats the <em>random</em> strategy using various acquisition functions.
         </p>
 
         <h3>Example 3 -- Neural Networks</h3>
         <p>
-          Let us take this example to get an idea of how to apply BO to train neural networks. Here we will be using <d-code language="python">scikit-optim</d-code>, which also provides us support for optimizing function with a search space of categorical, integral, and real variables. We will not be plotting the ground truth here, as it is extremely costly to do so. Below are some code snippets that show the ease of using BO packages for hyperparameter tuning.
+          Let us take this example to get an idea of how to apply Bayesian Optimization to train neural networks. Here we will be using <d-code language="python">scikit-optim</d-code>, which also provides us support for optimizing function with a search space of categorical, integral, and real variables. We will not be plotting the ground truth here, as it is extremely costly to do so. Below are some code snippets that show the ease of using Bayesian Optimization packages for hyperparameter tuning.
         </p>
 
         <p>
@@ -791,56 +903,62 @@ The visualization above uses Thompson sampling for optimization. Again, we can r
         </p>
 
         <p>
-          Looking at the above example, we can see that incorporating BO is not difficult and can save a lot of time. Optimizing to get an accuracy of nearly one in around seven iterations is impressive!<d-footnote>The example above has been inspired by <a href="https://github.com/Hvass-Labs/TensorFlow-Tutorials/blob/master/19_Hyper-Parameters.ipynb">Hvass Laboratories' Tutorial Notebook</a> showcasing hyperparameter optimization in TensorFlow using <d-code language="python">scikit-optim</d-code>.</d-footnote>
+          Looking at the above example, we can see that incorporating Bayesian Optimization is not difficult and can save a lot of time. Optimizing to get an accuracy of nearly one in around seven iterations is impressive!<d-footnote>The example above has been inspired by <a href="https://github.com/Hvass-Labs/TensorFlow-Tutorials/blob/master/19_Hyper-Parameters.ipynb">Hvass Laboratories' Tutorial Notebook</a> showcasing hyperparameter optimization in TensorFlow using <d-code language="python">scikit-optim</d-code>.</d-footnote>
         </p>
 
         <p>
-          Let us get the numbers into perspective. If we had run this optimization using grid search, it would have taken around <d-math>(5 \times 2 \times 7)</d-math> iterations. Whereas, BO only took seven iterations. Each iteration took around fifteen minutes, this sets the time required for the grid search to complete around seventeen hours!
+          Let us get the numbers into perspective. If we had run this optimization using grid search, it would have taken around <d-math>(5 \times 2 \times 7)</d-math> iterations. Whereas, Bayesian Optimization only took seven iterations. Each iteration took around fifteen minutes, this sets the time required for the grid search to complete around seventeen hours!
         </p>
       </div>
 
         <h1 id="conclusions">Conclusion and Summary</h1>
 
         <p>
-          In this article, we looked at Bayesian Optimization for optimizing a black-box function. BO is well suited when the function evaluations are expensive, making grid or exhaustive search impractical. We looked at the key components of BO. First, we looked at the notion of using a surrogate function (with a prior over the space of objective functions) to model our black-box function. Next, we looked at the "Bayes" in BO - the function evaluations are used as data to obtain the surrogate posterior. We look at acquisition functions, which are functions of the surrogate posterior and are optimized sequentially. This new sequential optimization is in-expensive and thus of utility of us. We also looked at a few acquisition functions and showed how these different functions balance exploration and exploitation. Finally, we looked at some practical examples of BO for optimizing hyper-parameters for machine learning models.         </p>
+          In this article, we looked at Bayesian Optimization for optimizing a black-box function. Bayesian Optimization is well suited when the function evaluations are expensive, making grid or exhaustive search impractical. We looked at the key components of Bayesian Optimization. First, we looked at the notion of using a surrogate function (with a prior over the space of objective functions) to model our black-box function. Next, we looked at the "Bayes" in Bayesian Optimization - the function evaluations are used as data to obtain the surrogate posterior. We look at acquisition functions, which are functions of the surrogate posterior and are optimized sequentially. This new sequential optimization is in-expensive and thus of utility of us. We also looked at a few acquisition functions and showed how these different functions balance exploration and exploitation. Finally, we looked at some practical examples of Bayesian Optimization for optimizing hyper-parameters for machine learning models.         </p>
 
-    <h2 id="embracebayesianoptimization">Embrace Bayesian Optimization</h2>
+          <p>
+            We hope you had a good time reading the article and hope you are ready to <strong>exploit</strong> the power of Bayesian Optimization. In case you wish to <strong>explore</strong> more, please read the <a href="#FurtherReading">Further Reading</a> section below. We also provide our <a href="https://github.com/distillpub/post--bayesian-optimization">repository</a> to reproduce the entire article.  
+          </p>
 
-    <p>
-      Having read all the way through, you might have been sold on the idea about the time you can save by asking Bayesian Optimizer to find the best hyperparameters for your fantastic model. There are a plethora of Bayesian Optimization libraries available. We have linked a few below. Do check them out.
-    </p>
+    <d-appendix>
+      <h4 id="embracebayesianoptimization">Embrace Bayesian Optimization</h2>
 
-    <ul>
-      <li><a href="https://scikit-optimize.github.io/">scikit-optimize</a>
-        <d-footnote>Really nice tutorial showcasing hyperparameter optimization on a neural network available at this <a href="https://github.com/Hvass-Labs/TensorFlow-Tutorials/blob/master/19_Hyper-Parameters.ipynb">link</a>.
-        </d-footnote>
-      </li>
+      <p>
+        Having read all the way through, you might have been sold on the idea about the time you can save by asking Bayesian Optimizer to find the best hyperparameters for your fantastic model. There are a plethora of Bayesian Optimization libraries available. We have linked a few below. Do check them out.
+      </p>
 
-      <li><a href="https://app.sigopt.com/docs/overview/python">sigopt</a></li>
+      <ul>
+        <li><a href="https://scikit-optimize.github.io/">scikit-optimize</a>
+          <d-footnote>Really nice tutorial showcasing hyperparameter optimization on a neural network available at this <a href="https://github.com/Hvass-Labs/TensorFlow-Tutorials/blob/master/19_Hyper-Parameters.ipynb">link</a>.
+          </d-footnote>
+        </li>
 
-      <li><a href="http://hyperopt.github.io/hyperopt/">hyperopt</a></li>
+        <li><a href="https://app.sigopt.com/docs/overview/python">sigopt</a></li>
 
-      <li><a href="https://github.com/HIPS/Spearmint">spearmint</a></li>
+        <li><a href="http://hyperopt.github.io/hyperopt/">hyperopt</a></li>
 
-      <li><a href="https://github.com/Yelp/MOE">MOE</a></li>
+        <li><a href="https://github.com/HIPS/Spearmint">spearmint</a></li>
 
-	<li><a href="https://botorch.org/tutorials/">BOTorch</a></li>
-<li><a href="https://github.com/SheffieldML/GPyOpt">GPyOpt</a></li>
-<li><a href="https://github.com/dragonfly/dragonfly">DragonFly</a></li>
-    </ul>
+        <li><a href="https://github.com/Yelp/MOE">MOE</a></li>
 
-    <p>
-      We hope you had a good time reading the article and hope you are ready to <strong>exploit</strong> the power of BO. In case you wish to <strong>explore</strong> more, please read the <a href="#FurtherReading">Further Reading</a> section below. We also provide our <a href="https://github.com/distillpub/post--bayesian-optimization">repository</a> to reproduce the entire article.  
-    </p>
+  	<li><a href="https://botorch.org/tutorials/">BOTorch</a></li>
+  <li><a href="https://github.com/SheffieldML/GPyOpt">GPyOpt</a></li>
+  <li><a href="https://github.com/dragonfly/dragonfly">DragonFly</a></li>
+      </ul>
+
+      <!-- <p>
+        We hope you had a good time reading the article and hope you are ready to <strong>exploit</strong> the power of Bayesian Optimization. In case you wish to <strong>explore</strong> more, please read the <a href="#FurtherReading">Further Reading</a> section below. We also provide our <a href="https://github.com/distillpub/post--bayesian-optimization">repository</a> to reproduce the entire article.  
+      </p> -->
 
 
 
 
-    <h2 id="ack">Acknowledgments</h2>
+      <h4 id="ack">Acknowledgments</h2>
 
-    <p>
-      This article was made possible with inputs from numerous people. Firstly, we would like to thank all the Distill reviewers for their punctilious and actionable feedback. These fantastic reviews immensely helped strengthen our article. We further express our gratitude towards the Distill Editors, who were extremely kind and helped us navigate various steps to publish our work. We would also like to thank <a href="https://sgarg87.github.io/">Dr. Sahil Garg</a> for his feedback on the flow of the article. We would like to acknowledge the help we received from <a href="http://initiatives.iitgn.ac.in/writingstudio/wp/">Writing Studio</a> to improve the script of our article. Lastly, we sincerely thank <a href="https://colah.github.io/">Christopher Olah</a>. His inputs, suggestions, multiple rounds of iterations made this article substantially better.  
-    </p>
+      <p>
+        This article was made possible with inputs from numerous people. Firstly, we would like to thank all the Distill reviewers for their punctilious and actionable feedback. These fantastic reviews immensely helped strengthen our article. We further express our gratitude towards the Distill Editors, who were extremely kind and helped us navigate various steps to publish our work. We would also like to thank <a href="https://sgarg87.github.io/">Dr. Sahil Garg</a> for his feedback on the flow of the article. We would like to acknowledge the help we received from <a href="http://initiatives.iitgn.ac.in/writingstudio/wp/">Writing Studio</a> to improve the script of our article. Lastly, we sincerely thank <a href="https://colah.github.io/">Christopher Olah</a>. His inputs, suggestions, multiple rounds of iterations made this article substantially better.  
+      </p>
+    </d-appendix>
 
   </d-article>
 
@@ -859,17 +977,17 @@ The visualization above uses Thompson sampling for optimization. Again, we can r
       </li>
       <li>
         <p>
-          To have a quick view of differences between BO and Gradient Descent, one can look at <a href="https://stats.stackexchange.com/q/161936">this</a> amazing answer at StackOverflow.
+          To have a quick view of differences between Bayesian Optimization and Gradient Descent, one can look at <a href="https://stats.stackexchange.com/q/161936">this</a> amazing answer at StackOverflow.
         </p>
       </li>
       <li>
         <p>
-          We talked about optimizing a black-box function here. If we are to perform over multiple objectives, how do these acquisition functions scale? There has been fantastic work in this domain too! We try to deal with these cases by having multiobjective acquisition functions. Have a look at <a href="https://gpflowopt.readthedocs.io/en/latest/notebooks/multiobjective.html">this excellent</a> notebook for an example using <d-code language="python">gpflowopt</d-code>.
+          We talked about optimizing a black-box function here. If we are to perform over multiple objectives, how do these acquisition functions scale? There has been fantastic work in this domain too! We try to deal with these cases by having multi-objective acquisition functions. Have a look at <a href="https://gpflowopt.readthedocs.io/en/latest/notebooks/multiobjective.html">this excellent</a> notebook for an example using <d-code language="python">gpflowopt</d-code>.
         </p>
       </li>
       <li>
         <p>
-          One of the more interesting uses of hyperparameters optimization can be attributed to searching the space of neural network architecture for finding the architectures that give us maximal predictive performance. One might also want to consider multiobjective optimizations as some of the other objectives like memory consumption, model size, or inference time also matter in practical scenarios.
+          One of the more interesting uses of hyperparameters optimization can be attributed to searching the space of neural network architecture for finding the architectures that give us maximal predictive performance. One might also want to consider nonobjective optimizations as some of the other objectives like memory consumption, model size, or inference time also matter in practical scenarios.
         </p>
       </li>
       <li>
@@ -879,12 +997,12 @@ The visualization above uses Thompson sampling for optimization. Again, we can r
       </li>
       <li>
         <p>
-          There also has been work on BO, where one explores with a certain level of "safety", meaning the evaluated values should lie above a certain security threshold functional value<d-cite key="SafeExplore"></d-cite>. One toy example is the possible configurations for a flying robot to maximize its stability. If we tried a point with terrible stability, we might crash the robot, and therefore we would like to explore the configuration space more diligently.
+          There also has been work on Bayesian Optimization, where one explores with a certain level of "safety", meaning the evaluated values should lie above a certain security threshold functional value<d-cite key="SafeExplore"></d-cite>. One toy example is the possible configurations for a flying robot to maximize its stability. If we tried a point with terrible stability, we might crash the robot, and therefore we would like to explore the configuration space more diligently.
         </p>
       </li>
       <li>
         <p>
-          We have been using GP in our BO for getting predictions, but we can have any other predictor or mean and variance in our BO.
+          We have been using GP in our Bayesian Optimization for getting predictions, but we can have any other predictor or mean and variance in our Bayesian Optimization.
         </p>
         <ul>
           <li>
@@ -894,20 +1012,20 @@ The visualization above uses Thompson sampling for optimization. Again, we can r
           </li>
           <li>
             <p>
-              There has been work on even using deep neural networks in BO<d-cite key="NNbasedBO"></d-cite> for a more scalable approach compared to GP. The paper talks about how GP-based Bayesian Optimization scales cubically with the number of observations, compared to their novel method that scales linearly.
+              There has been work on even using deep neural networks in Bayesian Optimization<d-cite key="NNbasedBO"></d-cite> for a more scalable approach compared to GP. The paper talks about how GP-based Bayesian Optimization scales cubically with the number of observations, compared to their novel method that scales linearly.
             </p>
           </li>
         </ul>
       </li>
       <li>
         <p>
-          Things to take care when using BO.
+          Things to take care when using Bayesian Optimization.
         </p>
         <ul>
           <li>
             <p>
               While working on the blog, we once scaled the accuracy from the range <d-math>[0, \ 1]</d-math> to <d-math>[0, \ 100]</d-math>. This changed broke havoc as the Gaussian Processes we were using had certain hyperparameters, which needed
-              to be scaled with the accuracy to maintain scale invariance. We wanted to point this out as it might be helpful for the readers who would like to start using on BO.
+              to be scaled with the accuracy to maintain scale invariance. We wanted to point this out as it might be helpful for the readers who would like to start using on Bayesian Optimization.
             </p>
           </li>
           <li>
@@ -918,7 +1036,7 @@ The visualization above uses Thompson sampling for optimization. Again, we can r
           </li>
           <li>
             <p>
-              Searching for the hyperparameters, and the choice of the acquisition function to use in BO are interesting problems in themselves. There has been amazing work done, looking at this problem. As mentioned previously in the post, there has
+              Searching for the hyperparameters, and the choice of the acquisition function to use in Bayesian Optimization are interesting problems in themselves. There has been amazing work done, looking at this problem. As mentioned previously in the post, there has
               been work done in strategies using multiple acquisition function<d-cite key="multiACQ"></d-cite> to deal with these interesting issues.
             </p>
           </li>
@@ -932,12 +1050,12 @@ The visualization above uses Thompson sampling for optimization. Again, we can r
       </li>
       <li>
         <p>
-          BO applications.
+          Bayesian Optimization applications.
         </p>
         <ul>
           <li>
             <p>
-              BO has been applied to Optimal Sensor Set selection for predictive accuracy<d-cite key="sensorBO"></d-cite>.
+              Bayesian Optimization has been applied to Optimal Sensor Set selection for predictive accuracy<d-cite key="sensorBO"></d-cite>.
             </p>
           </li>
           <li>
