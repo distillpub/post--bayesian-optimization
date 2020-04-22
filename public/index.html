@@ -130,7 +130,8 @@
     <p>
       Since we only know the true value of our function at a few points, we need a <em>surrogate model</em> for the values our function takes elsewhere. This surrogate should be flexible enough to model the true function. Using a GP is a common choice, both because of their flexibility and because they give us uncertainty estimates.
       <d-footnote>
-        Gaussian Process supports setting of priors by using specific kernels and mean functions. One might want to look at this excellent Distill article<d-cite key="görtler2019a"></d-cite> on Gaussian Processes<d-cite key="Rasmussen2004"></d-cite> to learn more.
+          Gaussian Process supports setting of priors by using specific kernels and mean functions. One might want to look at this excellent Distill article<d-cite key="görtler2019a"></d-cite> on Gaussian Processes<d-cite key="Rasmussen2004"></d-cite> to learn more.<br><br>
+          Please find <a href="https://youtu.be/EnXxO3BAgYk">this</a> amazing video from Javier González on Gaussian Processes. 
       </d-footnote>
     </p>
 
@@ -256,7 +257,7 @@
     </p>
 
     <p>
-      You may be wondering what’s “Bayesian” about Bayesian Optimization if we’re just optimizing these acquisition functions. Well, at every step we maintain a model describing our estimates and uncertainty at each point, which we update according to Bayes’ rule at each step. Our acquisition functions are based on this model, and nothing would be possible without them!
+      You may be wondering what’s “Bayesian” about Bayesian Optimization if we’re just optimizing these acquisition functions. Well, at every step we maintain a model describing our estimates and uncertainty at each point, which we update according to Bayes’ rule<d-cite key="nandoBOLoop"></d-cite> at each step. Our acquisition functions are based on this model, and nothing would be possible without them!
     </p>
     
     <!-- 
@@ -275,9 +276,6 @@
             <li> <a href="https://people.orie.cornell.edu/pfrazier/Presentations/2018.11.INFORMS.tutorial.pdf">Slide Deck</a></li>
           </ul>
         </d-footnote> in Bayesian Optimization and contrast them with the constraints in our gold mining example.</span>
-
-
-
 
       <table>
         <tr>
@@ -341,7 +339,7 @@
     <p>
       Acquisition functions<d-footnote>
         Please find <a href="https://www.cse.wustl.edu/~garnett/cse515t/spring_2015/files/lecture_notes/12.pdf">these</a> slides from Washington University in St. Louis to know more about acquisition functions.
-      </d-footnote>. are crucial to Bayesian Optimization, and there are a wide variety of options. In the following sections, we’ll go through a number of options, providing intuition and examples.
+      </d-footnote> are crucial to Bayesian Optimization, and there are a wide variety of options. In the following sections, we’ll go through a number of options, providing intuition and examples.
     </p>
 
     <!-- <p>
@@ -396,11 +394,41 @@
     <h4>Probability of Improvement (PI)</h4>
 
     <p>
-      In this acquisition function, we evaluate the point with the highest probability of improvement over the current max <d-math>f(x^+)</d-math>, where <d-math> x^+ = \text{argmax}_{x_i \in x_{1:t}}f(x_i)</d-math> and <d-math>x_i</d-math> is the location queried at <d-math>i^{th}</d-math> time step.
-      This acquisition function is the upper-tail probability of the surrogate posterior.
+      One way to select the next point could be to use probabilities. But what kind of probability will make sense in our case? How does the probability of this evaluation being more than any of the previous evaluations sound?
     </p>
 
-    <ol>
+    <p>
+      The acquisition function called Probability of Improvement precisely captures this probability and calculates it at each point. Now the point with the maximum probability is selected to be the next evaluation point. And it makes sense to select the point with the maximum <em>probability of improvement</em>, right?
+    </p>
+
+    <p>
+      Mathematically, we write the selection of next point as follows, 
+    </p>
+    <d-math block>x_{t+1} = \text{argmax}(\alpha_{PI}(x)) = \text{argmax}(P(f(x)) \geq (f(x^+) +\epsilon))</d-math>
+    <p>
+      where, 
+      <ul style="list-style-type: none;">
+        <li><d-math>P(\cdot)</d-math> indicates the probability of</li>
+        <li><d-math>\epsilon</d-math> is a small positive number</li>
+        <li>And, <d-math> x^+ = \text{argmax}_{x_i \in x_{1:t}}f(x_i)</d-math> where <d-math>x_i</d-math> is the location queried at <d-math>i^{th}</d-math> time step.</li>
+      </ul>
+    </p>
+    <p> 
+      Looking closely, we are just finding the upper-tail probability (or the CDF) of the surrogate posterior. Moreover, if we are using a GP as a surrogate the expression above converts to,
+    </p>
+    <d-math block>x_{t+1} = argmax_x \Phi\left(\frac{\mu_t(x) - f(x^+) - \epsilon}{\sigma_t(x)}\right)</d-math>
+    <p>
+      where, 
+      <ul style="list-style-type: none;">
+        <li><d-math>\Phi(\cdot)</d-math> indicates the CDF</li>
+      </ul>
+    </p>
+
+    <!-- <p>
+      Looking closely, we are just finding the upper-tail probability (or the CDF) of the surrogate posterior.
+    </p> -->
+
+    <!-- <ol>
       <li>
         <p>
           Let <d-math>f(x^+)</d-math> be the current highest value of the function
@@ -414,7 +442,7 @@
 
       <li>
         <p>
-          Choose <d-math>x_{t+1} = argmax(\alpha_{PI}(x))</d-math> where <d-math>\alpha_{PI}(x) = P(f(x)) \geq (f(x^+) +\epsilon)</d-math>
+          Choose <d-math block>x_{t+1} = argmax(\alpha_{PI}(x))</d-math> where <d-math>\alpha_{PI}(x) = P(f(x)) \geq (f(x^+) +\epsilon)</d-math>
         </p>
       </li>
     </ol>
@@ -424,10 +452,10 @@ If our surrogate is a GP we can obtain an analytical expression:
     <d-math block>x_{t+1} = argmax_x \Phi\left(\frac{\mu_t(x) - f(x^+) - \epsilon}{\sigma_t(x)}\right)</d-math>
     <p>
       where <d-math>\Phi(\cdot)</d-math> indicates the CDF.
-    </p>
+    </p> -->
 
     <p>
-      The visualization below shows the calculation of <d-math>\alpha_{PI}(x)</d-math>. The orange line represents the current max (plus an <d-math> \epsilon</d-math>) or <d-math> f(x^+) + \epsilon</d-math>. The violet region shows the probability density at each point. The grey regions show the probability density below the current max. The "area" of the violet region at each point represents the "probability of improvement over current maximum". The next point that will be queried is given by the dashed blue line.
+      Now we already know CDF is the area under the PDF. Therefore, the value of CDF can be visualized by plotting the area that results in its value. The visualization below shows the calculation of <d-math>\alpha_{PI}(x)</d-math>. The orange line represents the current max (plus an <d-math> \epsilon</d-math>) or <d-math> f(x^+) + \epsilon</d-math>. The violet region shows the probability density at each point. The grey regions show the probability density below the current max. The "area" of the violet region at each point represents the "probability of improvement over current maximum". The point next evaluated has the most <em>probability of improvement</em>. We denote this point using the dashed blue line.
     </p>
 
     <figure>
@@ -477,10 +505,9 @@ If our surrogate is a GP we can obtain an analytical expression:
     <h4 id="expectedimprovementei">Expected Improvement (EI)</h4>
 
     <p>
-      Probability of improvement only looked at <em>how likely</em> is an improvement, but, did not consider <em>how much</em> we can improve. The next criterion, called Expected Improvement (EI), does exactly that<d-footnote>A good
-        introduction to the Expected Improvement acquisition function is by <a href="https://thuijskens.github.io/2016/12/29/bayesian-optimisation/" target="_blank">this post</a> by Thomas Huijskens and <a
+      Probability of improvement only looked at <em>how likely</em> is an improvement, but, did not consider <em>how much</em> we can improve. The next criterion, called Expected Improvement (EI), does exactly that<d-footnote>A good introduction to the Expected Improvement acquisition function is by <a href="https://thuijskens.github.io/2016/12/29/bayesian-optimisation/" target="_blank">this post</a> by Thomas Huijskens and <a
           href="https://people.orie.cornell.edu/pfrazier/Presentations/2018.11.INFORMS.tutorial.pdf" target="_blank">these slides</a> by Peter Frazier</d-footnote>!
-      The idea is fairly simple - choose the next query point as the one which has the highest expected improvement over the current max <d-math>f(x^+)</d-math>, where <d-math> x^+ = \text{argmax}_{x_i \in x_{1:t}}f(x_i)</d-math> and <d-math>x_i</d-math> is the location queried at <d-math>i^{th}</d-math> time step.
+      The idea is fairly simple &#8212 choose the next query point as the one which has the highest expected improvement over the current max <d-math>f(x^+)</d-math>, where <d-math> x^+ = \text{argmax}_{x_i \in x_{1:t}}f(x_i)</d-math> and <d-math>x_i</d-math> is the location queried at <d-math>i^{th}</d-math> time step.
     </p>
 
     <p>
@@ -911,14 +938,15 @@ The visualization above uses Thompson sampling for optimization. Again, we can r
         </p>
       </div>
 
-        <h1 id="conclusions">Conclusion and Summary</h1>
+      <h1 id="conclusions">Conclusion and Summary</h1>
 
-        <p>
-          In this article, we looked at Bayesian Optimization for optimizing a black-box function. Bayesian Optimization is well suited when the function evaluations are expensive, making grid or exhaustive search impractical. We looked at the key components of Bayesian Optimization. First, we looked at the notion of using a surrogate function (with a prior over the space of objective functions) to model our black-box function. Next, we looked at the "Bayes" in Bayesian Optimization - the function evaluations are used as data to obtain the surrogate posterior. We look at acquisition functions, which are functions of the surrogate posterior and are optimized sequentially. This new sequential optimization is in-expensive and thus of utility of us. We also looked at a few acquisition functions and showed how these different functions balance exploration and exploitation. Finally, we looked at some practical examples of Bayesian Optimization for optimizing hyper-parameters for machine learning models.         </p>
+      <p>
+        In this article, we looked at Bayesian Optimization for optimizing a black-box function. Bayesian Optimization is well suited when the function evaluations are expensive, making grid or exhaustive search impractical. We looked at the key components of Bayesian Optimization. First, we looked at the notion of using a surrogate function (with a prior over the space of objective functions) to model our black-box function. Next, we looked at the "Bayes" in Bayesian Optimization - the function evaluations are used as data to obtain the surrogate posterior. We look at acquisition functions, which are functions of the surrogate posterior and are optimized sequentially. This new sequential optimization is in-expensive and thus of utility of us. We also looked at a few acquisition functions and showed how these different functions balance exploration and exploitation. Finally, we looked at some practical examples of Bayesian Optimization for optimizing hyper-parameters for machine learning models.
+      </p>
 
-          <p>
-            We hope you had a good time reading the article and hope you are ready to <strong>exploit</strong> the power of Bayesian Optimization. In case you wish to <strong>explore</strong> more, please read the <a href="#FurtherReading">Further Reading</a> section below. We also provide our <a href="https://github.com/distillpub/post--bayesian-optimization">repository</a> to reproduce the entire article.  
-          </p>
+      <p>
+        We hope you had a good time reading the article and hope you are ready to <strong>exploit</strong> the power of Bayesian Optimization. In case you wish to <strong>explore</strong> more, please read the <a href="#FurtherReading">Further Reading</a> section below. We also provide our <a href="https://github.com/distillpub/post--bayesian-optimization">repository</a> to reproduce the entire article.  
+      </p>
 
     <d-appendix>
       <h4 id="embracebayesianoptimization">Embrace Bayesian Optimization</h2>
