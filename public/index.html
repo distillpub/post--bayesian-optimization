@@ -265,7 +265,7 @@
       </p> 
     -->
     
-    <h3>Formalizing Bayesian Optimization</h1>
+    <h3>Formalizing Bayesian Optimization</h3>
 
       <span style="padding-bottom: 1em;">
         Let us now formally introduce Bayesian Optimization. Our goal is to find the location (<d-math>{x \in \mathbb{R}^d}</d-math>) corresponding to the global maximum (or minimum) of a function <d-math>f: \mathbb{R}^d \mapsto \mathbb{R}</d-math>.
@@ -343,7 +343,7 @@
         Please find <a href="https://www.cse.wustl.edu/~garnett/cse515t/spring_2015/files/lecture_notes/12.pdf">these</a> slides from Washington University in St. Louis to know more about acquisition functions.
       </d-footnote>. are crucial to Bayesian Optimization, and there are a wide variety of options. In the following sections, we’ll go through a number of options, providing intuition and examples.
     </p>
-    
+
     <!-- <p>
       The core question is Bayesian Optimization is "Based on what we know so far, which point should we evaluate next?" Remember that evaluating each point is expensive, so we want to pick carefully! In the active learning case, we picked the most uncertain point, but in Bayesian Optimization we don't waste precious evaluations on uncertain regions that are not promising.
     </p>
@@ -368,7 +368,7 @@
       </p>
     -->
 
-    <p>
+    <!-- <p>
       Let us re-wind and link the things discussed thus far, by noting the steps of Bayesian Optimization<d-footnote>Please find <a href="https://youtu.be/EnXxO3BAgYk">this</a> amazing video from Javier González at The Gaussian Process Summer School 2019.</d-footnote> and explicitly highlighting the "Bayesian" in Bayesian Optimization.
     </p>
     <p>
@@ -391,9 +391,9 @@
     <p>
       Thus, the "Bayesian" in Bayesian Optimization is sequentially refining our surrogate's posterior (and thus uncertainty) with each evaluation via Bayes rule<d-cite key="nandoBOLoop"></d-cite>.
     </p>
-    <p>Let us now look at a few common acquisition functions.</p>
+    <p>Let us now look at a few common acquisition functions.</p> -->
 
-    <h3>Probability of Improvement (PI)</h3>
+    <h4>Probability of Improvement (PI)</h4>
 
     <p>
       In this acquisition function, we evaluate the point with the highest probability of improvement over the current max <d-math>f(x^+)</d-math>, where <d-math> x^+ = \text{argmax}_{x_i \in x_{1:t}}f(x_i)</d-math> and <d-math>x_i</d-math> is the location queried at <d-math>i^{th}</d-math> time step.
@@ -434,7 +434,7 @@ If our surrogate is a GP we can obtain an analytical expression:
       <d-figure><img src="images/MAB_gifs/density_pi.png" /></d-figure>
     </figure>
 
-    <h4>Intuition behind <span style='text-transform: none'><d-math>\epsilon</d-math></span> in PI</h4>
+    <h5>Intuition behind <span style='text-transform: none'><d-math>\epsilon</d-math></span> in PI</h5>
 
     <p>
       PI uses <d-math>\epsilon</d-math> to strike a balance between exploration and exploitation. <!-- In the following plot, we visualize how changing the value of <d-math>\epsilon</d-math> affects the values of our acquisition function, resulting in different choices of points to evaluate. We selected two points as our candidate points <d-math>x \in \{1.0, 5.0\}</d-math>, and show their tail probabilities in shaded green and orange, respectively. -->
@@ -474,7 +474,7 @@ If our surrogate is a GP we can obtain an analytical expression:
 
     <p> Our quick experiments above help us conclude that <d-math>\epsilon</d-math> controls the degree of exploration in the PI acquisition function.
 
-    <h3 id="expectedimprovementei">Expected Improvement (EI)</h3>
+    <h4 id="expectedimprovementei">Expected Improvement (EI)</h4>
 
     <p>
       Probability of improvement only looked at <em>how likely</em> is an improvement, but, did not consider <em>how much</em> we can improve. The next criterion, called Expected Improvement (EI), does exactly that<d-footnote>A good
