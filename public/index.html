@@ -446,13 +446,12 @@ If our surrogate is a GP we can obtain an analytical expression:
       where <d-math>\Phi(\cdot)</d-math> indicates the CDF.
     </p> -->
 
-<!--     <p>
-      Now we already know CDF is the area under the PDF. Therefore, the value of CDF can be visualized by plotting the area that results in its value. 
-    </p> -->
+    <p>
+      The visualization below shows the calculation of <d-math>\alpha_{PI}(x)</d-math>. The orange line represents the current max (plus an <d-math> \epsilon</d-math>) or <d-math> f(x^+) + \epsilon</d-math>. The violet region shows the probability density at each point. The grey regions show the probability density below the current max. The "area" of the violet region at each point represents the "probability of improvement over current maximum". The next point to evaluate via the PI criteria (shown in dashed blue line) is <d-math>x = 6</d-math>.
+    </p>
 
     <figure>
       <d-figure><img src="images/MAB_gifs/density_pi.png" /></d-figure>
-      <figcaption>The visualization shows the calculation of <d-math>\alpha_{PI}(x)</d-math>. The orange line represents the current max (plus an <d-math> \epsilon</d-math>) or <d-math> f(x^+) + \epsilon</d-math>. The violet region shows the probability density at each point. The grey regions show the probability density below the current max. The "area" of the violet region at each point represents the "probability of improvement over current maximum". The next point to evaluate via the PI criteria (shown in dashed blue line) is <d-math>x = 6</d-math>.</figcaption>
     </figure>
 
     <h5>Intuition behind <span style='text-transform: none'><d-math>\epsilon</d-math></span> in PI</h5>
