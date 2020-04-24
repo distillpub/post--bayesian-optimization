@@ -69,7 +69,7 @@
 
     <h1>Mining Gold!</h1>
     <p>
-      Let us start with the example of gold mining. Our goal is to mine for gold in an unknown land<d-footnote>Interestingly, our example is similar to one of the first use of Gaussian Process (GP) (also called kriging)<d-cite key="goldKridge"></d-cite>, where Prof. Krige modelled gold concentrations using GPs.</d-footnote>.
+      Let us start with the example of gold mining. Our goal is to mine for gold in an unknown land<d-footnote>Interestingly, our example is similar to one of the first use of Gaussian Processes (also called kriging)<d-cite key="goldKridge"></d-cite>, where Prof. Krige modelled the gold concentrations using a Gaussian Process.</d-footnote>.
       For now, we assume that the gold is distributed about a line. We want to find the location along this line with the maximum gold while only drilling a few times (as drilling is expensive).
     </p>
 
@@ -394,15 +394,7 @@
     <h4>Probability of Improvement (PI)</h4>
 
     <p>
-      One way to select the next point could involve probabilities. But what kind of probabilities  make sense? This acquisition function chooses the next point where the surrogate posterior has the highest <em>probability of improvement</em> over the current maximum.
-    </p>
-<!-- 
-    <p>
-      The acquisition function called Probability of Improvement precisely captures this probability and calculates it at each point. Now the point with the maximum probability is selected to be the next evaluation point. And it makes sense to select the point with the maximum <em>probability of improvement</em>, right?
-    </p>
- -->
-    <p>
-      Mathematically, we write the selection of next point as follows, 
+      This acquisition function chooses the next query point as the one which has the highest <em>probability of improvement</em> over the current max <d-math>f(x^+)</d-math>. Mathematically, we write the selection of next point as follows, 
     </p>
     <d-math block>x_{t+1} = \text{argmax}(\alpha_{PI}(x)) = \text{argmax}(P(f(x)) \geq (f(x^+) +\epsilon))</d-math>
     <p>
@@ -454,12 +446,13 @@ If our surrogate is a GP we can obtain an analytical expression:
       where <d-math>\Phi(\cdot)</d-math> indicates the CDF.
     </p> -->
 
-    <p>
-      <!-- Now we already know CDF is the area under the PDF. Therefore, the value of CDF can be visualized by plotting the area that results in its value.  -->The visualization below shows the calculation of <d-math>\alpha_{PI}(x)</d-math>. The orange line represents the current max (plus an <d-math> \epsilon</d-math>) or <d-math> f(x^+) + \epsilon</d-math>. The violet region shows the probability density at each point. The grey regions show the probability density below the current max. The "area" of the violet region at each point represents the "probability of improvement over current maximum". The point next evaluated has the most <em>probability of improvement</em>. We denote this point using the dashed blue line.
-    </p>
+<!--     <p>
+      Now we already know CDF is the area under the PDF. Therefore, the value of CDF can be visualized by plotting the area that results in its value. 
+    </p> -->
 
-    <figure class='l-page'>
+    <figure>
       <d-figure><img src="images/MAB_gifs/density_pi.png" /></d-figure>
+      <figcaption>The visualization shows the calculation of <d-math>\alpha_{PI}(x)</d-math>. The orange line represents the current max (plus an <d-math> \epsilon</d-math>) or <d-math> f(x^+) + \epsilon</d-math>. The violet region shows the probability density at each point. The grey regions show the probability density below the current max. The "area" of the violet region at each point represents the "probability of improvement over current maximum". The next point to evaluate via the PI criteria (shown in dashed blue line) is <d-math>x = 6</d-math>.</figcaption>
     </figure>
 
     <h5>Intuition behind <span style='text-transform: none'><d-math>\epsilon</d-math></span> in PI</h5>
