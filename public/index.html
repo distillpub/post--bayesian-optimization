@@ -241,11 +241,11 @@
 
     <h2 id="bayesianoptimization">Bayesian Optimization</h2>
     <p>
-      In the previous section, we picked points in order to determine an accurate model of the gold content. But what if our goal is simply to find the location of maximum gold content? Of course, we could do active learning to estimate the  true function accurately and then find its maximum. But that seems pretty wasteful &#8212 why should we use evaluations improving our estimates of regions where the function has low gold content when we only care about the maximum?
+      In the previous section, we picked points in order to determine an accurate model of the gold content. But what if our goal is simply to find the location of maximum gold content? Of course, we could do active learning to estimate the  true function accurately and then find its maximum. But that seems pretty wasteful &#8212 why should we use evaluations improving our estimates of regions where the function expects low gold content when we only care about the maximum?
     </p>
 
     <P>
-      This is the core question is Bayesian Optimization: "Based on what we know so far, which point should we evaluate next?" Remember that evaluating each point is expensive, so we want to pick carefully! In the active learning case, we picked the most uncertain point, exploring the function. But in Bayesian Optimization, we need to balance exploring uncertain regions, which might unexpectedly have high gold content, against focusing on regions we already know have higher gold content (a kind of exploitation).
+      This is the core question in Bayesian Optimization: "Based on what we know so far, which point should we evaluate next?" Remember that evaluating each point is expensive, so we want to pick carefully! In the active learning case, we picked the most uncertain point, exploring the function. But in Bayesian Optimization, we need to balance exploring uncertain regions, which might unexpectedly have high gold content, against focusing on regions we already know have higher gold content (a kind of exploitation).
     </P>
 
     <p>
