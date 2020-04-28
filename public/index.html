@@ -69,7 +69,7 @@
 
     <h1>Mining Gold!</h1>
     <p>
-      Let us start with the example of gold mining. Our goal is to mine for gold in an unknown land<d-footnote>Interestingly, our example is similar to one of the first use of Gaussian Processes (also called kriging)<d-cite key="goldKridge"></d-cite>, where Prof. Krige modelled the gold concentrations using a Gaussian Process.</d-footnote>.
+      Let us start with the example of gold mining. Our goal is to mine for gold in an unknown land<d-footnote>Interestingly, our example is similar to one of the first use of Gaussian Processes (also called kriging)<d-cite key="goldKridge"></d-cite>, where Prof. Krige modeled the gold concentrations using a Gaussian Process.</d-footnote>.
       For now, we assume that the gold is distributed about a line. We want to find the location along this line with the maximum gold while only drilling a few times (as drilling is expensive).
     </p>
 
@@ -103,7 +103,7 @@
       <li>
         <p>
           <strong>Problem 2: Location of Maximum Gold (Bayesian Optimization)</strong><br/>
-          In this problem, we want to find the location of maximum gold content. We again can not drill at every location. Instead, we should drill at locations showing <strong>high promise</strong> about the gold content.<!-- , using a small number of drillings. --> This problem is akin to
+          In this problem, we want to find the location of the maximum gold content. We, again, can not drill at every location. Instead, we should drill at locations showing <strong>high promise</strong> about the gold content.<!-- , using a small number of drillings. --> This problem is akin to
           <strong>
             Bayesian Optimization<d-cite key="humanOut,nandoBOtut"></d-cite>
           </strong>.
@@ -140,7 +140,7 @@
       <d-footnote>
         Specifics: We use a Matern 5/2 kernel due to its property of favoring doubly differentiable functions. <!-- In contrast, Matern 3/2 favors singly differentiable functions. --> See <a href="http://www.gaussianprocess.org/gpml/">Rasmussen and Williams 2004</a> and <a href="https://scikit-learn.org/stable/modules/generated/sklearn.gaussian_process.kernels.Matern.html">scikit-learn</a>, for details regarding the Matern kernel.
       </d-footnote>.
-      As we evaluate points (drilling) we get more data for our surrogate to learn from, updating it according to Bayes’ rule.
+      As we evaluate points (drilling), we get more data for our surrogate to learn from, updating it according to Bayes’ rule.
     </p>
 
     <figure class="l-page">
@@ -249,7 +249,7 @@
     </P>
 
     <p>
-      We make this decision with something called an acquisition function. Acquisition functions are heuristics for how desirable it is to evaluate a point, based on our present model<d-footnote>More details on acquisition functions can be access at on this <a href="https://botorch.org/docs/acquisition">link</a>.</d-footnote>. We’ll spend much of this section going through different options for acquisition functions.
+      We make this decision with something called an acquisition function. Acquisition functions are heuristics for how desirable it is to evaluate a point, based on our present model<d-footnote>More details on acquisition functions can be accessed at on this <a href="https://botorch.org/docs/acquisition">link</a>.</d-footnote>. We’ll spend much of this section going through different options for acquisition functions.
     </p>
 
     <p>
@@ -290,7 +290,7 @@
         <tr>
           <td><d-math>f</d-math> is continuous but lacks special structure,
           e.g., concavity, that would make it easy to optimize.</td>
-          <td>Our true function is neither convex nor concave function resulting in local optimas.</td>
+          <td>Our true function is neither a convex nor a concave function, resulting in local optimums.</td>
         </tr>
         <tr>
           <td><d-math>f</d-math> is derivative-free:
@@ -471,7 +471,7 @@ If our surrogate is a GP we can obtain an analytical expression:
     <p>
       Looking at the graph above, we see that we reach the global maxima in a few iterations<d-footnote>Ties are broken randomly.</d-footnote>.
       Our surrogate possesses a large uncertainty in <d-math>x \in [2, 4]</d-math> in the first few iterations<d-footnote>The proportion of uncertainty is identified by the grey translucent area.</d-footnote>.
-      The acquisition function initially <strong>exploits</strong> regions with high promise<d-footnote>Points in the vicinity of current maxima</d-footnote> which leads to a high uncertainty in the region <d-math>x \in [2, 4]</d-math>. This observation also shows that we do not need to construct an accurate estimate of the black-box function to find its maximum.
+      The acquisition function initially <strong>exploits</strong> regions with a high promise<d-footnote>Points in the vicinity of current maxima</d-footnote>, which leads to high uncertainty in the region <d-math>x \in [2, 4]</d-math>. This observation also shows that we do not need to construct an accurate estimate of the black-box function to find its maximum.
     </p>
 
     <figure class="gif-slider">
@@ -618,7 +618,7 @@ If our surrogate is a GP we can obtain an analytical expression:
         </li>
         <li>
           <p>
-            The sampled functions must pass through the current max value, as there is no uncertainty at the evaluated locations. Thus, optimizing samples from surrogate posterior will ensure an <strong>exploiting</strong> behavior.
+            The sampled functions must pass through the current max value, as there is no uncertainty at the evaluated locations. Thus, optimizing samples from the surrogate posterior will ensure <strong>exploiting</strong> behavior.
           </p>
 
           <p>
@@ -648,7 +648,7 @@ The visualization above uses Thompson sampling for optimization. Again, we can r
       <figure class="gif-slider">
         <d-figure><img src="images/MAB_pngs/Rand/0.png" /></d-figure>
       </figure>
-	<p> The visualization above shows that the performance of the random acquisition function is not that bad! However, if our optimization was more complex (more dimensions), then, the random acquisition might perform poorly.
+	<p> The visualization above shows that the performance of the random acquisition function is not that bad! However, if our optimization was more complex (more dimensions), then the random acquisition might perform poorly.
 </p>
       <h3>Summary of Acquisition Functions</h3> <p>
         Let us now summarize the core ideas associated with acquisition functions: i) they are heuristics for evaluating the utility of a point; ii) they are a function of the surrogate posterior; iii) they combine exploration and exploitation; and iv) they are inexpensive to evaluate.</p>
@@ -710,7 +710,7 @@ The visualization above uses Thompson sampling for optimization. Again, we can r
         We now compare the performance of different acquisition functions on the gold mining problem<d-footnote>To know more about the difference between acquisition functions look at <a href="https://www.cs.ubc.ca/~nando/540-2013/lectures/l7.pdf">these</a> amazing
           slides from Nando De Freitas</d-footnote>. We have used the optimum hyperparameters for each acquisition function.
 
-          We ran the random acquisition function several times with different seeds and plot the mean gold sensed at every iteration.
+          We ran the random acquisition function several times with different seeds and plotted the mean gold sensed at every iteration.
       </p>
 
       <figure>
@@ -741,7 +741,7 @@ The visualization above uses Thompson sampling for optimization. Again, we can r
 
       <h3 id="example1">Example 1 -- Support Vector Machine (SVM)</h3>
 
-      <p>In this example, we use an SVM to classify on sklearn's moons dataset, and use Bayesian Optimization to optimize SVM hyperparameters.
+      <p>In this example, we use an SVM to classify on sklearn's moons dataset and use Bayesian Optimization to optimize SVM hyperparameters.
 
       <p>
         <ul>
@@ -818,7 +818,7 @@ The visualization above uses Thompson sampling for optimization. Again, we can r
         </figure>
 
         <p>
-          Above is a typical Bayesian Optimization run with <em>Probability of Improvement</em> acquisition function.
+          Above is a typical Bayesian Optimization run with the <em>Probability of Improvement</em> acquisition function.
         </p>
 
         <figure class="gif-slider">
@@ -926,7 +926,7 @@ The visualization above uses Thompson sampling for optimization. Again, we can r
         </p>
 
         <p>
-          Let us get the numbers into perspective. If we had run this optimization using grid search, it would have taken around <d-math>(5 \times 2 \times 7)</d-math> iterations. Whereas, Bayesian Optimization only took seven iterations. Each iteration took around fifteen minutes, this sets the time required for the grid search to complete around seventeen hours!
+          Let us get the numbers into perspective. If we had run this optimization using a grid search, it would have taken around <d-math>(5 \times 2 \times 7)</d-math> iterations. Whereas Bayesian Optimization only took seven iterations. Each iteration took around fifteen minutes; this sets the time required for the grid search to complete around seventeen hours!
         </p>
       </div>
 
@@ -980,8 +980,7 @@ The visualization above uses Thompson sampling for optimization. Again, we can r
         <p>Using gradient information when it is available.</p>
         <ul>
           <li>
-            Suppose we have gradient information available, we should possibly try to use the information. This could result in a much faster approach to the global maxima. To know more about this exciting domain of research look at the paper by
-            Wu, et. al.<d-cite key="BOwtGD"></d-cite>.
+            Suppose we have gradient information available, we should possibly try to use the information. This could result in a much faster approach to the global maxima. Please have a look at the paper by Wu, et al.<d-cite key="BOwtGD"></d-cite> to know more.
           </li>
         </ul>
       </li>
