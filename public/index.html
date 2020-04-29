@@ -249,7 +249,7 @@
     </P>
 
     <p>
-      We make this decision with something called an acquisition function. Acquisition functions are heuristics for how desirable it is to evaluate a point, based on our present model<d-footnote>More details on acquisition functions can be accessed at on this <a href="https://botorch.org/docs/acquisition">link</a>.</d-footnote>. We’ll spend much of this section going through different options for acquisition functions.
+      We make this decision with something called an acquisition function. Acquisition functions are heuristics for how desirable it is to evaluate a point, based on our present model<d-footnote>More details on acquisition functions can be accessed at on this <a href="https://botorch.org/docs/acquisition">link</a>.</d-footnote>. We will spend much of this section going through different options for acquisition functions.
     </p>
 
     <p>
@@ -310,7 +310,7 @@
       </table>
 
       <p>
-        To solve this problem, we’ll follow the following algorithm:
+        To solve this problem, we will follow the following algorithm:
       </p>
 
       <p>
@@ -339,7 +339,7 @@
     <p>
       Acquisition functions are crucial to Bayesian Optimization, and there are a wide variety of options<d-footnote>
         Please find <a href="https://www.cse.wustl.edu/~garnett/cse515t/spring_2015/files/lecture_notes/12.pdf">these</a> slides from Washington University in St. Louis to know more about acquisition functions.
-      </d-footnote>. In the following sections, we’ll go through a number of options, providing intuition and examples.
+      </d-footnote>. In the following sections, we will go through a number of options, providing intuition and examples.
     </p>
 
     <!-- <p>
@@ -400,7 +400,7 @@
     <p>
       where, 
       <ul style="list-style-type: none;">
-        <li><d-math>P(\cdot)</d-math> indicates the probability of</li>
+        <li><d-math>P(\cdot)</d-math> indicates probability</li>
         <li><d-math>\epsilon</d-math> is a small positive number</li>
         <li>And, <d-math> x^+ = \text{argmax}_{x_i \in x_{1:t}}f(x_i)</d-math> where <d-math>x_i</d-math> is the location queried at <d-math>i^{th}</d-math> time step.</li>
       </ul>
@@ -631,7 +631,7 @@ If our surrogate is a GP we can obtain an analytical expression:
 
 
       <figure class="gif-slider">
-        <d-figure><img src="images/MAB_pngs/Thompson/0.01/0.png" /></d-figure>
+        <d-figure><img src="images/MAB_pngs/Thompson/0.png" /></d-figure>
       </figure>
 
       <p>
@@ -718,7 +718,7 @@ The visualization above uses Thompson sampling for optimization. Again, we can r
       </figure>
 
       <p>
-        The <em>random</em> strategy is initially comparable to or better than other acquisition functions.<d-footnote>UCB and GP-UCB have been mentioned in the collapsible</d-footnote> However, the maximum gold sensed by <em>random</em> strategy grows slowly. In comparison, the other acquisition functions can find a good solution in a small number of iterations. In fact, most acquisition functions reach fairly close to the global maxima in as few as three iterations.
+        The <em>random</em> strategy is initially comparable to or better than other acquisition functions<d-footnote>UCB and GP-UCB have been mentioned in the collapsible</d-footnote>. However, the maximum gold sensed by <em>random</em> strategy grows slowly. In comparison, the other acquisition functions can find a good solution in a small number of iterations. In fact, most acquisition functions reach fairly close to the global maxima in as few as three iterations.
       </p>
 
       <h2>Hyperparameter Tuning</h2>
