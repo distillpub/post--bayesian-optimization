@@ -10,7 +10,8 @@ for (i = 0; i < coll.length; i++) {
       content.style.borderStyle = "hidden"
     } else {
       content.style.maxHeight = content.scrollHeight + "px";
-      content.style.borderStyle = "ridge"
+      content.style.borderStyle = "dashed"
+      content.style.borderTop = "none"
     } 
   });
 }

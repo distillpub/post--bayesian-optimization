@@ -48,7 +48,7 @@
 }
 
 .collapsible {
-  background-color: #e1f2f2;
+  background-color: hsla(206, 95%, 20%, 0.2);
   cursor: pointer;
   padding: 1em;
   border: none;
@@ -58,7 +58,7 @@
 
 .active, .collapsible:hover {
   transition: max-height 0.2s ease-out;
-  background-color: #acc2c2;
+  /* background-color: #acc2c2; */
 }
 
 .content {
@@ -68,7 +68,7 @@
   transition: max-height 0.2s ease-out;
   /*background-color: #e1f2f2;*/
   /*border-style: ridge;*/
-  border-color: #e1f2f2;
+  border-color: hsla(206, 95%, 20%, 0.2);
 }
 
 /* Next & previous buttons */
@@ -125,7 +125,7 @@
 }
 
 button {
-  cursor:grabbing;
+  cursor: grabbing;
   float: left;
   width: 2.2em;
   height: 2.2em;
@@ -138,4 +138,41 @@ button {
   border: 0;
   background: black;
   cursor: pointer;
+}
+
+/* 2020-05-05 @schubert editorial style fixes */
+
+.gif-slider button.stepper {
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.gif-slider button:focus {
+  outline: 0;
+}
+
+.collapsible {
+  display: flex;
+  justify-content: space-between;
+  align-content: center;
+  border-radius: 4px;
+}
+
+.collapsible.active {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.collapsible .collapsible-indicator::after {
+  content: "+"
+}
+
+.collapsible.active .collapsible-indicator::after {
+  content: "-"
+}
+
+.collapsible h4 {
+  margin: 0;
+  line-height: inherit;
 }

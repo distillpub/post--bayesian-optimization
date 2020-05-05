@@ -18,6 +18,9 @@ function preloadImages(array) {
     }
 }
 
+const trianglePointingRight = `<svg width="10" height="10" viewBox="0 0 10 10" style="margin-top: 3px;"><path d="M 0 0 L 10 5 L 0 10 z" fill="#888"></path></svg>`
+const trianglePointingLeft = `<svg width="10" height="10" viewBox="0 0 10 10" style="margin-top: 3px; margin-left: -1px;"><path d="M 10 0 L 0 5 L 10 10 z" fill="#888"></path></svg>`
+
 function appendInputButtons() {
   // get all doms with class="gif-slider"
   var figs = document.getElementsByClassName("gif-slider")
@@ -44,13 +47,15 @@ function appendInputButtons() {
 
     // installing buttons
     var button1 = document.createElement("button")
-    button1.appendChild(document.createTextNode("<"))
+    button1.innerHTML = trianglePointingLeft;
     button1.setAttribute("onclick", 
       "changePng(this.parentNode.parentNode.parentNode, false)")
+    button1.classList += "stepper button-left"
     var button2 = document.createElement("button")
-    button2.appendChild(document.createTextNode(">"))
+    button2.innerHTML = trianglePointingRight;
     button2.setAttribute("onclick", 
       "changePng(this.parentNode.parentNode.parentNode, true)")
+    button2.classList += "stepper button-right"
 
     div.setAttribute("class", "controls")
 
