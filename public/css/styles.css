@@ -191,3 +191,7 @@ ul.footnote-ul {
 ul.footnote-ul li {
   display: inline;
 }
+
+.katex-display {
+  overflow-x: auto;
+}
