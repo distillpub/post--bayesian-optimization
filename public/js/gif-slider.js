@@ -31,7 +31,8 @@ function appendInputButtons() {
 
     // installing input
     var input = document.createElement("input")
-    var one = "onchange"
+    // oninput fires during dragging; onchange only fires on mouseup (= when letting go of the slider)
+    var one = "oninput"
     var two = "changePng(this.parentNode.parentNode.parentNode, false, this.value);"
     input.setAttribute(one, two)
     one = "type"; two = "range";
