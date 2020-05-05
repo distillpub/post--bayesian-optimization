@@ -1,10 +1,10 @@
-.controls {
+d-article .controls {
   display: flex;
   justify-content: space-between;
   text-align: center;
 }
 
-.controls input {
+d-article .controls input {
   flex: 1
 }
 
@@ -18,7 +18,7 @@
   align-items: center;
 }
 
-.container {
+d-article .container {
   float: left;
 }
 
@@ -65,7 +65,7 @@
   /* background-color: #acc2c2; */
 }
 
-.content {
+d-article .content {
   padding: .3em 1em;
   max-height: 0;
   overflow: hidden;
@@ -76,7 +76,7 @@
 }
 
 /* Next & previous buttons */
-.prev, .next {
+d-article .prev, .next {
   cursor: pointer;
   position: absolute;
   top: 50%;
@@ -92,14 +92,14 @@
 }
 
 /*Taken from https://www.w3schools.com/howto/howto_js_rangeslider.asp*/
-.slidecontainer {
+d-article .slidecontainer {
   display: flex;
   flex: 1;
   justify-content: stretch;
   align-items: center;
 }
 
-.slider {
+d-article .slider {
   -webkit-appearance: none;
   cursor: grabbing;
   flex: 1;
@@ -129,7 +129,7 @@
   vertical-align: center;
 }
 
-button {
+d-article button {
   cursor: grabbing;
   float: left;
   width: 2.2em;
