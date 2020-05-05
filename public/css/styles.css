@@ -1,7 +1,11 @@
-.controls{
-  display: inline-flex;
-  width: -webkit-fill-available;
+.controls {
+  display: flex;
+  justify-content: space-between;
   text-align: center;
+}
+
+.controls input {
+  flex: 1
 }
 
 .column {
@@ -89,21 +93,22 @@
 
 /*Taken from https://www.w3schools.com/howto/howto_js_rangeslider.asp*/
 .slidecontainer {
-  width: -webkit-fill-available;
+  display: flex;
+  flex: 1;
+  justify-content: stretch;
+  align-items: center;
 }
 
 .slider {
   -webkit-appearance: none;
-  cursor:grabbing;
-  width: 95%;
+  cursor: grabbing;
+  flex: 1;
   height: 1.5em;
-  margin-top: .38em;
-  margin-bottom: .38em;
+  margin: 0.25em;
   border-radius: 5px;
   background: #d3d3d3;
   outline: none;
   opacity: 0.7;
-  -webkit-transition: .2s;
   transition: opacity .2s;
   vertical-align: center;
 }
