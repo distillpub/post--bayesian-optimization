@@ -396,7 +396,19 @@
     <p>
       This acquisition function chooses the next query point as the one which has the highest <em>probability of improvement</em> over the current max <d-math>f(x^+)</d-math>. Mathematically, we write the selection of next point as follows, 
     </p>
-    <d-math block>x_{t+1} = \text{argmax}(\alpha_{PI}(x)) = \text{argmax}(P(f(x)) \geq (f(x^+) +\epsilon))</d-math>
+    <div class="desktop">
+      <d-math block>
+        x_{t+1} = argmax(\alpha_{PI}(x)) = argmax(P(f(x)) \geq (f(x^+) +\epsilon))
+      </d-math>
+    </div>
+    <div class="mobile_device_480px">
+      <d-math block>
+        \begin{aligned}
+        x_{t+1} & = argmax(\alpha_{PI}(x))\\
+        & = argmax(P(f(x)) \geq (f(x^+) +\epsilon))
+        \end{aligned}
+      </d-math>
+    </div>
     <p>
       where, 
       <ul style="list-style-type: none;">
@@ -415,36 +427,6 @@
         <li><d-math>\Phi(\cdot)</d-math> indicates the CDF</li>
       </ul>
     </p>
-
-    <!-- <p>
-      Looking closely, we are just finding the upper-tail probability (or the CDF) of the surrogate posterior.
-    </p> -->
-
-    <!-- <ol>
-      <li>
-        <p>
-          Let <d-math>f(x^+)</d-math> be the current highest value of the function
-        </p>
-      </li>
-      <li>
-        <p>
-          Let <d-math>\epsilon</d-math> be close to zero
-        </p>
-      </li>
-
-      <li>
-        <p>
-          Choose <d-math block>x_{t+1} = argmax(\alpha_{PI}(x))</d-math> where <d-math>\alpha_{PI}(x) = P(f(x)) \geq (f(x^+) +\epsilon)</d-math>
-        </p>
-      </li>
-    </ol>
-    <p>
-If our surrogate is a GP we can obtain an analytical expression:
-    </p>
-    <d-math block>x_{t+1} = argmax_x \Phi\left(\frac{\mu_t(x) - f(x^+) - \epsilon}{\sigma_t(x)}\right)</d-math>
-    <p>
-      where <d-math>\Phi(\cdot)</d-math> indicates the CDF.
-    </p> -->
 
     <p>
       The visualization below shows the calculation of <d-math>\alpha_{PI}(x)</d-math>. The orange line represents the current max (plus an <d-math> \epsilon</d-math>) or <d-math> f(x^+) + \epsilon</d-math>. The violet region shows the probability density at each point. The grey regions show the probability density below the current max. The "area" of the violet region at each point represents the "probability of improvement over current maximum". The next point to evaluate via the PI criteria (shown in dashed blue line) is <d-math>x = 6</d-math>.
@@ -518,21 +500,42 @@ If our surrogate is a GP we can obtain an analytical expression:
       the following acquisition function to overcome the issue.
     </p>
 
-    <d-math block>
+    <div class="desktop">
+      <d-math block>
       x_{t+1} = argmax_x \mathbb{E} \left( {max} \{ 0, \ h_{t+1}(x) - f(x^+) \} \ | \ \mathcal{D}_t \right)
-    </d-math>
+      </d-math>
+    </div>
+    <div class="mobile_device_480px">
+      <d-math block>
+        \begin{aligned}
+          x_{t+1} = \ & argmax_x \mathbb{E} \\
+          & \left( {max} \{ 0, \ h_{t+1}(x) - f(x^+) \} \ | \ \mathcal{D}_t \right)
+        \end{aligned}
+      </d-math>
+    </div>
 
     <p>
       where <d-math>f(x^+)</d-math> is the maximum value that has been encountered so far. This equation for GP surrogate is an analytical expression shown below.
     </p>
 
-    <d-math block>
-      EI(x)=
-      \begin{cases}
-      (\mu_t(x) - f(x^+) - \epsilon)\Phi(Z) + \sigma_t(x)\phi(Z), & \text{if}\ \sigma_t(x) > 0 \\
-      0 & \text{if}\ \sigma_t(x) = 0
-      \end{cases}
-    </d-math>
+    <div class="desktop">
+      <d-math block>
+        EI(x)=
+        \begin{cases}
+        (\mu_t(x) - f(x^+) - \epsilon)\Phi(Z) + \sigma_t(x)\phi(Z), & \text{if}\ \sigma_t(x) > 0 \\
+        0, & \text{if}\ \sigma_t(x) = 0
+        \end{cases}
+      </d-math>
+    </div>
+    <div class="mobile_device_480px">
+      <d-math block>
+        EI(x)= \begin{cases}
+          [(\mu_t(x) - f(x^+) - \epsilon) & \ \sigma_t(x) > 0 \\
+          \quad * \Phi(Z)] + \sigma_t(x)\phi(Z),\\
+          0, & \ \sigma_t(x) = 0
+        \end{cases}
+      </d-math>
+    </div>
     <d-math block>Z= \frac{\mu_t(x) - f(x^+) - \epsilon}{\sigma_t(x)}</d-math>
     <p>
       where <d-math>\Phi(\cdot)</d-math> indicates CDF and <d-math>\phi(\cdot)</d-math> indicates pdf.
@@ -725,9 +728,19 @@ The visualization above uses Thompson sampling for optimization. Again, we can r
 
       <p>Before we talk about Bayesian optimization for hyperparameter tuning<d-cite key="Snoek2012,NIPS2011_4443,Bergstra"></d-cite>, we will quickly differentiate between hyperparameters and parameters: hyperparameters are set before learning and the parameters are learned from the data. To illustrate the difference, we take the example of Ridge regression.
       </p>
+      <div class="desktop">
       <d-math block>
         \hat{\theta}_{ridge} = argmin_{\theta\ \in \ \mathbb{R}^p} \sum\limits_{i=1}^{n} \left(y_i - x_i^T\theta \right)^2 + \lambda \sum\limits_{j=1}^{p} \theta^2_j
       </d-math>
+    </div>
+    <div class="mobile_device_480px">
+      <d-math block>
+        \begin{aligned}
+        \hat{\theta}_{ridge} = & argmin_{\theta\ \in \ \mathbb{R}^p} \sum\limits_{i=1}^{n} \left(y_i - x_i^T\theta \right)^2 \\
+        & + \lambda \sum\limits_{j=1}^{p} \theta^2_j
+        \end{aligned}
+      </d-math>
+    </div>
       <p>
         In Ridge regression, the weight matrix <d-math>\theta</d-math> is the parameter, and the regularization coefficient <d-math>\lambda \geq 0</d-math> is the hyperparameter. <br />
         If we solve the above regression problem via gradient descent optimization, we further introduce another optimization parameter, the learning rate <d-math>\alpha</d-math>.
@@ -900,14 +913,15 @@ The visualization above uses Thompson sampling for optimization. Again, we can r
         </p>
 
         <d-code block language="python">
-          # setting up default parameters (1st point)
-          default_parameters = [4, 1e-1, 'relu']
+          # initial parameters (1st point)
+          default_parameters = 
+            [4, 1e-1, 'relu']
 
           # bayesian optimization
             search_result = gp_minimize(
             func=train,
             dimensions=dimensions,
-            acq_func='EI', # Expected Improvement.
+            acq_func='EI', # Expctd Imprv.
             n_calls=11,
             x0=default_parameters
           )

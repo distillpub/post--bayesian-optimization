@@ -195,3 +195,15 @@ ul.footnote-ul li {
 .katex-display {
   overflow-x: auto;
 }
+
+
+/* if desktop */
+.mobile_device_480px {
+    display: none;
+}
+
+/* if mobile device max width 480px */
+@media only screen and (max-device-width: 480px) {
+   .mobile_device_480px{display: block;}
+   .desktop {display: none;}
+}
